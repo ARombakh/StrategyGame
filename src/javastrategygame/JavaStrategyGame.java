@@ -4,6 +4,8 @@
  */
 package javastrategygame;
 
+import java.util.Random;
+
 /**
  *
  * @author artyom
@@ -15,22 +17,28 @@ public class JavaStrategyGame {
     final private static int CELL_WIDTH = 5;
     final private static int CELL_HEIGHT = 4;
     
+    public enum TerrainType {
+        PLATEAU,
+        WATER,
+        MOUNTAIN
+    }
+    
     static class Unit{
         public char Player;
         public int Type;
     }
+    
     static class Building{}
     
-    // почему нужно обязательно указывать static?
+    // почему нужно обязательно указывать static??
     static class GameCell {
-        public int terrainType;    // Type of terrain 0 - plateau, 1 - water
-                                    // 2 - mountain
+        public TerrainType terrainType;
         public Unit unit;
         public Building building;
         
         public char[][] cellChars = new char[CELL_WIDTH][CELL_HEIGHT];
         
-        // Нужно ли инициализировать ячейку?
+        // Нужно ли инициализировать ячейку??
         public void initCell() {
             int x, y;
             
@@ -41,34 +49,76 @@ public class JavaStrategyGame {
             }
         }
         
-        public GameCell(int terrainType) {
-            this.terrainType = terrainType;
+        public TerrainType terrRand() {
+            double plateauPrb = 0.5;
+            double waterPrb = 0.3;
+            double mountainPrb = 0.2;
+            
+            TerrainType terr = TerrainType.PLATEAU;
+
+            Random rand = new Random();
+            double r = rand.nextDouble();
+            
+            if (r <= plateauPrb) {
+                terr = TerrainType.PLATEAU;
+            }
+            else {
+                if (r <= plateauPrb + waterPrb) {
+                    terr = TerrainType.WATER;
+                }
+                else {
+                    if (r <= plateauPrb + waterPrb + mountainPrb) {
+                        terr = TerrainType.MOUNTAIN;
+                    }
+                }
+            }
+            return terr;
+        }
+        
+        public void fillTerrain() {
+            /*char terrain[] = this.TerrainName().toCharArray();
+            
+            for (int i = 0; i < CELL_WIDTH - 2; i++) {
+                cellChars[i + 1][1] = terrain[i];
+            }*/
+            char terrain = ' ';
+            int x, y;
+            
+            switch (this.terrainType) {
+                case PLATEAU:
+                    terrain = ' ';
+                    break;
+                case MOUNTAIN:
+                    terrain = 'X';
+                    break;
+                case WATER:
+                    terrain = 'O';
+                    break;
+            }
+            
+            for (y = 0; y < CELL_HEIGHT; y++) {
+                for (x = 0; x < CELL_WIDTH; x++) {
+                    cellChars[x][y] = terrain;
+                }
+            }
+        }
+              
+        public GameCell() {
+            this.terrainType = terrRand();
             this.unit = null;
             this.building = new Building();
-            // в чём проблема в overridable методе в конструкторе?
-            // Почему выскакивает предупреждение?
+            // в чём проблема в overridable методе в конструкторе??
+            // Почему выскакивает предупреждение??
             initCell();
             fillTerrain();
         }
-        
-        public String TerrainName() {
-            String terrName = "";
-            
-            switch(this.terrainType) {
-                case 0 -> terrName = "PLT";
-                case 1 -> terrName = "MNT";
-                case 2 -> terrName = "WTR";
-            }
-            return terrName;
-        }
-
-        
+             
         public void fillBorder(boolean thick) {
             int x, y, i;
             
             int[] bordX = {0, CELL_WIDTH - 1};
             int[] bordY = {0, CELL_HEIGHT - 1};
-            
+            // Как это лучше организовать??
             cellChars[bordX[0]][bordY[0]] = thick ? (char) 0x250F :
                                                     (char) 0x250C;
             cellChars[bordX[1]][bordY[0]] = thick ? (char) 0x2513 :
@@ -89,14 +139,6 @@ public class JavaStrategyGame {
                     y = bordY[i];
                     cellChars[x][y] = thick ? (char) 0x2501 : (char) 0x2500;
                 }
-            }
-        }
-        
-        public void fillTerrain() {
-            char terrain[] = this.TerrainName().toCharArray();
-            
-            for (int i = 0; i < CELL_WIDTH - 2; i++) {
-                cellChars[i + 1][1] = terrain[i];
             }
         }
         
@@ -122,12 +164,12 @@ public class JavaStrategyGame {
                 for (x = 0; x < CELL_WIDTH; x++) {
                     System.out.print(this.cellChars[x][y]);
                 }
-                System.out.println("");
+                System.out.print("\n");
             }
         }
     }
 
-    // почему нужно обязательно указывать static?    
+    // почему нужно обязательно указывать static??    
     public static class Field {
         public int width;
         public int height;
@@ -153,11 +195,12 @@ public class JavaStrategyGame {
                             randTerrain = 2;
                     }
                     // randTerrain = (int)(Math.random() * 3);
-                    cells[x][y] = new GameCell(randTerrain);
+                    
+                    cells[x][y] = new GameCell();
                 }
             }
         }
-        
+        /*
         public void DrawField() {
             int x, y;
             String spc;
@@ -170,7 +213,7 @@ public class JavaStrategyGame {
                 }
                 System.out.print("\n");
             }
-        }
+        }*/
     }
     
     static class Screen {
@@ -228,11 +271,9 @@ public class JavaStrategyGame {
     public static void main(String[] args) {
         Field field = new Field();
 //        field.DrawField();
-        
-        field.cells[0][0].fillTerrain();
-        
+               
         Screen screen = new Screen();
         screen.assignAllCells(field);
         screen.printScreen();
-    }   
+    }
 }
