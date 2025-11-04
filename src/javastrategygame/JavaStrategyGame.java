@@ -13,7 +13,7 @@ import java.util.Random;
 public class JavaStrategyGame {
 
     final private static int FLD_WIDTH = 20;
-    final private static int FLD_HEIGHT = 20;
+    final private static int FLD_HEIGHT = 4;
     final private static int CELL_WIDTH = 5;
     final private static int CELL_HEIGHT = 4;
     
@@ -106,11 +106,10 @@ public class JavaStrategyGame {
         public GameCell() {
             this.terrainType = terrRand();
             this.unit = null;
-            this.building = new Building();
+            this.building = null;
             // в чём проблема в overridable методе в конструкторе??
             // Почему выскакивает предупреждение??
-            initCell();
-            fillTerrain();
+            fillCellChars();
         }
              
         public void fillBorder(boolean thick) {
@@ -144,6 +143,8 @@ public class JavaStrategyGame {
         
         public void fillCellChars() {
             int x, y;
+            initCell();            
+            fillTerrain();
             if (this.building != null) {
                 fillBorder(true);
                 cellChars[0][0] = 'B';
@@ -154,8 +155,6 @@ public class JavaStrategyGame {
                     cellChars[0][0] = this.unit.Player;
                 }
             }
-            
-            fillTerrain();
         }
         
         public void printCell() {
@@ -200,20 +199,6 @@ public class JavaStrategyGame {
                 }
             }
         }
-        /*
-        public void DrawField() {
-            int x, y;
-            String spc;
-            
-            for (y = 0; y < FLD_HEIGHT; y++) {
-                for (x = 0; x < FLD_WIDTH; x++) {
-                    spc = (x == this.width - 1 ? "" : " ");
-                    System.out.printf("%d%s",
-                                        this.cells[x][y].terrainType, spc);
-                }
-                System.out.print("\n");
-            }
-        }*/
     }
     
     static class Screen {
@@ -270,8 +255,12 @@ public class JavaStrategyGame {
      */
     public static void main(String[] args) {
         Field field = new Field();
-//        field.DrawField();
-               
+ 
+//        field.cells[0][0].building = new Building();
+        field.cells[0][0].unit = new Unit();
+        field.cells[0][0].unit.Player = 'X';
+        field.cells[0][0].fillCellChars();
+        
         Screen screen = new Screen();
         screen.assignAllCells(field);
         screen.printScreen();
