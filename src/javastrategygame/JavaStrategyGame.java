@@ -10,13 +10,13 @@ package javastrategygame;
  */
 public class JavaStrategyGame {
 
-    final private static int FLD_WIDTH = 3;
-    final private static int FLD_HEIGHT = 3;
+    final private static int FLD_WIDTH = 20;
+    final private static int FLD_HEIGHT = 20;
     final private static int CELL_WIDTH = 5;
     final private static int CELL_HEIGHT = 4;
     
     static class Unit{
-        public int Player;
+        public char Player;
         public int Type;
     }
     static class Building{}
@@ -48,6 +48,7 @@ public class JavaStrategyGame {
             // в чём проблема в overridable методе в конструкторе?
             // Почему выскакивает предупреждение?
             initCell();
+            fillTerrain();
         }
         
         public String TerrainName() {
@@ -55,8 +56,8 @@ public class JavaStrategyGame {
             
             switch(this.terrainType) {
                 case 0 -> terrName = "PLT";
-                case 1 -> terrName = "WTR";
-                case 2 -> terrName = "MNT";
+                case 1 -> terrName = "MNT";
+                case 2 -> terrName = "WTR";
             }
             return terrName;
         }
@@ -91,16 +92,28 @@ public class JavaStrategyGame {
             }
         }
         
+        public void fillTerrain() {
+            char terrain[] = this.TerrainName().toCharArray();
+            
+            for (int i = 0; i < CELL_WIDTH - 2; i++) {
+                cellChars[i + 1][1] = terrain[i];
+            }
+        }
+        
         public void fillCellChars() {
             int x, y;
             if (this.building != null) {
                 fillBorder(true);
+                cellChars[0][0] = 'B';
             }
             else {
                 if (this.unit != null) {
                     fillBorder(false);
+                    cellChars[0][0] = this.unit.Player;
                 }
             }
+            
+            fillTerrain();
         }
         
         public void printCell() {
@@ -120,15 +133,26 @@ public class JavaStrategyGame {
         public int height;
         public GameCell[][] cells;
         
-        public Field(int width, int height) {
-            int x, y, randTerrain;
-            this.width = width;
-            this.height = height;
+        public Field() {
+            int x, y, randTerrain, randomizer;
+            this.width = FLD_WIDTH;
+            this.height = FLD_HEIGHT;
             this.cells = new GameCell[this.width][this.height];
             
             for (y = 0; y < this.height; y++) {
                 for (x = 0; x < this.width; x++) {
-                    randTerrain = (int)(Math.random() * 3);
+                    randomizer = (int)(Math.random() * 9);
+                    switch (randomizer) {
+                        case 1, 2, 3, 4, 5:
+                            randTerrain = 0;
+                            break;
+                        case 6, 7, 8:
+                            randTerrain = 1;
+                            break;
+                        default:
+                            randTerrain = 2;
+                    }
+                    // randTerrain = (int)(Math.random() * 3);
                     cells[x][y] = new GameCell(randTerrain);
                 }
             }
@@ -136,10 +160,10 @@ public class JavaStrategyGame {
         
         public void DrawField() {
             int x, y;
-            String spc = " ";
+            String spc;
             
-            for (y = 0; y < 10; y++) {
-                for (x = 0; x < 10; x++) {
+            for (y = 0; y < FLD_HEIGHT; y++) {
+                for (x = 0; x < FLD_WIDTH; x++) {
                     spc = (x == this.width - 1 ? "" : " ");
                     System.out.printf("%d%s",
                                         this.cells[x][y].terrainType, spc);
@@ -202,11 +226,10 @@ public class JavaStrategyGame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Field field = new Field(10, 10);
-        field.DrawField();
-                
-        field.cells[0][0].fillBorder(true);
-        field.cells[1][1].fillBorder(false);
+        Field field = new Field();
+//        field.DrawField();
+        
+        field.cells[0][0].fillTerrain();
         
         Screen screen = new Screen();
         screen.assignAllCells(field);
