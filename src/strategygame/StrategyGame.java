@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package javastrategygame;
+package strategygame;
 
 import java.util.Random;
 
@@ -10,7 +10,7 @@ import java.util.Random;
  *
  * @author artyom
  */
-public class JavaStrategyGame {
+public class StrategyGame {
 
     final private static int FLD_WIDTH = 20;
     final private static int FLD_HEIGHT = 4;
@@ -23,8 +23,13 @@ public class JavaStrategyGame {
         MOUNTAIN
     }
     
+    public enum Player {
+        PLAYER1,
+        PLAYER2
+    }
+    
     static class Unit{
-        public char Player;
+        public Player player;
         public int Type;
     }
     
@@ -75,15 +80,8 @@ public class JavaStrategyGame {
             return terr;
         }
         
-        public void fillTerrain() {
-            /*char terrain[] = this.TerrainName().toCharArray();
-            
-            for (int i = 0; i < CELL_WIDTH - 2; i++) {
-                cellChars[i + 1][1] = terrain[i];
-            }*/
+        public char terrainFiller() {
             char terrain = ' ';
-            int x, y;
-            
             switch (this.terrainType) {
                 case PLATEAU:
                     terrain = ' ';
@@ -95,6 +93,27 @@ public class JavaStrategyGame {
                     terrain = 'O';
                     break;
             }
+            return terrain;
+        }
+        
+        public char playerFiller() {
+            char player = ' ';
+            switch (this.unit.player) {
+                case PLAYER1:
+                    player = 'X';
+                    break;
+                case PLAYER2:
+                    player = 'O';
+                    break;
+            }
+            return player;
+        }
+        
+        public void fillTerrain() {
+            char terrain = ' ';
+            int x, y;
+            
+            terrain = terrainFiller();
             
             for (y = 0; y < CELL_HEIGHT; y++) {
                 for (x = 0; x < CELL_WIDTH; x++) {
@@ -142,7 +161,6 @@ public class JavaStrategyGame {
         }
         
         public void fillCellChars() {
-            int x, y;
             initCell();            
             fillTerrain();
             if (this.building != null) {
@@ -152,7 +170,7 @@ public class JavaStrategyGame {
             else {
                 if (this.unit != null) {
                     fillBorder(false);
-                    cellChars[0][0] = this.unit.Player;
+                    cellChars[0][0] = this.playerFiller();
                 }
             }
         }
@@ -199,6 +217,45 @@ public class JavaStrategyGame {
                 }
             }
         }
+        
+        public boolean moveUnit(GameCell source, GameCell dest) {
+            boolean success = false;
+            
+            if (source == dest) {
+                System.out.println("Source and destination are the same");
+                success = false;
+            }
+            else {
+                if (source.unit == null) {
+                    System.out.println("There is no unit in this cell");
+                    success = false;
+                }
+                else {
+                    if (dest.building == null
+                            && dest.unit == null
+                            && dest.terrainType == TerrainType.PLATEAU) {
+                        dest.unit = source.unit;
+                        source.unit = null;
+                        success = true;
+                    }
+                    else {
+                        System.out.println("The destination cell is taken");
+                        success = false;
+                    }
+                }  
+            }
+            return success;
+        }
+        
+        public void recalcCells() {
+            int x, y;
+            
+            for (y = 0; y < FLD_HEIGHT; y++) {
+                for (x = 0; x < FLD_WIDTH; x++) {
+                    cells[x][y].fillCellChars();
+                }
+            }
+        }
     }
     
     static class Screen {
@@ -230,7 +287,7 @@ public class JavaStrategyGame {
         
         public void assignAllCells(Field field) {
             int x, y;
-            
+            field.recalcCells();
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
                     assignCell(field.cells[x][y], x, y);
@@ -250,19 +307,36 @@ public class JavaStrategyGame {
         }
     }
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        Field field = new Field();
- 
-//        field.cells[0][0].building = new Building();
-        field.cells[0][0].unit = new Unit();
-        field.cells[0][0].unit.Player = 'X';
-        field.cells[0][0].fillCellChars();
+    static class Legend {
+        GameCell Cell = new GameCell();
+        GameCell terrains = new GameCell();
+        GameCell units = new GameCell();
+        GameCell buildings = new GameCell();
         
-        Screen screen = new Screen();
-        screen.assignAllCells(field);
-        screen.printScreen();
+        public void printLegend() {
+            System.out.println("Legend:");
+            int x = 0, y = 0;
+            int middle = (CELL_HEIGHT % 2 == 0 ? CELL_HEIGHT / 2 :
+                                                (CELL_HEIGHT / 2) + 1);
+            String annotation;
+            
+            System.out.println("");
+            System.out.println("Terrains:");
+            
+            for (TerrainType terrain : TerrainType.values()) {
+                terrains.terrainType = terrain;
+                
+                terrains.fillCellChars();
+                
+                for (y = 0; y < CELL_HEIGHT; y++) {
+                    for (x = 0; x < CELL_WIDTH; x++) {
+                        System.out.print(terrains.cellChars[x][y]);
+                    }
+                    annotation = (y == middle - 1 ? "\t" + terrain : "");
+                    System.out.print(annotation + "\n");
+                }
+                System.out.println("");
+            }
+        }
     }
 }
