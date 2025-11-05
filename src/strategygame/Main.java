@@ -5,6 +5,7 @@
 package strategygame;
 
 import strategygame.StrategyGame.*;
+import strategygame.Map.*;
 
 /**
  *
@@ -12,7 +13,12 @@ import strategygame.StrategyGame.*;
  */
 public class Main {
     public static void main(String[] args) {
-        Field field = new Field();
+//        Field field = new Field();
+        
+        // Можно ли наполнить поле без создания нового объекта "карта"??
+        Map map = new Map();
+        Field field = map.River();
+//        field.randomize();
  
 //        field.cells[0][0].building = new Building();
         field.cells[0][0].unit = new Unit();

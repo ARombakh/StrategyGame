@@ -12,10 +12,10 @@ import java.util.Random;
  */
 public class StrategyGame {
 
-    final private static int FLD_WIDTH = 20;
-    final private static int FLD_HEIGHT = 4;
-    final private static int CELL_WIDTH = 5;
-    final private static int CELL_HEIGHT = 4;
+    final public static int FLD_WIDTH = 15;
+    final public static int FLD_HEIGHT = 15;
+    final public static int CELL_WIDTH = 5;
+    final public static int CELL_HEIGHT = 4;
     
     public enum TerrainType {
         PLATEAU,
@@ -193,11 +193,21 @@ public class StrategyGame {
         public GameCell[][] cells;
         
         public Field() {
-            int x, y, randTerrain, randomizer;
+            int x, y;
+            
             this.width = FLD_WIDTH;
             this.height = FLD_HEIGHT;
             this.cells = new GameCell[this.width][this.height];
             
+            for (y = 0; y < FLD_HEIGHT; y++) {
+                for (x = 0; x < FLD_WIDTH; x++) {
+                    this.cells[x][y] = new GameCell();
+                }
+            }
+        }
+        
+        public void randomize() {
+            int x, y, randTerrain, randomizer;
             for (y = 0; y < this.height; y++) {
                 for (x = 0; x < this.width; x++) {
                     randomizer = (int)(Math.random() * 9);
@@ -211,8 +221,7 @@ public class StrategyGame {
                         default:
                             randTerrain = 2;
                     }
-                    // randTerrain = (int)(Math.random() * 3);
-                    
+
                     cells[x][y] = new GameCell();
                 }
             }
