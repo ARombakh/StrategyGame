@@ -103,12 +103,8 @@ public class StrategyGame {
         public char playerFiller() {
             char player = ' ';
             switch (this.unit.player) {
-                case PLAYER1:
-                    player = 'X';
-                    break;
-                case PLAYER2:
-                    player = 'O';
-                    break;
+                case PLAYER1 -> player = 'X';
+                case PLAYER2 -> player = 'O';
             }
             return player;
         }
@@ -231,19 +227,49 @@ public class StrategyGame {
                 }
             }
         }
-        /*
+
         public boolean moveUnit(GameCell source, Direction direction) {
-            boolean success = false;
-            GameCell dest;
-            
-            if (source == dest) {
-                System.out.println("Source and destination are the same");
-                success = false;
+            boolean isSuccess;
+            GameCell dest;  // Destination cell
+            int x = source.xCell, y = source.yCell;            
+            if (source.unit == null) {
+                System.out.printf("There is no player in the cell[%d][%d]\n",
+                                    source.xCell, source.yCell);
+                isSuccess = false;
+                return isSuccess;
             }
-            else {
+
+            switch (direction) {
+                case UP -> {
+                    x += 0;
+                    y += -1;
+                }
+                case DOWN -> {
+                    x += 0;
+                    y += 1;
+                }
+                case LEFT -> {
+                    x += -1;
+                    y += 0;
+                }
+                case RIGHT -> {
+                    x += 1;
+                    y += 0;
+                }
+            }
+            
+            if (!(x >= 0 && x < CELL_WIDTH) ||
+                    !(y >= 0 && y < CELL_HEIGHT)) {
+                System.out.printf("%s moves out of the field\n",
+                                    source.unit.player);
+                System.out.println("Choose another direction.");
+                isSuccess = false;
+            } else {
+                dest = this.cells[x][y];
+                
                 if (source.unit == null) {
                     System.out.println("There is no unit in this cell");
-                    success = false;
+                    isSuccess = false;
                 }
                 else {
                     if (dest.building == null
@@ -251,17 +277,18 @@ public class StrategyGame {
                             && dest.terrainType == TerrainType.PLATEAU) {
                         dest.unit = source.unit;
                         source.unit = null;
-                        success = true;
+                        isSuccess = true;
                     }
                     else {
                         System.out.println("The destination cell is taken");
-                        success = false;
+                        isSuccess = false;
                     }
-                }  
+                }
             }
-            return success;
+            
+            return isSuccess;
         }
-        */
+
         public void recalcCells() {
             int x, y;
             
@@ -312,6 +339,7 @@ public class StrategyGame {
         
         public void printScreen() {
             int x, y;
+            assignAllCells(field);
             
             for (y = 0; y < FLD_HEIGHT * CELL_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH * CELL_WIDTH; x++) {

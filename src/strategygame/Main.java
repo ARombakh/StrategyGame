@@ -32,10 +32,19 @@ public class Main {
         legend.printLegend();
         
         Screen screen = new Screen();
-        screen.assignAllCells(field);
+        screen.field = field;
         screen.printScreen();
+        
+        field.moveUnit(field.cells[0][0], Direction.DOWN);
 
-        screen.assignAllCells(field);
+        screen.printScreen();
+        
+        field.moveUnit(field.cells[0][1], Direction.LEFT);
+        
+        screen.printScreen();
+        
+        field.moveUnit(field.cells[0][0], Direction.DOWN);
+        
         screen.printScreen();
     }
 }
