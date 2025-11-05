@@ -28,6 +28,13 @@ public class StrategyGame {
         PLAYER2
     }
     
+    public enum Direction {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    }
+    
     static class Unit{
         public Player player;
         public int Type;
@@ -40,6 +47,9 @@ public class StrategyGame {
         public TerrainType terrainType;
         public Unit unit;
         public Building building;
+        final public int xCell;     // компилятор выдаёт предупреждение по xCell
+                                    // но не по yCell
+        final public int yCell;     // coordinates of the cell in the field
         
         public char[][] cellChars = new char[CELL_WIDTH][CELL_HEIGHT];
         
@@ -83,15 +93,9 @@ public class StrategyGame {
         public char terrainFiller() {
             char terrain = ' ';
             switch (this.terrainType) {
-                case PLATEAU:
-                    terrain = ' ';
-                    break;
-                case MOUNTAIN:
-                    terrain = 'X';
-                    break;
-                case WATER:
-                    terrain = 'O';
-                    break;
+                case PLATEAU -> terrain = ' ';
+                case MOUNTAIN -> terrain = 'X';
+                case WATER -> terrain = 'O';
             }
             return terrain;
         }
@@ -110,7 +114,7 @@ public class StrategyGame {
         }
         
         public void fillTerrain() {
-            char terrain = ' ';
+            char terrain;
             int x, y;
             
             terrain = terrainFiller();
@@ -121,8 +125,10 @@ public class StrategyGame {
                 }
             }
         }
-              
-        public GameCell() {
+
+        public GameCell(int xCell, int yCell) {
+            this.xCell = xCell;
+            this.yCell = yCell;
             this.terrainType = terrRand();
             this.unit = null;
             this.building = null;
@@ -130,7 +136,11 @@ public class StrategyGame {
             // Почему выскакивает предупреждение??
             fillCellChars();
         }
-             
+        
+        public GameCell() {
+            this(-1, -1);
+        }
+                     
         public void fillBorder(boolean thick) {
             int x, y, i;
             
@@ -201,7 +211,7 @@ public class StrategyGame {
             
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
-                    this.cells[x][y] = new GameCell();
+                    this.cells[x][y] = new GameCell(x, y);
                 }
             }
         }
@@ -211,24 +221,20 @@ public class StrategyGame {
             for (y = 0; y < this.height; y++) {
                 for (x = 0; x < this.width; x++) {
                     randomizer = (int)(Math.random() * 9);
-                    switch (randomizer) {
-                        case 1, 2, 3, 4, 5:
-                            randTerrain = 0;
-                            break;
-                        case 6, 7, 8:
-                            randTerrain = 1;
-                            break;
-                        default:
-                            randTerrain = 2;
-                    }
+                    randTerrain = switch (randomizer) {
+                        case 1, 2, 3, 4, 5 -> 0;
+                        case 6, 7, 8 -> 1;
+                        default -> 2;
+                    };
 
-                    cells[x][y] = new GameCell();
+                    cells[x][y] = new GameCell(x, y);
                 }
             }
         }
-        
-        public boolean moveUnit(GameCell source, GameCell dest) {
+        /*
+        public boolean moveUnit(GameCell source, Direction direction) {
             boolean success = false;
+            GameCell dest;
             
             if (source == dest) {
                 System.out.println("Source and destination are the same");
@@ -255,7 +261,7 @@ public class StrategyGame {
             }
             return success;
         }
-        
+        */
         public void recalcCells() {
             int x, y;
             
@@ -329,17 +335,17 @@ public class StrategyGame {
                                                 (CELL_HEIGHT / 2) + 1);
             String annotation;
             
-            System.out.println("");
+            System.out.print("\n");
             System.out.println("Terrains:");
             
             for (TerrainType terrain : TerrainType.values()) {
-                terrains.terrainType = terrain;
+                Cell.terrainType = terrain;
                 
-                terrains.fillCellChars();
+                Cell.fillCellChars();
                 
                 for (y = 0; y < CELL_HEIGHT; y++) {
                     for (x = 0; x < CELL_WIDTH; x++) {
-                        System.out.print(terrains.cellChars[x][y]);
+                        System.out.print(Cell.cellChars[x][y]);
                     }
                     annotation = (y == middle - 1 ? "\t" + terrain : "");
                     System.out.print(annotation + "\n");
