@@ -14,19 +14,21 @@ import strategygame.Map.*;
 public class Main {
     public static void main(String[] args) {
         GameCell Cell;
+        Unit player1;
+        Unit player2;
         
         // Можно ли наполнить поле без создания нового объекта "карта"??
         Map map = new Map();
         Field field = map.River();
 
         Cell = field.cells[0][0];
-        Cell.unit = new Unit();
-        Cell.unit.player = Player.PLAYER1;
+        Cell.unit = new Unit(Player.PLAYER1, Cell);
+        player1 = Cell.unit;
         
         Cell = field.cells[StrategyGame.FLD_WIDTH - 1]
                 [StrategyGame.FLD_HEIGHT - 1];
-        Cell.unit = new Unit();
-        Cell.unit.player = Player.PLAYER2;
+        Cell.unit = new Unit(Player.PLAYER2, Cell);
+        player2 = Cell.unit;
 
         Legend legend = new Legend();
         legend.printLegend();
@@ -35,15 +37,11 @@ public class Main {
         screen.field = field;
         screen.printScreen();
         
-        field.moveUnit(field.cells[0][0], Direction.DOWN);
+        player1.moveUnit(Direction.DOWN);
 
         screen.printScreen();
         
-        field.moveUnit(field.cells[0][1], Direction.LEFT);
-        
-        screen.printScreen();
-        
-        field.moveUnit(field.cells[0][0], Direction.DOWN);
+        player1.moveUnit(Direction.LEFT);
         
         screen.printScreen();
     }

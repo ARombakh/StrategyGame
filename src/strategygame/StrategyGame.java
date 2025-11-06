@@ -35,18 +35,86 @@ public class StrategyGame {
         RIGHT
     }
     
-    static class Unit{
+    static class Unit {
         public Player player;
-        public int Type;
+        public int Life;
+        public int Damage;
+        GameCell Cell;
+        
+        public Unit (Player player, GameCell Cell) {
+            this.player = player;
+            this.Cell = Cell;
+            this.Life = 100;
+            this.Damage = 5;
+        }
+
+        public boolean moveUnit(Direction direction) {
+            boolean isSuccess;
+            GameCell source = this.Cell;
+            GameCell dest = this.Cell;  // Destination cell
+            int x = source.xCell, y = source.yCell;
+
+            switch (direction) {
+                case UP -> {
+                    x += 0;
+                    y += -1;
+                }
+                case DOWN -> {
+                    x += 0;
+                    y += 1;
+                }
+                case LEFT -> {
+                    x += -1;
+                    y += 0;
+                }
+                case RIGHT -> {
+                    x += 1;
+                    y += 0;
+                }
+            }
+            
+            if (!(x >= 0 && x < CELL_WIDTH) ||
+                    !(y >= 0 && y < CELL_HEIGHT)) {
+                System.out.printf("%s moves out of the field\n",
+                                    source.unit.player);
+                System.out.println("Choose another direction.");
+                isSuccess = false;
+            } else {
+                dest = source.field.cells[x][y];
+                
+                if (source.unit == null) {
+                    System.out.println("There is no unit in this cell");
+                    isSuccess = false;
+                }
+                else {
+                    if (dest.building == null
+                            && dest.unit == null
+                            && dest.terrainType == TerrainType.PLATEAU) {
+                        dest.unit = source.unit;
+                        source.unit = null;
+                        isSuccess = true;
+                    }
+                    else {
+                        System.out.println("The destination cell is taken");
+                        isSuccess = false;
+                    }
+                }
+            }
+            this.Cell = dest;
+            return isSuccess;
+        }
     }
     
-    static class Building{}
+    static class Building {
+        public int Life;
+    }
     
     // почему нужно обязательно указывать static??
     static class GameCell {
         public TerrainType terrainType;
         public Unit unit;
         public Building building;
+        public Field field;
         final public int xCell;     // компилятор выдаёт предупреждение по xCell
                                     // но не по yCell
         final public int yCell;     // coordinates of the cell in the field
@@ -122,7 +190,8 @@ public class StrategyGame {
             }
         }
 
-        public GameCell(int xCell, int yCell) {
+        public GameCell(int xCell, int yCell, Field field) {
+            this.field = field;
             this.xCell = xCell;
             this.yCell = yCell;
             this.terrainType = terrRand();
@@ -134,7 +203,7 @@ public class StrategyGame {
         }
         
         public GameCell() {
-            this(-1, -1);
+            this(-1, -1, null);
         }
                      
         public void fillBorder(boolean thick) {
@@ -207,7 +276,7 @@ public class StrategyGame {
             
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
-                    this.cells[x][y] = new GameCell(x, y);
+                    this.cells[x][y] = new GameCell(x, y, this);
                 }
             }
         }
@@ -223,70 +292,9 @@ public class StrategyGame {
                         default -> 2;
                     };
 
-                    cells[x][y] = new GameCell(x, y);
+                    cells[x][y] = new GameCell(x, y, this);
                 }
             }
-        }
-
-        public boolean moveUnit(GameCell source, Direction direction) {
-            boolean isSuccess;
-            GameCell dest;  // Destination cell
-            int x = source.xCell, y = source.yCell;            
-            if (source.unit == null) {
-                System.out.printf("There is no player in the cell[%d][%d]\n",
-                                    source.xCell, source.yCell);
-                isSuccess = false;
-                return isSuccess;
-            }
-
-            switch (direction) {
-                case UP -> {
-                    x += 0;
-                    y += -1;
-                }
-                case DOWN -> {
-                    x += 0;
-                    y += 1;
-                }
-                case LEFT -> {
-                    x += -1;
-                    y += 0;
-                }
-                case RIGHT -> {
-                    x += 1;
-                    y += 0;
-                }
-            }
-            
-            if (!(x >= 0 && x < CELL_WIDTH) ||
-                    !(y >= 0 && y < CELL_HEIGHT)) {
-                System.out.printf("%s moves out of the field\n",
-                                    source.unit.player);
-                System.out.println("Choose another direction.");
-                isSuccess = false;
-            } else {
-                dest = this.cells[x][y];
-                
-                if (source.unit == null) {
-                    System.out.println("There is no unit in this cell");
-                    isSuccess = false;
-                }
-                else {
-                    if (dest.building == null
-                            && dest.unit == null
-                            && dest.terrainType == TerrainType.PLATEAU) {
-                        dest.unit = source.unit;
-                        source.unit = null;
-                        isSuccess = true;
-                    }
-                    else {
-                        System.out.println("The destination cell is taken");
-                        isSuccess = false;
-                    }
-                }
-            }
-            
-            return isSuccess;
         }
 
         public void recalcCells() {
