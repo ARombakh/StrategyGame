@@ -73,8 +73,8 @@ public class StrategyGame {
                 }
             }
             
-            if (!(x >= 0 && x < CELL_WIDTH) ||
-                    !(y >= 0 && y < CELL_HEIGHT)) {
+            if (!(x >= 0 && x < FLD_WIDTH) ||
+                    !(y >= 0 && y < FLD_HEIGHT)) {
                 System.out.printf("%s moves out of the field\n",
                                     source.unit.player);
                 System.out.println("Choose another direction.");

@@ -44,5 +44,7 @@ public class Main {
         player1.moveUnit(Direction.LEFT);
         
         screen.printScreen();
+        player2.moveUnit(Direction.UP);
+        screen.printScreen();
     }
 }
