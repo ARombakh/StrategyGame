@@ -47,11 +47,12 @@ public class StrategyGame {
             this.Life = 100;
             this.Damage = 5;
         }
-
-        public boolean moveUnit(Direction direction) {
-            boolean isSuccess;
-            GameCell source = this.Cell;
-            GameCell dest = this.Cell;  // Destination cell
+        
+        // Насколько разумно возвращать метод ту же GameCell в случае
+        // неудачи??
+        public GameCell destCell(GameCell source, Direction direction) {
+            GameCell dest;
+            
             int x = source.xCell, y = source.yCell;
 
             switch (direction) {
@@ -75,31 +76,38 @@ public class StrategyGame {
             
             if (!(x >= 0 && x < FLD_WIDTH) ||
                     !(y >= 0 && y < FLD_HEIGHT)) {
-                System.out.printf("%s moves out of the field\n",
+                System.out.printf("Target cell of %s is out of the field\n",
                                     source.unit.player);
                 System.out.println("Choose another direction.");
+                dest = source;
+            }
+            else dest = source.field.cells[x][y];
+            
+            return dest;
+        }
+
+        public boolean moveUnit(Direction direction) {
+            boolean isSuccess;
+            GameCell source = this.Cell;
+            GameCell dest;  // Destination cell
+            
+            dest = destCell(source, direction);
+            if (dest == source) {
                 isSuccess = false;
             } else {
-                dest = source.field.cells[x][y];
-                
-                if (source.unit == null) {
-                    System.out.println("There is no unit in this cell");
-                    isSuccess = false;
+                if (dest.building == null
+                        && dest.unit == null
+                        && dest.terrainType == TerrainType.PLATEAU) {
+                    dest.unit = source.unit;
+                    source.unit = null;
+                    isSuccess = true;
                 }
                 else {
-                    if (dest.building == null
-                            && dest.unit == null
-                            && dest.terrainType == TerrainType.PLATEAU) {
-                        dest.unit = source.unit;
-                        source.unit = null;
-                        isSuccess = true;
-                    }
-                    else {
-                        System.out.println("The destination cell is taken");
-                        isSuccess = false;
-                    }
+                    System.out.println("The destination cell is taken");
+                    isSuccess = false;
                 }
             }
+
             this.Cell = dest;
             return isSuccess;
         }
