@@ -13,6 +13,8 @@ import strategygame.Map.*;
  */
 public class Main {
     public static void main(String[] args) {
+        int i, j;
+        
         GameCell Cell;
         Unit player1;
         Unit player2;
@@ -37,14 +39,10 @@ public class Main {
         screen.field = field;
         screen.printScreen();
         
-        player1.moveUnit(Direction.DOWN);
-
-        screen.printScreen();
-        
-        player1.moveUnit(Direction.LEFT);
-        
-        screen.printScreen();
-//        player2.moveUnit(Direction.UP);
-//        screen.printScreen();
+        while (player1.move(Direction.RIGHT) &
+                player2.move(Direction.LEFT)) {
+            
+            screen.printScreen();
+        }
     }
 }

@@ -86,7 +86,7 @@ public class StrategyGame {
             return dest;
         }
 
-        public boolean moveUnit(Direction direction) {
+        public boolean move(Direction direction) {
             boolean isSuccess;
             GameCell source = this.Cell;
             GameCell dest;  // Destination cell
@@ -104,6 +104,7 @@ public class StrategyGame {
                 }
                 else {
                     System.out.println("The destination cell is taken");
+                    dest = source;
                     isSuccess = false;
                 }
             }
@@ -349,7 +350,7 @@ public class StrategyGame {
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
                     assignCell(field.cells[x][y], x, y);
-                }                
+                }
             }
         }
         
