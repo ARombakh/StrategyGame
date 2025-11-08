@@ -5,6 +5,7 @@
 package strategygame;
 
 import java.util.Random;
+import strategygame.Map.*;
 
 /**
  *
@@ -16,6 +17,14 @@ public class StrategyGame {
     final public static int FLD_HEIGHT = 15;
     final public static int CELL_WIDTH = 5;
     final public static int CELL_HEIGHT = 4;
+    
+    final public static int X_START_PL1 = 0;
+    final public static int Y_START_PL1 = 0;
+    
+    final public static int X_START_PL2 = FLD_WIDTH - 1;
+    final public static int Y_START_PL2 = FLD_HEIGHT - 1;
+    
+    public static boolean gameOver = false;
     
     public enum TerrainType {
         PLATEAU,
@@ -34,6 +43,8 @@ public class StrategyGame {
         LEFT,
         RIGHT
     }
+    
+    Player playerTurn;
     
     static class Unit {
         public Player player;
@@ -112,8 +123,42 @@ public class StrategyGame {
             this.Cell = dest;
             return isSuccess;
         }
+        
+        public boolean action(Direction direction) {
+            boolean isSuccess;
+            GameCell source = this.Cell;
+            GameCell dest;  // Destination cell
+            
+            dest = destCell(source, direction);
+            if (dest == source) {
+                isSuccess = false;
+            } else {
+                if (dest.building == null
+                        && dest.unit == null) {
+                    System.out.println("No one to attack in the target cell");
+                    dest = source;
+                    isSuccess = false;
+                }
+                else {
+                    if (dest.unit != null) {
+                        dest.unit.attacked(source.unit.Damage);
+                    }
+                    isSuccess = true;
+                }
+            }
+            
+            return isSuccess;
+        }
+        
+        public boolean attacked(int Damage) {
+            this.Life -= (this.Life > Damage ? Damage : this.Life);
+            if (this.Life == 0) {
+                gameOver = true;
+            }
+            return true;
+        }
     }
-    
+
     static class Building {
         public int Life;
     }
@@ -124,8 +169,7 @@ public class StrategyGame {
         public Unit unit;
         public Building building;
         public Field field;
-        final public int xCell;     // компилятор выдаёт предупреждение по xCell
-                                    // но не по yCell
+        final public int xCell;
         final public int yCell;     // coordinates of the cell in the field
         
         public char[][] cellChars = new char[CELL_WIDTH][CELL_HEIGHT];
@@ -322,9 +366,10 @@ public class StrategyGame {
                                         [FLD_HEIGHT * CELL_HEIGHT];
         public Field field;
 
-        public Screen() {
+        public Screen(Field field) {
             int x, y;
-
+            this.field = field;
+            assignAllCells(this.field);
             for (y = 0; y < screen[0].length; y++) {
                 for (x = 0; x < screen.length; x++) {
                     this.screen[x][y] = ' ';
@@ -332,9 +377,10 @@ public class StrategyGame {
             }
         }
         
-        public void assignCell(GameCell Cell, int cellX, int cellY) {
-            int strtX = cellX * CELL_WIDTH;
-            int strtY = cellY * CELL_HEIGHT; // Offset coordinates in the screen
+        public void assignCell(GameCell Cell) {
+            int strtX = Cell.xCell * CELL_WIDTH;
+            int strtY = Cell.yCell * CELL_HEIGHT; // Offset coordinates in
+            // the screen
             int x, y; // Coordinates to loop in the screen
 
             for (y = 0; y < CELL_HEIGHT; y++) {
@@ -349,21 +395,28 @@ public class StrategyGame {
             field.recalcCells();
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
-                    assignCell(field.cells[x][y], x, y);
+                    assignCell(field.cells[x][y]);
                 }
             }
         }
         
         public void printScreen() {
             int x, y;
-            assignAllCells(field);
-            
+            assignAllCells(this.field);
             for (y = 0; y < FLD_HEIGHT * CELL_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH * CELL_WIDTH; x++) {
                     System.out.print(screen[x][y]);
                 }
                 System.out.println("");
             }
+        }
+        
+        public void printSeparator() {
+            char sep = (char) 0x2588;
+            for (int i = 0; i < FLD_WIDTH * CELL_WIDTH; i++) {
+                System.out.print(sep);
+            }
+            System.out.println("");
         }
     }
     
@@ -397,6 +450,41 @@ public class StrategyGame {
                 }
                 System.out.println("");
             }
+        }
+    }
+
+    public static void updateScreen(Legend legend, Screen screen) {
+        legend.printLegend();
+        screen.printScreen();
+        screen.printSeparator();
+    }
+
+    static class Game {
+        Field field;
+        Legend legend;
+        Screen screen;
+        
+        public Game() {
+            this.field = initField();
+            this.legend = new Legend();
+            this.screen = new Screen(this.field);
+            
+            updateScreen(this.legend, this.screen);
+        }
+        
+        public static Field initField() {
+            GameCell Cell;
+
+            // Можно ли наполнить поле без создания нового объекта "карта"??
+            Map map = new Map();
+            Field field = map.Plateau();
+
+            Cell = field.cells[X_START_PL1][Y_START_PL1];
+            Cell.unit = new Unit(Player.PLAYER1, Cell);
+
+            Cell = field.cells[X_START_PL2][Y_START_PL2];
+            Cell.unit = new Unit(Player.PLAYER2, Cell);
+            return field;
         }
     }
 }
