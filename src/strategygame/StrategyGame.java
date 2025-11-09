@@ -48,16 +48,14 @@ public class StrategyGame {
 
     // почему нужно обязательно указывать static??    
     public static class Field {
-        public int width;
-        public int height;
         public GameCell[][] cells;
+        Unit Player1;
+        Unit Player2;
         
         public Field() {
             int x, y;
-            
-            this.width = FLD_WIDTH;
-            this.height = FLD_HEIGHT;
-            this.cells = new GameCell[this.width][this.height];
+
+            this.cells = new GameCell[FLD_WIDTH][FLD_HEIGHT];
             
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
@@ -68,8 +66,8 @@ public class StrategyGame {
         
         public void randomize() {
             int x, y, randTerrain, randomizer;
-            for (y = 0; y < this.height; y++) {
-                for (x = 0; x < this.width; x++) {
+            for (y = 0; y < FLD_HEIGHT; y++) {
+                for (x = 0; x < FLD_WIDTH; x++) {
                     randomizer = (int)(Math.random() * 9);
                     randTerrain = switch (randomizer) {
                         case 1, 2, 3, 4, 5 -> 0;
@@ -458,7 +456,7 @@ public class StrategyGame {
             }
         }
         
-        public static void updateScreen(Legend legend, Screen screen) {
+        public void updateScreen(Legend legend, Screen screen) {
             legend.printLegend();
             screen.printScreen();
             screen.printSeparator();
@@ -475,7 +473,7 @@ public class StrategyGame {
             this.legend = field.new Legend();
             this.screen = field.new Screen(this.field);
 
-            Field.updateScreen(this.legend, this.screen);
+            field.updateScreen(this.legend, this.screen);
         }
         
         public static Field initField() {
@@ -487,9 +485,11 @@ public class StrategyGame {
 
             Cell = field.cells[X_START_PL1][Y_START_PL1];
             Cell.unit = field.new Unit(Player.PLAYER1, Cell);
-
+            field.Player1 = Cell.unit;
+            
             Cell = field.cells[X_START_PL2][Y_START_PL2];
             Cell.unit = field.new Unit(Player.PLAYER2, Cell);
+            field.Player2 = Cell.unit;
             return field;
         }
     }
