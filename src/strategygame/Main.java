@@ -14,5 +14,7 @@ import strategygame.Map.*;
 public class Main {
     public static void main(String[] args) {
         StrategyGame.Game game = new StrategyGame.Game();
+        
+        game.turn();
     }
 }

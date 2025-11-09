@@ -5,6 +5,7 @@
 package strategygame;
 
 import java.util.Random;
+import java.util.Scanner;
 import strategygame.Map.*;
 
 /**
@@ -43,8 +44,6 @@ public class StrategyGame {
         LEFT,
         RIGHT
     }
-    
-    Player playerTurn;
 
     // почему нужно обязательно указывать static??    
     public static class Field {
@@ -467,6 +466,7 @@ public class StrategyGame {
         Field field;
         Field.Legend legend;
         Field.Screen screen;
+        Player playerTurn;
         
         public Game() {
             this.field = initField();
@@ -476,7 +476,7 @@ public class StrategyGame {
             field.updateScreen(this.legend, this.screen);
         }
         
-        public static Field initField() {
+        public Field initField() {
             Field.GameCell Cell;
 
             // Можно ли наполнить поле без создания нового объекта "карта"??
@@ -490,7 +490,50 @@ public class StrategyGame {
             Cell = field.cells[X_START_PL2][Y_START_PL2];
             Cell.unit = field.new Unit(Player.PLAYER2, Cell);
             field.Player2 = Cell.unit;
+            playerTurn = Player.PLAYER1;
+            
             return field;
+        }
+        
+        public boolean turn() {
+            String move;
+            Direction dir;
+            Scanner scanner = new Scanner(System.in);
+            
+            System.out.printf("Next move of %s:\n", playerTurn);
+            move = scanner.next();
+            
+            switch (move) {
+                case "UP":
+                    dir = Direction.UP;
+                    break;
+                case "DOWN":
+                    dir = Direction.DOWN;
+                    break;
+                case "LEFT":
+                    dir = Direction.LEFT;
+                    break;
+                case "RIGHT":
+                    dir = Direction.RIGHT;
+                    break;                
+                default:
+                    System.out.println("Incorrect spelling of move, " +
+                                        "enter another move");
+                    return false;
+            }
+           
+            switch (playerTurn) {
+                case PLAYER1:
+                    field.Player1.move(dir);
+                    playerTurn = Player.PLAYER2;
+                    break;
+                case PLAYER2:
+                    field.Player2.move(dir);
+                    playerTurn = Player.PLAYER1;
+                    break;
+            }
+            
+            return true;
         }
     }
 }
