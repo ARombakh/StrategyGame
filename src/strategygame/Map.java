@@ -44,7 +44,7 @@ public class Map {
     public Field Plateau() {
         int x = 0, y = 0;
         
-        if (StrategyGame.FLD_WIDTH == 15 && StrategyGame.FLD_HEIGHT == 15) {            
+        if (StrategyGame.FLD_WIDTH == 6 && StrategyGame.FLD_HEIGHT == 6) {
             for (y = 0; y < StrategyGame.FLD_HEIGHT; y++) {
                 for (x = 0; x < StrategyGame.FLD_WIDTH; x++) {
                     field.cells[x][y].terrainType = TerrainType.PLATEAU;    

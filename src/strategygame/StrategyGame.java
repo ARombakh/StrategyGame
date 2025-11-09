@@ -14,8 +14,8 @@ import strategygame.Map.*;
  */
 public class StrategyGame {
 
-    final public static int FLD_WIDTH = 15;
-    final public static int FLD_HEIGHT = 15;
+    final public static int FLD_WIDTH = 6;
+    final public static int FLD_HEIGHT = 6;
     final public static int CELL_WIDTH = 5;
     final public static int CELL_HEIGHT = 4;
     
@@ -25,7 +25,8 @@ public class StrategyGame {
     final public static int X_START_PL2 = FLD_WIDTH - 1;
     final public static int Y_START_PL2 = FLD_HEIGHT - 1;
     
-    public static boolean gameOver = false;
+    final public static int LIFE = 20;
+    final public static int DAMAGE = 5;
     
     public enum TerrainType {
         PLATEAU,
@@ -93,13 +94,14 @@ public class StrategyGame {
             public Player player;
             public int Life;
             public int Damage;
+            public boolean isKilled;
             GameCell Cell;
 
             public Unit (Player player, GameCell Cell) {
                 this.player = player;
                 this.Cell = Cell;
-                this.Life = 100;
-                this.Damage = 5;
+                this.Life = LIFE;
+                this.Damage = DAMAGE;
             }
             
             public Unit (Player player, int x, int y) {
@@ -184,7 +186,8 @@ public class StrategyGame {
                 } else {
                     if (dest.building == null
                             && dest.unit == null) {
-                        System.out.println("No one to attack in the target cell");
+                        System.out.println(
+                                "No one to attack in the target cell");
                         dest = source;
                         isSuccess = false;
                     }
@@ -202,9 +205,13 @@ public class StrategyGame {
             public boolean attacked(int Damage) {
                 this.Life -= (this.Life > Damage ? Damage : this.Life);
                 if (this.Life == 0) {
-                    gameOver = true;
+                    this.isKilled = true;
                 }
-                return true;
+                return this.isKilled;
+            }
+            
+            public boolean isDead() {
+                return this.isKilled;
             }
         }
 
@@ -387,7 +394,8 @@ public class StrategyGame {
 
                 for (y = 0; y < CELL_HEIGHT; y++) {
                     for (x = 0; x < CELL_WIDTH; x++) {
-                        this.screen[x + strtX][y + strtY] = Cell.cellChars[x][y];
+                        this.screen[x + strtX][y + strtY]
+                                = Cell.cellChars[x][y];
                     }
                 }
             }
@@ -495,45 +503,89 @@ public class StrategyGame {
             return field;
         }
         
-        public boolean turn() {
-            String move;
-            Direction dir;
-            Scanner scanner = new Scanner(System.in);
+        public Direction getDir(String move) {
+            Direction dir = null;
             
-            System.out.printf("Next move of %s:\n", playerTurn);
-            move = scanner.next();
-            
-            switch (move) {
-                case "UP":
+            switch (move.toLowerCase()) {
+                case "up":
                     dir = Direction.UP;
                     break;
-                case "DOWN":
+                case "down":
                     dir = Direction.DOWN;
                     break;
-                case "LEFT":
+                case "left":
                     dir = Direction.LEFT;
                     break;
-                case "RIGHT":
+                case "right":
                     dir = Direction.RIGHT;
                     break;                
                 default:
-                    System.out.println("Incorrect spelling of move, " +
-                                        "enter another move");
-                    return false;
-            }
-           
-            switch (playerTurn) {
-                case PLAYER1:
-                    field.Player1.move(dir);
-                    playerTurn = Player.PLAYER2;
-                    break;
-                case PLAYER2:
-                    field.Player2.move(dir);
-                    playerTurn = Player.PLAYER1;
-                    break;
+                    dir = null;
             }
             
-            return true;
+            return dir;
+        }
+
+        public boolean turn() {
+            boolean isSuccess = false;
+            String move;
+            String yes_no;
+            boolean action;
+            Direction dir = null;
+            Field.Unit unitToGo = null;
+            Scanner scanner = new Scanner(System.in);
+            
+            switch (playerTurn) {
+                case PLAYER1:
+                    unitToGo = field.Player1;
+                    break;
+                case PLAYER2:
+                    unitToGo = field.Player2;
+                    break;
+                default:
+                    throw new AssertionError("The player doesn't exist!");
+            }
+            
+            System.out.printf("Turn of %s.\n", playerTurn);
+            System.out.print("Will it be action [y/n]? ");
+            yes_no = scanner.next();
+            
+            action = yes_no.toLowerCase().equals("y");
+            
+            if (action) {
+                System.out.println("Action chosen. ");
+            }
+            else {
+                System.out.println("Move chosen. ");
+            }
+            
+            System.out.print("Enter direction: ");
+            move = scanner.next();
+            
+            while ((dir = getDir(move)) == null) {
+                System.out.print(
+                        "Incorrect direction. Enter another direction: "
+                );
+                move = scanner.next();
+            }
+            
+            if (action) {
+                isSuccess = unitToGo.action(dir);
+            }
+            else {
+                isSuccess = unitToGo.move(dir);
+            }
+            
+            if (isSuccess) {
+                if (unitToGo.player == Player.PLAYER1) {
+                    playerTurn = Player.PLAYER2;
+                }
+                else {
+                    playerTurn = Player.PLAYER1;
+                }                
+            }
+
+            return isSuccess;
         }
     }
 }

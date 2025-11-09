@@ -15,6 +15,21 @@ public class Main {
     public static void main(String[] args) {
         StrategyGame.Game game = new StrategyGame.Game();
         
-        game.turn();
+        while (!game.field.Player1.isKilled && !game.field.Player2.isKilled) {
+            while (!game.turn()) {                
+                System.out.println("Turn unsuccessfull, repeat the turn!");
+            }
+            
+            game.field.updateScreen(game.legend, game.screen);
+        }
+
+        if (game.field.Player1.isKilled) {
+            System.out.println("Player2 won!");
+        }
+        else {
+            if (game.field.Player2.isKilled) {
+                System.out.println("Player1 won!");
+            }
+        }
     }
 }
