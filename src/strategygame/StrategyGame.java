@@ -14,10 +14,14 @@ import strategygame.Map.*;
  */
 public class StrategyGame {
 
-    final public static int FLD_WIDTH = 6;
-    final public static int FLD_HEIGHT = 6;
+    final public static int FLD_WIDTH = 15;
+    final public static int FLD_HEIGHT = 15;
+    
     final public static int CELL_WIDTH = 5;
     final public static int CELL_HEIGHT = 4;
+    final public static int CELL_MIDDLE = (CELL_HEIGHT % 2 == 0 ?
+                                            CELL_HEIGHT / 2 :
+                                                    (CELL_HEIGHT / 2) + 1);
     
     final public static int X_START_PL1 = 0;
     final public static int Y_START_PL1 = 0;
@@ -25,8 +29,10 @@ public class StrategyGame {
     final public static int X_START_PL2 = FLD_WIDTH - 1;
     final public static int Y_START_PL2 = FLD_HEIGHT - 1;
     
-    final public static int LIFE = 20;
+    final public static int LIFE = 100;
     final public static int DAMAGE = 5;
+    
+    final public static int LABEL_LEN = 3;
     
     public enum TerrainType {
         PLATEAU,
@@ -44,6 +50,12 @@ public class StrategyGame {
         DOWN,
         LEFT,
         RIGHT
+    }
+    
+    public enum ResourceType {
+        LUMBER,
+        GOLD,
+        STONE
     }
 
     // почему нужно обязательно указывать static??    
@@ -218,6 +230,17 @@ public class StrategyGame {
         static class Building {
             public int Life;
         }
+        
+            
+        class Resource {
+            public ResourceType resourceType;
+            public int resourceQty;
+            
+            public Resource(ResourceType resourceType, int resourceQty) {
+                this.resourceType = resourceType;
+                this.resourceQty = resourceQty;
+            }
+        }
 
         // почему нужно обязательно указывать static??
         class GameCell {
@@ -225,6 +248,7 @@ public class StrategyGame {
             public Unit unit;
             public Building building;
             public Field field;
+            public Resource resource;
             final public int xCell;
             final public int yCell;     // coordinates of the cell in the field
 
@@ -352,9 +376,45 @@ public class StrategyGame {
                     cellChars[0][0] = 'B';
                 }
                 else {
-                    if (this.unit != null) {
+                    if (this.unit != null ||
+                            this.resource != null) {
                         fillBorder(false);
-                        cellChars[0][0] = this.playerFiller();
+                    }
+                }
+                fillPlayerMark();
+                fillCellLabel();
+            }
+            
+            public void fillPlayerMark() {
+                if (this.unit != null) {
+                    cellChars[0][0] = this.playerFiller();
+                }
+            }
+            
+            public void fillCellLabel() {
+                String label;
+                int indent;
+                if (this.resource != null) {
+                    switch (this.resource.resourceType) {
+                        case GOLD -> label = "GLD";
+                        case LUMBER -> label = "LMB";
+                        case STONE -> label = "STN";
+                        default ->
+                            throw new AssertionError("Incorrect resource type");
+                    }
+
+                    for (int i = 0; i < LABEL_LEN; i++) {
+                        cellChars[i + 1][CELL_MIDDLE] = label.charAt(i);
+                    }
+                    
+                    
+                    label = Integer.toString(this.resource.resourceQty);
+                    indent = LABEL_LEN - label.length();
+                    // The quantity of resource is ought to be aligned at
+                    // the right margin
+                    for (int i = 0; i < label.length(); i++) {
+                        cellChars[i + 1 + indent][CELL_MIDDLE - 1] =
+                                label.charAt(i);
                     }
                 }
             }
@@ -439,8 +499,6 @@ public class StrategyGame {
             public void printLegend() {
                 System.out.println("Legend:");
                 int x = 0, y = 0;
-                int middle = (CELL_HEIGHT % 2 == 0 ? CELL_HEIGHT / 2 :
-                                                    (CELL_HEIGHT / 2) + 1);
                 String annotation;
 
                 System.out.print("\n");
@@ -455,7 +513,8 @@ public class StrategyGame {
                         for (x = 0; x < CELL_WIDTH; x++) {
                             System.out.print(Cell.cellChars[x][y]);
                         }
-                        annotation = (y == middle - 1 ? "\t" + terrain : "");
+                        annotation =
+                                (y == CELL_MIDDLE - 1 ? "\t" + terrain : "");
                         System.out.print(annotation + "\n");
                     }
                     System.out.println("");
@@ -536,13 +595,9 @@ public class StrategyGame {
             Scanner scanner = new Scanner(System.in);
             
             switch (playerTurn) {
-                case PLAYER1:
-                    unitToGo = field.Player1;
-                    break;
-                case PLAYER2:
-                    unitToGo = field.Player2;
-                    break;
-                default:
+                case PLAYER1 -> unitToGo = field.Player1;
+                case PLAYER2 -> unitToGo = field.Player2;
+                default ->
                     throw new AssertionError("The player doesn't exist!");
             }
             
