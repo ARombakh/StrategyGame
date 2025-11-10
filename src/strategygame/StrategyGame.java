@@ -565,22 +565,13 @@ public class StrategyGame {
         public Direction getDir(String move) {
             Direction dir = null;
             
-            switch (move.toLowerCase()) {
-                case "up":
-                    dir = Direction.UP;
-                    break;
-                case "down":
-                    dir = Direction.DOWN;
-                    break;
-                case "left":
-                    dir = Direction.LEFT;
-                    break;
-                case "right":
-                    dir = Direction.RIGHT;
-                    break;                
-                default:
-                    dir = null;
-            }
+            dir = switch (move.toLowerCase()) {
+                case "up" -> Direction.UP;
+                case "down" -> Direction.DOWN;
+                case "left" -> Direction.LEFT;
+                case "right" -> Direction.RIGHT;
+                default -> null;
+            };
             
             return dir;
         }
