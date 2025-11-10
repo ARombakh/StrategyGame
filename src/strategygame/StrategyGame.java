@@ -14,8 +14,8 @@ import strategygame.Map.*;
  */
 public class StrategyGame {
 
-    final public static int FLD_WIDTH = 15;
-    final public static int FLD_HEIGHT = 15;
+    final public static int FLD_WIDTH = 7;
+    final public static int FLD_HEIGHT = 7;
     
     final public static int CELL_WIDTH = 5;
     final public static int CELL_HEIGHT = 4;
@@ -31,6 +31,7 @@ public class StrategyGame {
     
     final public static int LIFE = 100;
     final public static int DAMAGE = 5;
+    final public static int CAPACITY = 5;
     
     final public static int LABEL_LEN = 3;
     
@@ -56,6 +57,11 @@ public class StrategyGame {
         LUMBER,
         GOLD,
         STONE
+    }
+    
+    public enum ActionType {
+        ATTACK,
+        COLLECT
     }
 
     // почему нужно обязательно указывать static??    
@@ -106,6 +112,7 @@ public class StrategyGame {
             public Player player;
             public int Life;
             public int Damage;
+            public int ResCapacity;
             public boolean isKilled;
             GameCell Cell;
 
@@ -114,6 +121,7 @@ public class StrategyGame {
                 this.Cell = Cell;
                 this.Life = LIFE;
                 this.Damage = DAMAGE;
+                this.ResCapacity = CAPACITY;
             }
             
             public Unit (Player player, int x, int y) {
@@ -197,15 +205,17 @@ public class StrategyGame {
                     isSuccess = false;
                 } else {
                     if (dest.building == null
-                            && dest.unit == null) {
+                            && dest.unit == null
+                            && dest.resource == null) {
                         System.out.println(
                                 "No one to attack in the target cell");
                         dest = source;
                         isSuccess = false;
                     }
                     else {
-                        if (dest.unit != null) {
-                            dest.unit.attacked(source.unit.Damage);
+                        if (dest.unit != null ||
+                                dest.resource != null) {
+                            dest.actedUpon(source.unit);
                         }
                         isSuccess = true;
                     }
@@ -240,6 +250,11 @@ public class StrategyGame {
                 this.resourceType = resourceType;
                 this.resourceQty = resourceQty;
             }
+            
+            public void Extract(int resourceQty) {
+                this.resourceQty -= (this.resourceQty > resourceQty ?
+                        resourceQty : this.resourceQty);
+            }
         }
 
         // почему нужно обязательно указывать static??
@@ -262,6 +277,16 @@ public class StrategyGame {
                     for (y = 0; y < CELL_HEIGHT; y++) {
                         cellChars[x][y] = ' ';
                     }
+                }
+            }
+            
+            public void checkCell() {
+                if (this.resource != null && this.resource.resourceQty == 0) {
+                    this.resource = null;
+                }
+                
+                if (this.unit != null && this.unit.Life == 0) {
+                    this.unit = null;
                 }
             }
 
@@ -428,6 +453,23 @@ public class StrategyGame {
                     System.out.print("\n");
                 }
             }
+            
+            public boolean actedUpon(Unit actUnit) {
+                boolean isSuccess = false;
+                
+                if (this.unit != null) {
+                    this.unit.attacked(actUnit.Damage);
+                    isSuccess = true;
+                }
+                else {
+                    if (this.resource != null) {
+                        this.resource.Extract(actUnit.ResCapacity);
+                        isSuccess = true;
+                    }
+                }
+                
+                return isSuccess;
+            }
         }
 
         class Screen {
@@ -465,6 +507,7 @@ public class StrategyGame {
                 field.recalcCells();
                 for (y = 0; y < FLD_HEIGHT; y++) {
                     for (x = 0; x < FLD_WIDTH; x++) {
+                        field.cells[x][y].checkCell();
                         assignCell(field.cells[x][y]);
                     }
                 }
@@ -526,112 +569,6 @@ public class StrategyGame {
             legend.printLegend();
             screen.printScreen();
             screen.printSeparator();
-        }
-    }
-    
-    static class Game {
-        Field field;
-        Field.Legend legend;
-        Field.Screen screen;
-        Player playerTurn;
-        
-        public Game() {
-            this.field = initField();
-            this.legend = field.new Legend();
-            this.screen = field.new Screen(this.field);
-
-            field.updateScreen(this.legend, this.screen);
-        }
-        
-        public Field initField() {
-            Field.GameCell Cell;
-
-            // Можно ли наполнить поле без создания нового объекта "карта"??
-            Map map = new Map();
-            Field field = map.Plateau();
-
-            Cell = field.cells[X_START_PL1][Y_START_PL1];
-            Cell.unit = field.new Unit(Player.PLAYER1, Cell);
-            field.Player1 = Cell.unit;
-            
-            Cell = field.cells[X_START_PL2][Y_START_PL2];
-            Cell.unit = field.new Unit(Player.PLAYER2, Cell);
-            field.Player2 = Cell.unit;
-            playerTurn = Player.PLAYER1;
-            
-            return field;
-        }
-        
-        public Direction getDir(String move) {
-            Direction dir = null;
-            
-            dir = switch (move.toLowerCase()) {
-                case "up" -> Direction.UP;
-                case "down" -> Direction.DOWN;
-                case "left" -> Direction.LEFT;
-                case "right" -> Direction.RIGHT;
-                default -> null;
-            };
-            
-            return dir;
-        }
-
-        public boolean turn() {
-            boolean isSuccess = false;
-            String move;
-            String yes_no;
-            boolean action;
-            Direction dir = null;
-            Field.Unit unitToGo = null;
-            Scanner scanner = new Scanner(System.in);
-            
-            switch (playerTurn) {
-                case PLAYER1 -> unitToGo = field.Player1;
-                case PLAYER2 -> unitToGo = field.Player2;
-                default ->
-                    throw new AssertionError("The player doesn't exist!");
-            }
-            
-            System.out.printf("Turn of %s.\n", playerTurn);
-            System.out.print("Will it be action [y/n]? ");
-            yes_no = scanner.next();
-            
-            action = yes_no.toLowerCase().equals("y");
-            
-            if (action) {
-                System.out.println("Action chosen. ");
-            }
-            else {
-                System.out.println("Move chosen. ");
-            }
-            
-            System.out.print("Enter direction: ");
-            move = scanner.next();
-            
-            while ((dir = getDir(move)) == null) {
-                System.out.print(
-                        "Incorrect direction. Enter another direction: "
-                );
-                move = scanner.next();
-            }
-            
-            if (action) {
-                isSuccess = unitToGo.action(dir);
-            }
-            else {
-                isSuccess = unitToGo.move(dir);
-            }
-            
-            if (isSuccess) {
-                if (unitToGo.player == Player.PLAYER1) {
-                    playerTurn = Player.PLAYER2;
-                }
-                else {
-                    playerTurn = Player.PLAYER1;
-                }                
-            }
-
-            return isSuccess;
         }
     }
 }

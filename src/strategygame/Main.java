@@ -14,7 +14,7 @@ import strategygame.Game.*;
  */
 public class Main {
     public static void main(String[] args) {
-        StrategyGame.Game game = new StrategyGame.Game();
+        Game game = new Game();
         
         while (!game.field.Player1.isKilled && !game.field.Player2.isKilled) {
             while (!game.turn()) {                
