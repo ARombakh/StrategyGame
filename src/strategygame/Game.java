@@ -15,12 +15,13 @@ public class Game {
     StrategyGame.Field field;
     StrategyGame.Field.Legend legend;
     StrategyGame.Field.Screen screen;
-    StrategyGame.PlayerType playerTurn;
+    StrategyGame.Field.Player playerTurn;
 
     public Game() {
         this.field = initField();
         this.legend = field.new Legend();
         this.screen = field.new Screen(this.field);
+        this.playerTurn = field.Player[0];
 
         field.updateScreen(this.legend, this.screen);
     }
@@ -32,14 +33,13 @@ public class Game {
         Map map = new Map();
         StrategyGame.Field field = map.Plateau();
 
-        Cell = field.cells[X_START_PL1][Y_START_PL1];
-        Cell.unit = field.new Unit(StrategyGame.PlayerType.PLAYER1, Cell);
-        field.Player1 = Cell.unit;
-
-        Cell = field.cells[X_START_PL2][Y_START_PL2];
-        Cell.unit = field.new Unit(StrategyGame.PlayerType.PLAYER2, Cell);
-        field.Player2 = Cell.unit;
-        playerTurn = StrategyGame.PlayerType.PLAYER1;
+        for (int i = 0; i < PLAYERS_COUNT; i++) {
+            Cell = field.cells[X_START_PL[i]][Y_START_PL[i]];
+            field.Player[i] = field.new Player(PLAYER_SYMBOL[i]);
+            Cell.unit = field.new Unit(field.Player[i], Cell);
+            field.Player[i].unit = Cell.unit;
+            Cell.unit.player = field.Player[i];
+        }
 
         return field;
     }
@@ -58,7 +58,7 @@ public class Game {
         return dir;
     }
 
-    public boolean turn() {
+    public boolean turn(int i) {
         boolean isSuccess = false;
         String move;
         String yes_no;
@@ -67,14 +67,9 @@ public class Game {
         StrategyGame.Field.Unit unitToGo = null;
         Scanner scanner = new Scanner(System.in);
 
-        switch (playerTurn) {
-            case PLAYER1 -> unitToGo = field.Player1;
-            case PLAYER2 -> unitToGo = field.Player2;
-            default ->
-                throw new AssertionError("The player doesn't exist!");
-        }
+        unitToGo = field.Player[i].unit;
 
-        System.out.printf("Turn of %s.\n", playerTurn);
+        System.out.printf("Turn of Player%c.\n", field.Player[i].symbol);
         System.out.print("Will it be action [y/n]? ");
         yes_no = scanner.next();
 
@@ -102,15 +97,6 @@ public class Game {
         }
         else {
             isSuccess = unitToGo.move(dir);
-        }
-
-        if (isSuccess) {
-            if (unitToGo.player == StrategyGame.PlayerType.PLAYER1) {
-                playerTurn = StrategyGame.PlayerType.PLAYER2;
-            }
-            else {
-                playerTurn = StrategyGame.PlayerType.PLAYER1;
-            }                
         }
 
         return isSuccess;

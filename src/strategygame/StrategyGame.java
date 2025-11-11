@@ -14,8 +14,8 @@ import strategygame.Map.*;
  */
 public class StrategyGame {
 
-    final public static int FLD_WIDTH = 7;
-    final public static int FLD_HEIGHT = 7;
+    final public static int FLD_WIDTH = 4;
+    final public static int FLD_HEIGHT = 4;
     
     final public static int CELL_WIDTH = 5;
     final public static int CELL_HEIGHT = 4;
@@ -23,17 +23,18 @@ public class StrategyGame {
                                             CELL_HEIGHT / 2 :
                                                     (CELL_HEIGHT / 2) + 1);
     
-    final public static int X_START_PL1 = 0;
-    final public static int Y_START_PL1 = 0;
-    
-    final public static int X_START_PL2 = FLD_WIDTH - 1;
-    final public static int Y_START_PL2 = FLD_HEIGHT - 1;
+    final public static int[] X_START_PL = {0, FLD_WIDTH - 1};
+    final public static int[] Y_START_PL = {0, FLD_HEIGHT - 1};
     
     final public static int LIFE = 20;
     final public static int DAMAGE = 5;
     final public static int EXTRACT_CAPACITY = 5;
     
     final public static int LABEL_LEN = 3;
+    
+    final public static char[] PLAYER_SYMBOL = {'X', 'O'};
+    
+    final public static int PLAYERS_COUNT = 2;
     
     public enum TerrainType {
         PLATEAU,
@@ -63,13 +64,6 @@ public class StrategyGame {
         ATTACK,
         COLLECT
     }
-    
-    class Player {
-        PlayerType player;
-        Resource gold = new Resource(ResourceType.GOLD, 0);
-        Resource stone = new Resource(ResourceType.STONE, 0);
-        Resource lumber = new Resource(ResourceType.LUMBER, 0);
-    }
 
     static class Resource {
         public ResourceType resourceType;
@@ -84,18 +78,30 @@ public class StrategyGame {
     // почему нужно обязательно указывать static??    
     public static class Field {
         public GameCell[][] cells;
-        Unit Player1;
-        Unit Player2;
+        Player[] Player;
         
         public Field() {
             int x, y;
 
             this.cells = new GameCell[FLD_WIDTH][FLD_HEIGHT];
+            this.Player = new Field.Player[PLAYERS_COUNT];
             
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
                     this.cells[x][y] = new GameCell(x, y, this);
                 }
+            }
+        }
+        
+        class Player {
+            Unit unit;
+            char symbol;
+            Resource gold = new Resource(ResourceType.GOLD, 0);
+            Resource stone = new Resource(ResourceType.STONE, 0);
+            Resource lumber = new Resource(ResourceType.LUMBER, 0);
+            
+            public Player(char symbol) {
+                this.symbol = symbol;
             }
         }
         
@@ -127,13 +133,13 @@ public class StrategyGame {
         }
 
         class Unit {
-            public PlayerType player;
+            public Player player;
             public int Life;
             public int Damage;
             public int ResExtrCapacity;
             GameCell Cell;
 
-            public Unit (PlayerType player, GameCell Cell) {
+            public Unit (Player player, GameCell Cell) {
                 this.player = player;
                 this.Cell = Cell;
                 this.Life = LIFE;
@@ -141,7 +147,7 @@ public class StrategyGame {
                 this.ResExtrCapacity = EXTRACT_CAPACITY;
             }
             
-            public Unit (PlayerType player, int x, int y) {
+            public Unit (Player player, int x, int y) {
                 GameCell Cell = cells[x][y];
                 
                 this(player, Cell);
@@ -321,12 +327,7 @@ public class StrategyGame {
             }
 
             public char playerFiller() {
-                char player = ' ';
-                switch (this.unit.player) {
-                    case PLAYER1 -> player = 'X';
-                    case PLAYER2 -> player = 'O';
-                }
-                return player;
+                return this.unit.player.symbol;
             }
 
             public void fillTerrain() {
@@ -539,7 +540,7 @@ public class StrategyGame {
             GameCell units = new GameCell();
             GameCell buildings = new GameCell();
 
-            public void printLegend() {
+            public void printLegend(Field field) {
                 System.out.println("Legend:");
                 int x = 0, y = 0;
                 String annotation;
@@ -562,12 +563,24 @@ public class StrategyGame {
                     }
                     System.out.println("");
                 }
+                
+                for (Player Player_iter : field.Player) {
+                    System.out.print("\n\n");
+                    System.out.print("Player1:\n");
+                    System.out.print("\n");
+                    System.out.printf("Life:\t%d\n", Player_iter.unit.Life);
+                    System.out.printf("Damage:\t%d\n", Player_iter.unit.Damage);
+                    System.out.print("\n");
+                    System.out.printf("Gold:\n", Player_iter.gold);
+                    System.out.printf("Stone:\n", Player_iter.stone);
+                    System.out.printf("Lumber:\n", Player_iter.lumber);
+                }
             }
         }
         
         public void updateScreen(Legend legend, Screen screen) {
             screen.printSeparator();
-            legend.printLegend();
+            legend.printLegend(this);
             screen.printScreen();
             screen.printSeparator();
         }
