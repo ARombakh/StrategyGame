@@ -29,9 +29,9 @@ public class StrategyGame {
     final public static int X_START_PL2 = FLD_WIDTH - 1;
     final public static int Y_START_PL2 = FLD_HEIGHT - 1;
     
-    final public static int LIFE = 100;
+    final public static int LIFE = 20;
     final public static int DAMAGE = 5;
-    final public static int CAPACITY = 5;
+    final public static int EXTRACT_CAPACITY = 5;
     
     final public static int LABEL_LEN = 3;
     
@@ -41,7 +41,7 @@ public class StrategyGame {
         MOUNTAIN
     }
     
-    public enum Player {
+    public enum PlayerType {
         PLAYER1,
         PLAYER2
     }
@@ -62,6 +62,23 @@ public class StrategyGame {
     public enum ActionType {
         ATTACK,
         COLLECT
+    }
+    
+    class Player {
+        PlayerType player;
+        Resource gold = new Resource(ResourceType.GOLD, 0);
+        Resource stone = new Resource(ResourceType.STONE, 0);
+        Resource lumber = new Resource(ResourceType.LUMBER, 0);
+    }
+
+    static class Resource {
+        public ResourceType resourceType;
+        public int resourceQty;
+
+        public Resource(ResourceType resourceType, int resourceQty) {
+            this.resourceType = resourceType;
+            this.resourceQty = resourceQty;
+        }
     }
 
     // почему нужно обязательно указывать static??    
@@ -103,28 +120,28 @@ public class StrategyGame {
             
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
+                    cells[x][y].checkCell();
                     cells[x][y].fillCellChars();
                 }
             }
         }
 
         class Unit {
-            public Player player;
+            public PlayerType player;
             public int Life;
             public int Damage;
-            public int ResCapacity;
-            public boolean isKilled;
+            public int ResExtrCapacity;
             GameCell Cell;
 
-            public Unit (Player player, GameCell Cell) {
+            public Unit (PlayerType player, GameCell Cell) {
                 this.player = player;
                 this.Cell = Cell;
                 this.Life = LIFE;
                 this.Damage = DAMAGE;
-                this.ResCapacity = CAPACITY;
+                this.ResExtrCapacity = EXTRACT_CAPACITY;
             }
             
-            public Unit (Player player, int x, int y) {
+            public Unit (PlayerType player, int x, int y) {
                 GameCell Cell = cells[x][y];
                 
                 this(player, Cell);
@@ -179,6 +196,7 @@ public class StrategyGame {
                 } else {
                     if (dest.building == null
                             && dest.unit == null
+                            && dest.resource == null
                             && dest.terrainType == TerrainType.PLATEAU) {
                         dest.unit = source.unit;
                         source.unit = null;
@@ -208,7 +226,7 @@ public class StrategyGame {
                             && dest.unit == null
                             && dest.resource == null) {
                         System.out.println(
-                                "No one to attack in the target cell");
+                                "No one to act upon in the target cell");
                         dest = source;
                         isSuccess = false;
                     }
@@ -224,37 +242,13 @@ public class StrategyGame {
                 return isSuccess;
             }
 
-            public boolean attacked(int Damage) {
+            public void attacked(int Damage) {
                 this.Life -= (this.Life > Damage ? Damage : this.Life);
-                if (this.Life == 0) {
-                    this.isKilled = true;
-                }
-                return this.isKilled;
-            }
-            
-            public boolean isDead() {
-                return this.isKilled;
             }
         }
 
         static class Building {
             public int Life;
-        }
-        
-            
-        class Resource {
-            public ResourceType resourceType;
-            public int resourceQty;
-            
-            public Resource(ResourceType resourceType, int resourceQty) {
-                this.resourceType = resourceType;
-                this.resourceQty = resourceQty;
-            }
-            
-            public void Extract(int resourceQty) {
-                this.resourceQty -= (this.resourceQty > resourceQty ?
-                        resourceQty : this.resourceQty);
-            }
         }
 
         // почему нужно обязательно указывать static??
@@ -463,12 +457,19 @@ public class StrategyGame {
                 }
                 else {
                     if (this.resource != null) {
-                        this.resource.Extract(actUnit.ResCapacity);
+                        this.ExtractResource(actUnit.ResExtrCapacity);
                         isSuccess = true;
                     }
                 }
                 
                 return isSuccess;
+            }
+            
+            public int ExtractResource(int resourceQty) {
+                int extracted = this.resource.resourceQty > resourceQty ?
+                        resourceQty : this.resource.resourceQty;
+                this.resource.resourceQty -= extracted;
+                return extracted;
             }
         }
 
@@ -507,7 +508,6 @@ public class StrategyGame {
                 field.recalcCells();
                 for (y = 0; y < FLD_HEIGHT; y++) {
                     for (x = 0; x < FLD_WIDTH; x++) {
-                        field.cells[x][y].checkCell();
                         assignCell(field.cells[x][y]);
                     }
                 }
@@ -566,6 +566,7 @@ public class StrategyGame {
         }
         
         public void updateScreen(Legend legend, Screen screen) {
+            screen.printSeparator();
             legend.printLegend();
             screen.printScreen();
             screen.printSeparator();

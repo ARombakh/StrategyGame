@@ -53,13 +53,13 @@ public class Map {
         }
         
         field.cells[0][2].resource
-                = field.new Resource(ResourceType.GOLD, 25);
+                = new Resource(ResourceType.GOLD, 25);
         
         field.cells[2][1].resource
-                = field.new Resource(ResourceType.LUMBER, 100);
+                = new Resource(ResourceType.LUMBER, 100);
         
         field.cells[6][5].resource
-                = field.new Resource(ResourceType.STONE, 100);
+                = new Resource(ResourceType.STONE, 100);
         return field;
     }
 }

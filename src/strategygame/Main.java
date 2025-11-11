@@ -15,20 +15,21 @@ import strategygame.Game.*;
 public class Main {
     public static void main(String[] args) {
         Game game = new Game();
+        Field field = game.field;
         
-        while (!game.field.Player1.isKilled && !game.field.Player2.isKilled) {
-            while (!game.turn()) {                
+        while (field.Player1.Life != 0 && field.Player2.Life != 0) {
+            while (!game.turn()) {
                 System.out.println("Turn unsuccessfull, repeat the turn!");
             }
             
-            game.field.updateScreen(game.legend, game.screen);
+            field.updateScreen(game.legend, game.screen);
         }
 
-        if (game.field.Player1.isKilled) {
+        if (field.Player1.Life == 0) {
             System.out.println("Player2 won!");
         }
         else {
-            if (game.field.Player2.isKilled) {
+            if (field.Player2.Life == 0) {
                 System.out.println("Player1 won!");
             }
         }

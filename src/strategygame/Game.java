@@ -15,7 +15,7 @@ public class Game {
     StrategyGame.Field field;
     StrategyGame.Field.Legend legend;
     StrategyGame.Field.Screen screen;
-    StrategyGame.Player playerTurn;
+    StrategyGame.PlayerType playerTurn;
 
     public Game() {
         this.field = initField();
@@ -33,13 +33,13 @@ public class Game {
         StrategyGame.Field field = map.Plateau();
 
         Cell = field.cells[X_START_PL1][Y_START_PL1];
-        Cell.unit = field.new Unit(StrategyGame.Player.PLAYER1, Cell);
+        Cell.unit = field.new Unit(StrategyGame.PlayerType.PLAYER1, Cell);
         field.Player1 = Cell.unit;
 
         Cell = field.cells[X_START_PL2][Y_START_PL2];
-        Cell.unit = field.new Unit(StrategyGame.Player.PLAYER2, Cell);
+        Cell.unit = field.new Unit(StrategyGame.PlayerType.PLAYER2, Cell);
         field.Player2 = Cell.unit;
-        playerTurn = StrategyGame.Player.PLAYER1;
+        playerTurn = StrategyGame.PlayerType.PLAYER1;
 
         return field;
     }
@@ -105,11 +105,11 @@ public class Game {
         }
 
         if (isSuccess) {
-            if (unitToGo.player == StrategyGame.Player.PLAYER1) {
-                playerTurn = StrategyGame.Player.PLAYER2;
+            if (unitToGo.player == StrategyGame.PlayerType.PLAYER1) {
+                playerTurn = StrategyGame.PlayerType.PLAYER2;
             }
             else {
-                playerTurn = StrategyGame.Player.PLAYER1;
+                playerTurn = StrategyGame.PlayerType.PLAYER1;
             }                
         }
 
