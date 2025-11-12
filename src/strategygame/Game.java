@@ -36,7 +36,7 @@ public class Game {
         for (int i = 0; i < PLAYERS_COUNT; i++) {
             Cell = field.cells[X_START_PL[i]][Y_START_PL[i]];
             field.Player[i] = field.new Player(PLAYER_SYMBOL[i]);
-            Cell.unit = field.new Unit(field.Player[i], Cell);
+            Cell.unit = Cell.new Unit(field.Player[i], Cell);
             field.Player[i].unit = Cell.unit;
             Cell.unit.player = field.Player[i];
         }
@@ -64,7 +64,7 @@ public class Game {
         String yes_no;
         boolean action;
         StrategyGame.Direction dir = null;
-        StrategyGame.Field.Unit unitToGo = null;
+        StrategyGame.Field.GameCell.Unit unitToGo = null;
         Scanner scanner = new Scanner(System.in);
 
         unitToGo = field.Player[i].unit;
