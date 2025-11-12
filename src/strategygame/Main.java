@@ -5,7 +5,6 @@
 package strategygame;
 
 import strategygame.StrategyGame.*;
-import strategygame.Map.*;
 import strategygame.Game.*;
 
 /**

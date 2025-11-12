@@ -36,7 +36,7 @@ public class Game {
         for (int i = 0; i < PLAYERS_COUNT; i++) {
             Cell = field.cells[X_START_PL[i]][Y_START_PL[i]];
             field.Player[i] = field.new Player(PLAYER_SYMBOL[i]);
-            Cell.unit = Cell.new Unit(field.Player[i], Cell);
+            Cell.unit = Cell.new Unit(field.Player[i]);
             field.Player[i].unit = Cell.unit;
             Cell.unit.player = field.Player[i];
         }

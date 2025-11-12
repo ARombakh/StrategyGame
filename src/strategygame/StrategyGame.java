@@ -92,8 +92,8 @@ public class StrategyGame {
         }
         
         class Player {
-            GameCell.Unit unit;
             char symbol;
+            GameCell.Unit unit;
             Resource gold = new Resource(ResourceType.GOLD, 0);
             Resource stone = new Resource(ResourceType.STONE, 0);
             Resource lumber = new Resource(ResourceType.LUMBER, 0);
@@ -355,28 +355,20 @@ public class StrategyGame {
                 public int Life;
                 public int Damage;
                 public int ResExtrCapacity;
-                GameCell Cell;
 
-                public Unit (Player player, GameCell Cell) {
+                public Unit (Player player) {
                     this.player = player;
-                    this.Cell = Cell;
                     this.Life = LIFE;
                     this.Damage = DAMAGE;
                     this.ResExtrCapacity = EXTRACT_CAPACITY;
                 }
 
-                public Unit (Player player, int x, int y) {
-                    GameCell Cell = cells[x][y];
-
-                    this(player, Cell);
-                }
-
                 // Насколько разумно возвращать метод ту же GameCell в случае
                 // неудачи??
-                public GameCell destCell(GameCell source, Direction direction) {
+                public GameCell destCell(Direction direction) {
                     GameCell dest;
 
-                    int x = source.xCell, y = source.yCell;
+                    int x = GameCell.this.xCell, y = GameCell.this.yCell;
 
                     switch (direction) {
                         case UP -> {
@@ -399,22 +391,23 @@ public class StrategyGame {
 
                     if (!(x >= 0 && x < FLD_WIDTH) ||
                             !(y >= 0 && y < FLD_HEIGHT)) {
-                        System.out.printf("Target cell of %s is out of the field\n",
-                                            source.unit.player);
+                        System.out.print("Target cell of ");
+                        System.out.printf("%s is out of the field\n",
+                                            GameCell.this.unit.player);
                         System.out.println("Choose another direction.");
-                        dest = source;
+                        dest = GameCell.this;
                     }
-                    else dest = source.field.cells[x][y];
+                    else dest = Field.this.cells[x][y];
 
                     return dest;
                 }
 
                 public boolean move(Direction direction) {
                     boolean isSuccess;
-                    GameCell source = this.Cell;
+                    GameCell source = GameCell.this;
                     GameCell dest;  // Destination cell
 
-                    dest = destCell(source, direction);
+                    dest = destCell(direction);
                     if (dest == source) {
                         isSuccess = false;
                     } else {
@@ -428,21 +421,19 @@ public class StrategyGame {
                         }
                         else {
                             System.out.println("The destination cell is taken");
-                            dest = source;
                             isSuccess = false;
                         }
                     }
 
-                    this.Cell = dest;
                     return isSuccess;
                 }
 
                 public boolean action(Direction direction) {
                     boolean isSuccess;
-                    GameCell source = this.Cell;
+                    GameCell source = GameCell.this;
                     GameCell dest;  // Destination cell
 
-                    dest = destCell(source, direction);
+                    dest = destCell(direction);
                     if (dest == source) {
                         isSuccess = false;
                     } else {
@@ -451,7 +442,6 @@ public class StrategyGame {
                                 && dest.resource == null) {
                             System.out.println(
                                     "No one to act upon in the target cell");
-                            dest = source;
                             isSuccess = false;
                         }
                         else {
