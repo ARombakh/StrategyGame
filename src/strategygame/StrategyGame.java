@@ -40,11 +40,6 @@ public class StrategyGame {
         MOUNTAIN
     }
     
-    public enum PlayerType {
-        PLAYER1,
-        PLAYER2
-    }
-    
     public enum Direction {
         UP,
         DOWN,
@@ -326,7 +321,7 @@ public class StrategyGame {
                 }
             }
             
-            public boolean actedUpon(Unit actUnit) {
+            public boolean actUpon(Unit actUnit) {
                 boolean isSuccess = false;
                 
                 if (this.unit != null) {
@@ -447,7 +442,7 @@ public class StrategyGame {
                         else {
                             if (dest.unit != null ||
                                     dest.resource != null) {
-                                dest.actedUpon(source.unit);
+                                dest.actUpon(source.unit);
                             }
                             isSuccess = true;
                         }
