@@ -9,12 +9,12 @@ import strategygame.StrategyGame.*;
  *
  * @author artyom
  */
-public class Map {
+public class Maps {
     public Field field;
     public int width;
     public int height;
     
-    public Map() {
+    public Maps() {
         field = new Field();
     }
 
@@ -44,14 +44,14 @@ public class Map {
     public Field Plateau() {
         int x = 0, y = 0;
         
-        if (StrategyGame.FLD_WIDTH == 4 && StrategyGame.FLD_HEIGHT == 4) {
+        if (StrategyGame.FLD_WIDTH == 8 && StrategyGame.FLD_HEIGHT == 8) {
             for (y = 0; y < StrategyGame.FLD_HEIGHT; y++) {
                 for (x = 0; x < StrategyGame.FLD_WIDTH; x++) {
                     field.cells[x][y].terrainType = TerrainType.PLATEAU;    
                 }
             }
         }
-        /*
+
         field.cells[0][2].resource
                 = new Resource(ResourceType.GOLD, 25);
         
@@ -60,7 +60,6 @@ public class Map {
         
         field.cells[6][5].resource
                 = new Resource(ResourceType.STONE, 100);
-                */
         return field;
     }
 }

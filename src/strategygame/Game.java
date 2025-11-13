@@ -30,7 +30,7 @@ public class Game {
         StrategyGame.Field.GameCell Cell;
 
         // Можно ли наполнить поле без создания нового объекта "карта"??
-        Map map = new Map();
+        Maps map = new Maps();
         StrategyGame.Field field = map.Plateau();
 
         for (int i = 0; i < PLAYERS_COUNT; i++) {
@@ -69,7 +69,7 @@ public class Game {
 
         unitToGo = field.Player[i].unit;
 
-        System.out.printf("Turn of Player%c.\n", field.Player[i].symbol);
+        System.out.printf("Turn of Player %c.\n", field.Player[i].symbol);
         System.out.print("Will it be action [y/n]? ");
         yes_no = scanner.next();
 

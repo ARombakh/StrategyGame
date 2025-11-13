@@ -4,6 +4,8 @@
  */
 package strategygame;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -12,8 +14,8 @@ import java.util.Random;
  */
 public class StrategyGame {
 
-    final public static int FLD_WIDTH = 4;
-    final public static int FLD_HEIGHT = 4;
+    final public static int FLD_WIDTH = 8;
+    final public static int FLD_HEIGHT = 8;
     
     final public static int CELL_WIDTH = 5;
     final public static int CELL_HEIGHT = 4;
@@ -57,7 +59,7 @@ public class StrategyGame {
         ATTACK,
         COLLECT
     }
-
+    
     static class Resource {
         public ResourceType resourceType;
         public int resourceQty;
@@ -89,12 +91,21 @@ public class StrategyGame {
         class Player {
             char symbol;
             GameCell.Unit unit;
+            public EnumMap<ResourceType, Integer> resources =
+                    new EnumMap<>(ResourceType.class);
+            
+            
+            /*
             Resource gold = new Resource(ResourceType.GOLD, 0);
             Resource stone = new Resource(ResourceType.STONE, 0);
-            Resource lumber = new Resource(ResourceType.LUMBER, 0);
+            Resource lumber = new Resource(ResourceType.LUMBER, 0);*/
             
             public Player(char symbol) {
                 this.symbol = symbol;
+                
+                for (ResourceType Res : ResourceType.values()) {
+                    resources.put(Res, 0);
+                }
             }
         }
         
@@ -330,7 +341,7 @@ public class StrategyGame {
                 }
                 else {
                     if (this.resource != null) {
-                        this.ExtractResource(actUnit.ResExtrCapacity);
+                        this.ExtractResource(actUnit);
                         isSuccess = true;
                     }
                 }
@@ -338,10 +349,16 @@ public class StrategyGame {
                 return isSuccess;
             }
             
-            public int ExtractResource(int resourceQty) {
-                int extracted = this.resource.resourceQty > resourceQty ?
-                        resourceQty : this.resource.resourceQty;
+            public int ExtractResource(Unit actUnit) {
+                int extracted;
+                    if(this.resource.resourceQty > actUnit.ResExtrCapacity)
+                        extracted = actUnit.ResExtrCapacity;
+                    else
+                        extracted = this.resource.resourceQty;
                 this.resource.resourceQty -= extracted;
+                System.out.println(actUnit.player
+                        .resources.get(this.resource.resourceType));
+
                 return extracted;
             }
 
@@ -383,7 +400,7 @@ public class StrategyGame {
                             y += 0;
                         }
                     }
-
+                    
                     if (!(x >= 0 && x < FLD_WIDTH) ||
                             !(y >= 0 && y < FLD_HEIGHT)) {
                         System.out.print("Target cell of ");
@@ -554,9 +571,13 @@ public class StrategyGame {
                     System.out.printf("Life:\t%d\n", Player_iter.unit.Life);
                     System.out.printf("Damage:\t%d\n", Player_iter.unit.Damage);
                     System.out.print("\n");
-                    System.out.printf("Gold:\n", Player_iter.gold);
-                    System.out.printf("Stone:\n", Player_iter.stone);
-                    System.out.printf("Lumber:\n", Player_iter.lumber);
+                    
+                    for (Map.Entry<ResourceType, Integer> entry :
+                            Player_iter.resources.entrySet()) {
+                        ResourceType key = entry.getKey();
+                        Integer value = entry.getValue();
+                        System.out.printf("%s: %d\n", key, value);                        
+                    }
                 }
             }
         }
