@@ -44,13 +44,23 @@ public class Map {
     public Field Plateau() {
         int x = 0, y = 0;
         
-        if (StrategyGame.FLD_WIDTH == 15 && StrategyGame.FLD_HEIGHT == 15) {            
+        if (StrategyGame.FLD_WIDTH == 4 && StrategyGame.FLD_HEIGHT == 4) {
             for (y = 0; y < StrategyGame.FLD_HEIGHT; y++) {
                 for (x = 0; x < StrategyGame.FLD_WIDTH; x++) {
                     field.cells[x][y].terrainType = TerrainType.PLATEAU;    
                 }
             }
         }
+        /*
+        field.cells[0][2].resource
+                = new Resource(ResourceType.GOLD, 25);
+        
+        field.cells[2][1].resource
+                = new Resource(ResourceType.LUMBER, 100);
+        
+        field.cells[6][5].resource
+                = new Resource(ResourceType.STONE, 100);
+                */
         return field;
     }
 }

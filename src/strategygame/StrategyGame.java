@@ -5,8 +5,6 @@
 package strategygame;
 
 import java.util.Random;
-import java.util.Scanner;
-import strategygame.Map.*;
 
 /**
  *
@@ -14,18 +12,27 @@ import strategygame.Map.*;
  */
 public class StrategyGame {
 
-    final public static int FLD_WIDTH = 15;
-    final public static int FLD_HEIGHT = 15;
+    final public static int FLD_WIDTH = 4;
+    final public static int FLD_HEIGHT = 4;
+    
     final public static int CELL_WIDTH = 5;
     final public static int CELL_HEIGHT = 4;
+    final public static int CELL_MIDDLE = (CELL_HEIGHT % 2 == 0 ?
+                                            CELL_HEIGHT / 2 :
+                                                    (CELL_HEIGHT / 2) + 1);
     
-    final public static int X_START_PL1 = 0;
-    final public static int Y_START_PL1 = 0;
+    final public static int[] X_START_PL = {0, FLD_WIDTH - 1};
+    final public static int[] Y_START_PL = {0, FLD_HEIGHT - 1};
     
-    final public static int X_START_PL2 = FLD_WIDTH - 1;
-    final public static int Y_START_PL2 = FLD_HEIGHT - 1;
+    final public static int LIFE = 20;
+    final public static int DAMAGE = 5;
+    final public static int EXTRACT_CAPACITY = 5;
     
-    public static boolean gameOver = false;
+    final public static int LABEL_LEN = 3;
+    
+    final public static char[] PLAYER_SYMBOL = {'X', 'O'};
+    
+    final public static int PLAYERS_COUNT = 2;
     
     public enum TerrainType {
         PLATEAU,
@@ -33,7 +40,7 @@ public class StrategyGame {
         MOUNTAIN
     }
     
-    public enum Player {
+    public enum PlayerType {
         PLAYER1,
         PLAYER2
     }
@@ -44,22 +51,55 @@ public class StrategyGame {
         LEFT,
         RIGHT
     }
+    
+    public enum ResourceType {
+        LUMBER,
+        GOLD,
+        STONE
+    }
+    
+    public enum ActionType {
+        ATTACK,
+        COLLECT
+    }
+
+    static class Resource {
+        public ResourceType resourceType;
+        public int resourceQty;
+
+        public Resource(ResourceType resourceType, int resourceQty) {
+            this.resourceType = resourceType;
+            this.resourceQty = resourceQty;
+        }
+    }
 
     // почему нужно обязательно указывать static??    
     public static class Field {
         public GameCell[][] cells;
-        Unit Player1;
-        Unit Player2;
+        Player[] Player;
         
         public Field() {
             int x, y;
 
             this.cells = new GameCell[FLD_WIDTH][FLD_HEIGHT];
+            this.Player = new Field.Player[PLAYERS_COUNT];
             
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
                     this.cells[x][y] = new GameCell(x, y, this);
                 }
+            }
+        }
+        
+        class Player {
+            char symbol;
+            GameCell.Unit unit;
+            Resource gold = new Resource(ResourceType.GOLD, 0);
+            Resource stone = new Resource(ResourceType.STONE, 0);
+            Resource lumber = new Resource(ResourceType.LUMBER, 0);
+            
+            public Player(char symbol) {
+                this.symbol = symbol;
             }
         }
         
@@ -84,127 +124,9 @@ public class StrategyGame {
             
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
+                    cells[x][y].checkCell();
                     cells[x][y].fillCellChars();
                 }
-            }
-        }
-
-        class Unit {
-            public Player player;
-            public int Life;
-            public int Damage;
-            GameCell Cell;
-
-            public Unit (Player player, GameCell Cell) {
-                this.player = player;
-                this.Cell = Cell;
-                this.Life = 100;
-                this.Damage = 5;
-            }
-            
-            public Unit (Player player, int x, int y) {
-                GameCell Cell = cells[x][y];
-                
-                this(player, Cell);
-            }
-
-            // Насколько разумно возвращать метод ту же GameCell в случае
-            // неудачи??
-            public GameCell destCell(GameCell source, Direction direction) {
-                GameCell dest;
-
-                int x = source.xCell, y = source.yCell;
-
-                switch (direction) {
-                    case UP -> {
-                        x += 0;
-                        y += -1;
-                    }
-                    case DOWN -> {
-                        x += 0;
-                        y += 1;
-                    }
-                    case LEFT -> {
-                        x += -1;
-                        y += 0;
-                    }
-                    case RIGHT -> {
-                        x += 1;
-                        y += 0;
-                    }
-                }
-
-                if (!(x >= 0 && x < FLD_WIDTH) ||
-                        !(y >= 0 && y < FLD_HEIGHT)) {
-                    System.out.printf("Target cell of %s is out of the field\n",
-                                        source.unit.player);
-                    System.out.println("Choose another direction.");
-                    dest = source;
-                }
-                else dest = source.field.cells[x][y];
-
-                return dest;
-            }
-
-            public boolean move(Direction direction) {
-                boolean isSuccess;
-                GameCell source = this.Cell;
-                GameCell dest;  // Destination cell
-
-                dest = destCell(source, direction);
-                if (dest == source) {
-                    isSuccess = false;
-                } else {
-                    if (dest.building == null
-                            && dest.unit == null
-                            && dest.terrainType == TerrainType.PLATEAU) {
-                        dest.unit = source.unit;
-                        source.unit = null;
-                        isSuccess = true;
-                    }
-                    else {
-                        System.out.println("The destination cell is taken");
-                        dest = source;
-                        isSuccess = false;
-                    }
-                }
-
-                this.Cell = dest;
-                return isSuccess;
-            }
-
-            public boolean action(Direction direction) {
-                boolean isSuccess;
-                GameCell source = this.Cell;
-                GameCell dest;  // Destination cell
-
-                dest = destCell(source, direction);
-                if (dest == source) {
-                    isSuccess = false;
-                } else {
-                    if (dest.building == null
-                            && dest.unit == null) {
-                        System.out.println("No one to attack in the target cell");
-                        dest = source;
-                        isSuccess = false;
-                    }
-                    else {
-                        if (dest.unit != null) {
-                            dest.unit.attacked(source.unit.Damage);
-                        }
-                        isSuccess = true;
-                    }
-                }
-
-                return isSuccess;
-            }
-
-            public boolean attacked(int Damage) {
-                this.Life -= (this.Life > Damage ? Damage : this.Life);
-                if (this.Life == 0) {
-                    gameOver = true;
-                }
-                return true;
             }
         }
 
@@ -218,6 +140,7 @@ public class StrategyGame {
             public Unit unit;
             public Building building;
             public Field field;
+            public Resource resource;
             final public int xCell;
             final public int yCell;     // coordinates of the cell in the field
 
@@ -231,6 +154,16 @@ public class StrategyGame {
                     for (y = 0; y < CELL_HEIGHT; y++) {
                         cellChars[x][y] = ' ';
                     }
+                }
+            }
+            
+            public void checkCell() {
+                if (this.resource != null && this.resource.resourceQty == 0) {
+                    this.resource = null;
+                }
+                
+                if (this.unit != null && this.unit.Life == 0) {
+                    this.unit = null;
                 }
             }
 
@@ -271,12 +204,7 @@ public class StrategyGame {
             }
 
             public char playerFiller() {
-                char player = ' ';
-                switch (this.unit.player) {
-                    case PLAYER1 -> player = 'X';
-                    case PLAYER2 -> player = 'O';
-                }
-                return player;
+                return this.unit.player.symbol;
             }
 
             public void fillTerrain() {
@@ -345,9 +273,45 @@ public class StrategyGame {
                     cellChars[0][0] = 'B';
                 }
                 else {
-                    if (this.unit != null) {
+                    if (this.unit != null ||
+                            this.resource != null) {
                         fillBorder(false);
-                        cellChars[0][0] = this.playerFiller();
+                    }
+                }
+                fillPlayerMark();
+                fillCellLabel();
+            }
+            
+            public void fillPlayerMark() {
+                if (this.unit != null) {
+                    cellChars[0][0] = this.playerFiller();
+                }
+            }
+            
+            public void fillCellLabel() {
+                String label;
+                int indent;
+                if (this.resource != null) {
+                    switch (this.resource.resourceType) {
+                        case GOLD -> label = "GLD";
+                        case LUMBER -> label = "LMB";
+                        case STONE -> label = "STN";
+                        default ->
+                            throw new AssertionError("Incorrect resource type");
+                    }
+
+                    for (int i = 0; i < LABEL_LEN; i++) {
+                        cellChars[i + 1][CELL_MIDDLE] = label.charAt(i);
+                    }
+                    
+                    
+                    label = Integer.toString(this.resource.resourceQty);
+                    indent = LABEL_LEN - label.length();
+                    // The quantity of resource is ought to be aligned at
+                    // the right margin
+                    for (int i = 0; i < label.length(); i++) {
+                        cellChars[i + 1 + indent][CELL_MIDDLE - 1] =
+                                label.charAt(i);
                     }
                 }
             }
@@ -359,6 +323,141 @@ public class StrategyGame {
                         System.out.print(this.cellChars[x][y]);
                     }
                     System.out.print("\n");
+                }
+            }
+            
+            public boolean actedUpon(Unit actUnit) {
+                boolean isSuccess = false;
+                
+                if (this.unit != null) {
+                    this.unit.attacked(actUnit.Damage);
+                    isSuccess = true;
+                }
+                else {
+                    if (this.resource != null) {
+                        this.ExtractResource(actUnit.ResExtrCapacity);
+                        isSuccess = true;
+                    }
+                }
+                
+                return isSuccess;
+            }
+            
+            public int ExtractResource(int resourceQty) {
+                int extracted = this.resource.resourceQty > resourceQty ?
+                        resourceQty : this.resource.resourceQty;
+                this.resource.resourceQty -= extracted;
+                return extracted;
+            }
+
+            class Unit {
+                public Player player;
+                public int Life;
+                public int Damage;
+                public int ResExtrCapacity;
+
+                public Unit (Player player) {
+                    this.player = player;
+                    this.Life = LIFE;
+                    this.Damage = DAMAGE;
+                    this.ResExtrCapacity = EXTRACT_CAPACITY;
+                }
+
+                // Насколько разумно возвращать метод ту же GameCell в случае
+                // неудачи??
+                public GameCell destCell(Direction direction) {
+                    GameCell dest;
+
+                    int x = GameCell.this.xCell, y = GameCell.this.yCell;
+
+                    switch (direction) {
+                        case UP -> {
+                            x += 0;
+                            y += -1;
+                        }
+                        case DOWN -> {
+                            x += 0;
+                            y += 1;
+                        }
+                        case LEFT -> {
+                            x += -1;
+                            y += 0;
+                        }
+                        case RIGHT -> {
+                            x += 1;
+                            y += 0;
+                        }
+                    }
+
+                    if (!(x >= 0 && x < FLD_WIDTH) ||
+                            !(y >= 0 && y < FLD_HEIGHT)) {
+                        System.out.print("Target cell of ");
+                        System.out.printf("%s is out of the field\n",
+                                            GameCell.this.unit.player);
+                        System.out.println("Choose another direction.");
+                        dest = GameCell.this;
+                    }
+                    else dest = Field.this.cells[x][y];
+
+                    return dest;
+                }
+
+                public boolean move(Direction direction) {
+                    boolean isSuccess;
+                    GameCell source = GameCell.this;
+                    GameCell dest;  // Destination cell
+
+                    dest = destCell(direction);
+                    if (dest == source) {
+                        isSuccess = false;
+                    } else {
+                        if (dest.building == null
+                                && dest.unit == null
+                                && dest.resource == null
+                                && dest.terrainType == TerrainType.PLATEAU) {
+                            dest.unit = source.unit;
+                            source.unit = null;
+                            isSuccess = true;
+                        }
+                        else {
+                            System.out.println("The destination cell is taken");
+                            isSuccess = false;
+                        }
+                    }
+
+                    return isSuccess;
+                }
+
+                public boolean action(Direction direction) {
+                    boolean isSuccess;
+                    GameCell source = GameCell.this;
+                    GameCell dest;  // Destination cell
+
+                    dest = destCell(direction);
+                    if (dest == source) {
+                        isSuccess = false;
+                    } else {
+                        if (dest.building == null
+                                && dest.unit == null
+                                && dest.resource == null) {
+                            System.out.println(
+                                    "No one to act upon in the target cell");
+                            isSuccess = false;
+                        }
+                        else {
+                            if (dest.unit != null ||
+                                    dest.resource != null) {
+                                dest.actedUpon(source.unit);
+                            }
+                            isSuccess = true;
+                        }
+                    }
+
+                    return isSuccess;
+                }
+
+                public void attacked(int Damage) {
+                    this.Life -= (this.Life > Damage ? Damage : this.Life);
                 }
             }
         }
@@ -387,7 +486,8 @@ public class StrategyGame {
 
                 for (y = 0; y < CELL_HEIGHT; y++) {
                     for (x = 0; x < CELL_WIDTH; x++) {
-                        this.screen[x + strtX][y + strtY] = Cell.cellChars[x][y];
+                        this.screen[x + strtX][y + strtY]
+                                = Cell.cellChars[x][y];
                     }
                 }
             }
@@ -428,11 +528,9 @@ public class StrategyGame {
             GameCell units = new GameCell();
             GameCell buildings = new GameCell();
 
-            public void printLegend() {
+            public void printLegend(Field field) {
                 System.out.println("Legend:");
                 int x = 0, y = 0;
-                int middle = (CELL_HEIGHT % 2 == 0 ? CELL_HEIGHT / 2 :
-                                                    (CELL_HEIGHT / 2) + 1);
                 String annotation;
 
                 System.out.print("\n");
@@ -447,93 +545,32 @@ public class StrategyGame {
                         for (x = 0; x < CELL_WIDTH; x++) {
                             System.out.print(Cell.cellChars[x][y]);
                         }
-                        annotation = (y == middle - 1 ? "\t" + terrain : "");
+                        annotation =
+                                (y == CELL_MIDDLE - 1 ? "\t" + terrain : "");
                         System.out.print(annotation + "\n");
                     }
                     System.out.println("");
+                }
+                
+                for (Player Player_iter : field.Player) {
+                    System.out.print("\n\n");
+                    System.out.print("Player1:\n");
+                    System.out.print("\n");
+                    System.out.printf("Life:\t%d\n", Player_iter.unit.Life);
+                    System.out.printf("Damage:\t%d\n", Player_iter.unit.Damage);
+                    System.out.print("\n");
+                    System.out.printf("Gold:\n", Player_iter.gold);
+                    System.out.printf("Stone:\n", Player_iter.stone);
+                    System.out.printf("Lumber:\n", Player_iter.lumber);
                 }
             }
         }
         
         public void updateScreen(Legend legend, Screen screen) {
-            legend.printLegend();
+            screen.printSeparator();
+            legend.printLegend(this);
             screen.printScreen();
             screen.printSeparator();
-        }
-    }
-    
-    static class Game {
-        Field field;
-        Field.Legend legend;
-        Field.Screen screen;
-        Player playerTurn;
-        
-        public Game() {
-            this.field = initField();
-            this.legend = field.new Legend();
-            this.screen = field.new Screen(this.field);
-
-            field.updateScreen(this.legend, this.screen);
-        }
-        
-        public Field initField() {
-            Field.GameCell Cell;
-
-            // Можно ли наполнить поле без создания нового объекта "карта"??
-            Map map = new Map();
-            Field field = map.Plateau();
-
-            Cell = field.cells[X_START_PL1][Y_START_PL1];
-            Cell.unit = field.new Unit(Player.PLAYER1, Cell);
-            field.Player1 = Cell.unit;
-            
-            Cell = field.cells[X_START_PL2][Y_START_PL2];
-            Cell.unit = field.new Unit(Player.PLAYER2, Cell);
-            field.Player2 = Cell.unit;
-            playerTurn = Player.PLAYER1;
-            
-            return field;
-        }
-        
-        public boolean turn() {
-            String move;
-            Direction dir;
-            Scanner scanner = new Scanner(System.in);
-            
-            System.out.printf("Next move of %s:\n", playerTurn);
-            move = scanner.next();
-            
-            switch (move) {
-                case "UP":
-                    dir = Direction.UP;
-                    break;
-                case "DOWN":
-                    dir = Direction.DOWN;
-                    break;
-                case "LEFT":
-                    dir = Direction.LEFT;
-                    break;
-                case "RIGHT":
-                    dir = Direction.RIGHT;
-                    break;                
-                default:
-                    System.out.println("Incorrect spelling of move, " +
-                                        "enter another move");
-                    return false;
-            }
-           
-            switch (playerTurn) {
-                case PLAYER1:
-                    field.Player1.move(dir);
-                    playerTurn = Player.PLAYER2;
-                    break;
-                case PLAYER2:
-                    field.Player2.move(dir);
-                    playerTurn = Player.PLAYER1;
-                    break;
-            }
-            
-            return true;
         }
     }
 }
