@@ -90,7 +90,7 @@ public class StrategyGame {
         
         class Player {
             char symbol;
-            GameCell.Unit unit;
+            Unit unit;
             public EnumMap<ResourceType, Integer> resources =
                     new EnumMap<>(ResourceType.class);
             
@@ -139,6 +139,120 @@ public class StrategyGame {
         static class Building {
             public int Life;
         }
+        
+        class Unit {
+            public Player player;
+            public GameCell cell;
+            public int Life;
+            public int Damage;
+            public int ResExtrCapacity;
+
+            public Unit (Player player, GameCell cell) {
+                this.player = player;
+                this.cell = cell;
+                this.Life = LIFE;
+                this.Damage = DAMAGE;
+                this.ResExtrCapacity = EXTRACT_CAPACITY;
+            }
+
+            // Насколько разумно возвращать метод ту же GameCell в случае
+            // неудачи??
+            public GameCell destCell(Direction direction) {
+                GameCell dest;
+
+                int x = cell.xCell, y = cell.yCell;
+
+                switch (direction) {
+                    case UP -> {
+                        x += 0;
+                        y += -1;
+                    }
+                    case DOWN -> {
+                        x += 0;
+                        y += 1;
+                    }
+                    case LEFT -> {
+                        x += -1;
+                        y += 0;
+                    }
+                    case RIGHT -> {
+                        x += 1;
+                        y += 0;
+                    }
+                }
+                
+                if (!(x >= 0 && x < FLD_WIDTH) ||
+                        !(y >= 0 && y < FLD_HEIGHT)) {
+                    System.out.print("Target cell of ");
+                    System.out.printf("%s is out of the field\n",
+                                        this.player);
+                    System.out.println("Choose another direction.");
+                    dest = this.cell;
+                }
+                else dest = this.cell.field.cells[x][y];
+
+                return dest;
+            }
+
+            public boolean move(Direction direction) {
+                boolean isSuccess;
+                GameCell source = this.cell;
+                GameCell dest;  // Destination cell
+
+                dest = destCell(direction);
+                if (dest == source) {
+                    isSuccess = false;
+                } else {
+                    if (dest.building == null
+                            && dest.unit == null
+                            && dest.resource == null
+                            && dest.terrainType == TerrainType.PLATEAU) {
+                        dest.unit = source.unit;
+                        source.unit = null;
+			this.cell = dest;
+                        isSuccess = true;
+                    }
+                    else {
+                        System.out.println("The destination cell is taken");
+                        isSuccess = false;
+                    }
+                }
+
+                return isSuccess;
+            }
+
+            public boolean action(Direction direction) {
+                boolean isSuccess;
+                GameCell source = this.cell;
+                GameCell dest;  // Destination cell
+
+                dest = destCell(direction);
+                if (dest == source) {
+                    isSuccess = false;
+                } else {
+                    if (dest.building == null
+                            && dest.unit == null
+                            && dest.resource == null) {
+                        System.out.println(
+                                "No one to act upon in the target cell");
+                        isSuccess = false;
+                    }
+                    else {
+                        if (dest.unit != null ||
+                                dest.resource != null) {
+                            dest.actUpon(source.unit);
+                        }
+                        isSuccess = true;
+                    }
+                }
+
+                return isSuccess;
+            }
+
+            public void attacked(int Damage) {
+                this.Life -= (this.Life > Damage ? Damage : this.Life);
+            }
+        }
 
         // почему нужно обязательно указывать static??
         class GameCell {
@@ -161,6 +275,10 @@ public class StrategyGame {
                         cellChars[x][y] = ' ';
                     }
                 }
+            }
+            
+            public Field getField() {
+                return this.field;
             }
             
             public void checkCell() {
@@ -360,117 +478,6 @@ public class StrategyGame {
                         .resources.get(this.resource.resourceType));
 
                 return extracted;
-            }
-
-            class Unit {
-                public Player player;
-                public int Life;
-                public int Damage;
-                public int ResExtrCapacity;
-
-                public Unit (Player player) {
-                    this.player = player;
-                    this.Life = LIFE;
-                    this.Damage = DAMAGE;
-                    this.ResExtrCapacity = EXTRACT_CAPACITY;
-                }
-
-                // Насколько разумно возвращать метод ту же GameCell в случае
-                // неудачи??
-                public GameCell destCell(Direction direction) {
-                    GameCell dest;
-
-                    int x = GameCell.this.xCell, y = GameCell.this.yCell;
-
-                    switch (direction) {
-                        case UP -> {
-                            x += 0;
-                            y += -1;
-                        }
-                        case DOWN -> {
-                            x += 0;
-                            y += 1;
-                        }
-                        case LEFT -> {
-                            x += -1;
-                            y += 0;
-                        }
-                        case RIGHT -> {
-                            x += 1;
-                            y += 0;
-                        }
-                    }
-                    
-                    if (!(x >= 0 && x < FLD_WIDTH) ||
-                            !(y >= 0 && y < FLD_HEIGHT)) {
-                        System.out.print("Target cell of ");
-                        System.out.printf("%s is out of the field\n",
-                                            GameCell.this.unit.player);
-                        System.out.println("Choose another direction.");
-                        dest = GameCell.this;
-                    }
-                    else dest = Field.this.cells[x][y];
-
-                    return dest;
-                }
-
-                public boolean move(Direction direction) {
-                    boolean isSuccess;
-                    GameCell source = GameCell.this;
-                    GameCell dest;  // Destination cell
-
-                    dest = destCell(direction);
-                    if (dest == source) {
-                        isSuccess = false;
-                    } else {
-                        if (dest.building == null
-                                && dest.unit == null
-                                && dest.resource == null
-                                && dest.terrainType == TerrainType.PLATEAU) {
-                            dest.unit = source.unit;
-                            source.unit = null;
-                            isSuccess = true;
-                        }
-                        else {
-                            System.out.println("The destination cell is taken");
-                            isSuccess = false;
-                        }
-                    }
-
-                    return isSuccess;
-                }
-
-                public boolean action(Direction direction) {
-                    boolean isSuccess;
-                    GameCell source = GameCell.this;
-                    GameCell dest;  // Destination cell
-
-                    dest = destCell(direction);
-                    if (dest == source) {
-                        isSuccess = false;
-                    } else {
-                        if (dest.building == null
-                                && dest.unit == null
-                                && dest.resource == null) {
-                            System.out.println(
-                                    "No one to act upon in the target cell");
-                            isSuccess = false;
-                        }
-                        else {
-                            if (dest.unit != null ||
-                                    dest.resource != null) {
-                                dest.actUpon(source.unit);
-                            }
-                            isSuccess = true;
-                        }
-                    }
-
-                    return isSuccess;
-                }
-
-                public void attacked(int Damage) {
-                    this.Life -= (this.Life > Damage ? Damage : this.Life);
-                }
             }
         }
 
