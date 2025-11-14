@@ -469,13 +469,18 @@ public class StrategyGame {
             
             public int ExtractResource(Unit actUnit) {
                 int extracted;
-                    if(this.resource.resourceQty > actUnit.ResExtrCapacity)
-                        extracted = actUnit.ResExtrCapacity;
-                    else
-                        extracted = this.resource.resourceQty;
+                int newResQty;
+                ResourceType resourceType;
+                resourceType = this.resource.resourceType;
+                
+                if(this.resource.resourceQty > actUnit.ResExtrCapacity)
+                    extracted = actUnit.ResExtrCapacity;
+                else
+                    extracted = this.resource.resourceQty;
                 this.resource.resourceQty -= extracted;
-                System.out.println(actUnit.player
-                        .resources.get(this.resource.resourceType));
+                newResQty = actUnit.player.resources.get(resourceType);
+                newResQty += extracted;
+                actUnit.player.resources.put(resourceType, newResQty);
 
                 return extracted;
             }
@@ -573,7 +578,7 @@ public class StrategyGame {
                 
                 for (Player Player_iter : field.Player) {
                     System.out.print("\n\n");
-                    System.out.print("Player1:\n");
+                    System.out.printf("Player %c:\n", Player_iter.symbol);
                     System.out.print("\n");
                     System.out.printf("Life:\t%d\n", Player_iter.unit.Life);
                     System.out.printf("Damage:\t%d\n", Player_iter.unit.Damage);
