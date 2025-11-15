@@ -94,12 +94,6 @@ public class StrategyGame {
             public EnumMap<ResourceType, Integer> resources =
                     new EnumMap<>(ResourceType.class);
             
-            
-            /*
-            Resource gold = new Resource(ResourceType.GOLD, 0);
-            Resource stone = new Resource(ResourceType.STONE, 0);
-            Resource lumber = new Resource(ResourceType.LUMBER, 0);*/
-            
             public Player(char symbol) {
                 this.symbol = symbol;
                 

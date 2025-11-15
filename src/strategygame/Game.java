@@ -15,14 +15,12 @@ public class Game {
     StrategyGame.Field field;
     StrategyGame.Field.Legend legend;
     StrategyGame.Field.Screen screen;
-    StrategyGame.Field.Player playerTurn;
     Scanner scanner = new Scanner(System.in);
 
     public Game() {
         this.field = initField();
         this.legend = field.new Legend();
         this.screen = field.new Screen(this.field);
-        this.playerTurn = field.Player[0];
 
         field.updateScreen(this.legend, this.screen);
     }
@@ -32,17 +30,17 @@ public class Game {
 
         // Можно ли наполнить поле без создания нового объекта "карта"??
         Maps map = new Maps();
-        StrategyGame.Field field = map.Plateau();
+        StrategyGame.Field plateau = map.Plateau();
 
         for (int i = 0; i < PLAYERS_COUNT; i++) {
-            Cell = field.cells[X_START_PL[i]][Y_START_PL[i]];
-            field.Player[i] = field.new Player(PLAYER_SYMBOL[i]);
-            Cell.unit = field.new Unit(field.Player[i], Cell);
-            field.Player[i].unit = Cell.unit;
-            Cell.unit.player = field.Player[i];
+            Cell = plateau.cells[X_START_PL[i]][Y_START_PL[i]];
+            plateau.Player[i] = plateau.new Player(PLAYER_SYMBOL[i]);
+            Cell.unit = plateau.new Unit(plateau.Player[i], Cell);
+            plateau.Player[i].unit = Cell.unit;
+            Cell.unit.player = plateau.Player[i];
         }
 
-        return field;
+        return plateau;
     }
 
     public StrategyGame.Direction getDir(String move) {
@@ -60,12 +58,12 @@ public class Game {
     }
 
     public boolean turn(int i) {
-        boolean isSuccess = false;
+        boolean isSuccess;
         String move;
         String yes_no;
         boolean action;
         StrategyGame.Direction dir = null;
-        StrategyGame.Field.Unit unitToGo = null;
+        StrategyGame.Field.Unit unitToGo;
 
         unitToGo = field.Player[i].unit;
 
