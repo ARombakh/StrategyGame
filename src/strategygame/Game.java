@@ -6,6 +6,7 @@ package strategygame;
 
 import java.util.Scanner;
 import static strategygame.StrategyGame.*;
+import strategygame.MapFactory.*;
 
 /**
  *
@@ -18,29 +19,12 @@ public class Game {
     Scanner scanner = new Scanner(System.in);
 
     public Game() {
-        this.field = initField();
+        MapFactory theMap = new MapFactory();
+        this.field = theMap.createPlateau();
         this.legend = field.new Legend();
         this.screen = field.new Screen(this.field);
 
         field.updateScreen(this.legend, this.screen);
-    }
-
-    public StrategyGame.Field initField() {
-        StrategyGame.Field.GameCell Cell;
-
-        // Можно ли наполнить поле без создания нового объекта "карта"??
-        Maps map = new Maps();
-        StrategyGame.Field plateau = map.Plateau();
-
-        for (int i = 0; i < PLAYERS_COUNT; i++) {
-            Cell = plateau.cells[X_START_PL[i]][Y_START_PL[i]];
-            plateau.Player[i] = plateau.new Player(PLAYER_SYMBOL[i]);
-            Cell.unit = plateau.new Unit(plateau.Player[i], Cell);
-            plateau.Player[i].unit = Cell.unit;
-            Cell.unit.player = plateau.Player[i];
-        }
-
-        return plateau;
     }
 
     public StrategyGame.Direction getDir(String move) {
