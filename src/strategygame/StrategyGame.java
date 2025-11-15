@@ -407,7 +407,7 @@ public class StrategyGame {
             }
             
             public void fillCellLabel() {
-                String label;
+                String label = "NUL";
                 int indent;
                 if (this.resource != null) {
                     switch (this.resource.resourceType) {
@@ -421,9 +421,17 @@ public class StrategyGame {
                     for (int i = 0; i < LABEL_LEN; i++) {
                         cellChars[i + 1][CELL_MIDDLE] = label.charAt(i);
                     }
+                }
+                
+                if (this.resource != null || this.unit != null) {
+                    if (this.resource != null) {
+                        label = Integer.toString(this.resource.resourceQty);
+                    }
                     
+                    if (this.unit != null) {
+                        label = Integer.toString(this.unit.life);
+                    }
                     
-                    label = Integer.toString(this.resource.resourceQty);
                     indent = LABEL_LEN - label.length();
                     // The quantity of resource is ought to be aligned at
                     // the right margin
@@ -574,7 +582,6 @@ public class StrategyGame {
                     System.out.print("\n\n");
                     System.out.printf("Player %c:\n", Player_iter.symbol);
                     System.out.print("\n");
-                    System.out.printf("Life:\t%d\n", Player_iter.unit.life);
                     System.out.printf("Damage:\t%d\n", Player_iter.unit.Damage);
                     System.out.print("\n");
                     
