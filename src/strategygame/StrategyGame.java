@@ -137,20 +137,20 @@ public class StrategyGame {
         }
 
         static class Building {
-            public int Life;
+            public int life;
         }
         
         class Unit {
             public Player player;
             public GameCell cell;
-            public int Life;
+            public int life;
             public int Damage;
             public int ResExtrCapacity;
 
             public Unit (Player player, GameCell cell) {
                 this.player = player;
                 this.cell = cell;
-                this.Life = LIFE;
+                this.life = LIFE;
                 this.Damage = DAMAGE;
                 this.ResExtrCapacity = EXTRACT_CAPACITY;
             }
@@ -250,7 +250,7 @@ public class StrategyGame {
             }
 
             public void attacked(int Damage) {
-                this.Life -= (this.Life > Damage ? Damage : this.Life);
+                this.life -= (this.life > Damage ? Damage : this.life);
             }
         }
 
@@ -286,7 +286,7 @@ public class StrategyGame {
                     this.resource = null;
                 }
                 
-                if (this.unit != null && this.unit.Life == 0) {
+                if (this.unit != null && this.unit.life == 0) {
                     this.unit = null;
                 }
             }
@@ -580,7 +580,7 @@ public class StrategyGame {
                     System.out.print("\n\n");
                     System.out.printf("Player %c:\n", Player_iter.symbol);
                     System.out.print("\n");
-                    System.out.printf("Life:\t%d\n", Player_iter.unit.Life);
+                    System.out.printf("Life:\t%d\n", Player_iter.unit.life);
                     System.out.printf("Damage:\t%d\n", Player_iter.unit.Damage);
                     System.out.print("\n");
                     

@@ -70,8 +70,14 @@ public class Game {
         unitToGo = field.Player[i].unit;
 
         System.out.printf("Turn of Player %c.\n", field.Player[i].symbol);
-        System.out.print("Will it be action [y/n]? ");
-        yes_no = this.scanner.next();
+        
+        do {            
+            System.out.print("Will it be action [y/n]? ");
+            yes_no = this.scanner.next();
+            if (!yes_no.equals("y") && !yes_no.equals("n")) {
+                System.out.println("Unrecognized input. Repeat the input.");
+            }
+        } while (!yes_no.equals("y") && !yes_no.equals("n"));
 
         action = yes_no.toLowerCase().equals("y");
 

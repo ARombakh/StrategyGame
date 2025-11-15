@@ -17,8 +17,8 @@ public class Main {
         Field field = game.field;
         int i = 0;  // Number of player who plays now
         
-        while (field.Player[0].unit.Life != 0
-                && field.Player[1].unit.Life != 0) {
+        while (field.Player[0].unit.life != 0
+                && field.Player[1].unit.life != 0) {
             while (!game.turn(i)) {
                 System.out.println("Turn unsuccessfull, repeat the turn!");
             }
@@ -27,11 +27,11 @@ public class Main {
             field.updateScreen(game.legend, game.screen);
         }
 
-        if (field.Player[0].unit.Life == 0) {
+        if (field.Player[0].unit.life == 0) {
             System.out.println("Player2 won!");
         }
         else {
-            if (field.Player[1].unit.Life == 0) {
+            if (field.Player[1].unit.life == 0) {
                 System.out.println("Player1 won!");
             }
         }
