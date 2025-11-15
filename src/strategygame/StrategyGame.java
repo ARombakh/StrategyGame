@@ -34,7 +34,7 @@ public class StrategyGame {
     
     final public static char[] PLAYER_SYMBOL = {'X', 'O'};
     
-    final public static int PLAYERS_COUNT = 1;
+    final public static int PLAYERS_COUNT = 2;
     
     public enum TerrainType {
         PLATEAU,
