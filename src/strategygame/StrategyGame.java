@@ -34,7 +34,7 @@ public class StrategyGame {
     
     final public static char[] PLAYER_SYMBOL = {'X', 'O'};
     
-    final public static int PLAYERS_COUNT = 2;
+    final public static int PLAYERS_COUNT = 1;
     
     public enum TerrainType {
         PLATEAU,
@@ -80,7 +80,7 @@ public class StrategyGame {
 
             this.cells = new GameCell[FLD_WIDTH][FLD_HEIGHT];
             this.Player = new Field.Player[PLAYERS_COUNT];
-            
+                        
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
                     this.cells[x][y] = new GameCell(x, y, this);
@@ -569,7 +569,7 @@ public class StrategyGame {
                     }
                     System.out.println("");
                 }
-                
+
                 for (Player Player_iter : field.Player) {
                     System.out.print("\n\n");
                     System.out.printf("Player %c:\n", Player_iter.symbol);

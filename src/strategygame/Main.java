@@ -16,24 +16,27 @@ public class Main {
         Game game = new Game();
         Field field = game.field;
         int i = 0;  // Number of player who plays now
+        boolean playerIsDead = false;
+        char deadPlayerSymb = 'Z';
         
-        while (field.Player[0].unit.life != 0
-                && field.Player[1].unit.life != 0) {
+        Outer:
+        while (!playerIsDead) {
             while (!game.turn(i)) {
                 System.out.println("Turn unsuccessfull, repeat the turn!");
             }
             
-            i = (i == StrategyGame.PLAYERS_COUNT - 1 ? 0 : i + 1);
             field.updateScreen(game.legend, game.screen);
-        }
-
-        if (field.Player[0].unit.life == 0) {
-            System.out.println("Player2 won!");
-        }
-        else {
-            if (field.Player[1].unit.life == 0) {
-                System.out.println("Player1 won!");
+            i = (i == StrategyGame.PLAYERS_COUNT - 1 ? 0 : i + 1);
+            
+            for (Field.Player player : field.Player) {
+                if (player.unit.life == 0) {
+                    playerIsDead = true;
+                    deadPlayerSymb = player.symbol;
+                    break Outer;
+                }
             }
         }
+
+        System.out.printf("Player %c lost!", deadPlayerSymb);
     }
 }
