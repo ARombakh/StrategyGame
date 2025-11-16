@@ -228,7 +228,7 @@ public class StrategyGame {
                             && dest.unit == null
                             && dest.resource == null) {
                         System.out.println(
-                                "No one to act upon in the target cell");
+                                "Nothing to act upon in the target cell");
                         isSuccess = false;
                     }
                     else {

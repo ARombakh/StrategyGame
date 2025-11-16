@@ -5,7 +5,7 @@
 package strategygame;
 
 import java.util.Scanner;
-import static strategygame.StrategyGame.*;
+//import static strategygame.StrategyGame.*;
 //import strategygame.MapFactory.*;
 
 /**
