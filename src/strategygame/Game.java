@@ -6,7 +6,7 @@ package strategygame;
 
 import java.util.Scanner;
 import static strategygame.StrategyGame.*;
-import strategygame.MapFactory.*;
+//import strategygame.MapFactory.*;
 
 /**
  *
@@ -23,25 +23,10 @@ public class Game {
         this.field = theMap.createPlateau();
         this.legend = field.new Legend();
         this.screen = field.new Screen(this.field);
-
         field.updateScreen(this.legend, this.screen);
     }
-
-    public StrategyGame.Direction getDir(String move) {
-        StrategyGame.Direction dir = null;
-
-        dir = switch (move.toLowerCase()) {
-            case "up" -> StrategyGame.Direction.UP;
-            case "down" -> StrategyGame.Direction.DOWN;
-            case "left" -> StrategyGame.Direction.LEFT;
-            case "right" -> StrategyGame.Direction.RIGHT;
-            default -> null;
-        };
-
-        return dir;
-    }
-
-    public boolean turn(int i) {
+    
+    public boolean turn(int playerIndex) {
         boolean isSuccess;
         String move;
         String yes_no;
@@ -49,19 +34,13 @@ public class Game {
         StrategyGame.Direction dir = null;
         StrategyGame.Field.Unit unitToGo;
 
-        unitToGo = field.Player[i].unit;
+        unitToGo = field.Player[playerIndex].unit;
 
-        System.out.printf("Turn of Player %c.\n", field.Player[i].symbol);
+        System.out.printf("Turn of Player %c.\n",
+                field.Player[playerIndex].symbol);
         
-        do {            
-            System.out.print("Will it be action [y/n]? ");
-            yes_no = this.scanner.next();
-            if (!yes_no.equals("y") && !yes_no.equals("n")) {
-                System.out.println("Unrecognized input. Repeat the input.");
-            }
-        } while (!yes_no.equals("y") && !yes_no.equals("n"));
-
-        action = yes_no.toLowerCase().equals("y");
+        GameUI ui = new GameUI();
+        action = ui.getIsAction();
 
         if (action) {
             System.out.println("Action chosen. ");
@@ -70,15 +49,7 @@ public class Game {
             System.out.println("Move chosen. ");
         }
 
-        System.out.print("Enter direction: ");
-        move = this.scanner.next();
-
-        while ((dir = getDir(move)) == null) {
-            System.out.print(
-                    "Incorrect direction. Enter another direction: "
-            );
-            move = this.scanner.next();
-        }
+        dir = ui.getDirection();
 
         if (action) {
             isSuccess = unitToGo.action(dir);
