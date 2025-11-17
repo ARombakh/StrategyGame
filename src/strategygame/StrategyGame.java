@@ -14,27 +14,27 @@ import java.util.Random;
  */
 public class StrategyGame {
 
-    final public static int FLD_WIDTH = 8;
-    final public static int FLD_HEIGHT = 8;
+    public static final int FLD_WIDTH = 8;
+    public static final int FLD_HEIGHT = 8;
     
-    final public static int CELL_WIDTH = 5;
-    final public static int CELL_HEIGHT = 4;
-    final public static int CELL_MIDDLE = (CELL_HEIGHT % 2 == 0 ?
+    public static final int CELL_WIDTH = 5;
+    public static final int CELL_HEIGHT = 4;
+    public static final int CELL_MIDDLE = (CELL_HEIGHT % 2 == 0 ?
                                             CELL_HEIGHT / 2 :
                                                     (CELL_HEIGHT / 2) + 1);
     
-    final public static int[] X_START_PL = {0, FLD_WIDTH - 1};
-    final public static int[] Y_START_PL = {0, FLD_HEIGHT - 1};
+    public static final int[] X_START_PL = {0, FLD_WIDTH - 1};
+    public static final int[] Y_START_PL = {0, FLD_HEIGHT - 1};
     
-    final public static int LIFE = 20;
-    final public static int DAMAGE = 5;
-    final public static int EXTRACT_CAPACITY = 5;
+    public static final int LIFE = 20;
+    public static final int DAMAGE = 5;
+    public static final int EXTRACT_CAPACITY = 5;
     
-    final public static int LABEL_LEN = 3;
+    public static final int LABEL_LEN = 3;
     
-    final public static char[] PLAYER_SYMBOL = {'X', 'O'};
+    public static final char[] PLAYER_SYMBOL = {'X', 'O'};
     
-    final public static int PLAYERS_COUNT = 2;
+    public static final int PLAYERS_COUNT = 2;
     
     public enum TerrainType {
         PLATEAU,
@@ -61,25 +61,49 @@ public class StrategyGame {
     }
     
     static class Resource {
-        public ResourceType resourceType;
-        public int resourceQty;
+        private ResourceType resourceType;
+        private int resourceQty;
 
-        public Resource(ResourceType resourceType, int resourceQty) {
+        public ResourceType getResourceType() {
+            return this.resourceType;
+        }
+        
+        public void setResourceType(ResourceType resourceType) {
             this.resourceType = resourceType;
+        }
+
+        public int getResourceQty() {
+            return resourceQty;
+        }
+
+        public void setResourceQty(int resourceQty) {
             this.resourceQty = resourceQty;
         }
+        
+        public void addResourceQty(int resourceQty) {
+            int newResQty;
+            newResQty = getResourceQty();
+            newResQty += resourceQty;
+            setResourceQty(newResQty);
+        }
+
+        public Resource(ResourceType resourceType, int resourceQty) {
+            this.setResourceType(resourceType);
+            this.setResourceQty(resourceQty);
+        }
+
     }
 
     // почему нужно обязательно указывать static??    
     public static class Field {
         public GameCell[][] cells;
-        Player[] Player;
-        
+        public Player[] player;
+
         public Field() {
             int x, y;
 
             this.cells = new GameCell[FLD_WIDTH][FLD_HEIGHT];
-            this.Player = new Field.Player[PLAYERS_COUNT];
+            this.player = new Field.Player[PLAYERS_COUNT];
                         
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
@@ -89,13 +113,29 @@ public class StrategyGame {
         }
         
         class Player {
-            char symbol;
-            Unit unit;
+            private char symbol;
+            private Unit unit;
             public EnumMap<ResourceType, Integer> resources =
                     new EnumMap<>(ResourceType.class);
             
-            public Player(char symbol) {
+            public char getSymbol() {
+                return this.symbol;
+            }
+            
+            public void setSymbol(char symbol) {
                 this.symbol = symbol;
+            }
+            
+            public Unit getUnit() {
+                return this.unit;
+            }
+            
+            public void setUnit(Unit unit) {
+                this.unit = unit;
+            }
+            
+            public Player(char symbol) {
+                this.setSymbol(symbol);
                 
                 for (ResourceType Res : ResourceType.values()) {
                     resources.put(Res, 0);
@@ -131,22 +171,62 @@ public class StrategyGame {
         }
 
         static class Building {
-            public int life;
+            private int life;
         }
         
         class Unit {
-            public Player player;
-            public GameCell cell;
-            public int life;
-            public int Damage;
-            public int ResExtrCapacity;
-
-            public Unit (Player player, GameCell cell) {
+            private Player player;
+            private GameCell cell;
+            private int life;
+            private int damage;
+            private int resExtrCapacity;
+            
+            public Player getPlayer() {
+                return player;
+            }
+            
+            public void setPlayer(Player player) {
                 this.player = player;
+            }
+            
+            public GameCell getCell() {
+                return cell;
+            }
+            
+            public void setCell(GameCell cell) {
                 this.cell = cell;
-                this.life = LIFE;
-                this.Damage = DAMAGE;
-                this.ResExtrCapacity = EXTRACT_CAPACITY;
+            }
+            
+            public int getLife() {
+                return life;
+            }
+
+            public void setLife(int life) {
+                this.life = life;
+            }
+            
+            public int getDamage() {
+                return damage;
+            }
+            
+            public void setDamage(int damage) {
+                this.damage = damage;
+            }
+            
+            public int getResExtrCapacity() {
+                return resExtrCapacity;
+            }
+            
+            public void setResExtrCapacity(int resExtrCapacity) {
+                this.resExtrCapacity = resExtrCapacity;
+            }
+            
+            public Unit (Player player, GameCell cell) {
+                this.setPlayer(player);
+                this.setCell(cell);
+                this.setLife(LIFE);
+                this.setDamage(DAMAGE);
+                this.setResExtrCapacity(EXTRACT_CAPACITY);
             }
 
             // Насколько разумно возвращать метод ту же GameCell в случае
@@ -154,7 +234,7 @@ public class StrategyGame {
             public GameCell destCell(Direction direction) {
                 GameCell dest;
 
-                int x = cell.xCell, y = cell.yCell;
+                int x = getCell().getxCell(), y = getCell().getyCell();
 
                 switch (direction) {
                     case UP -> {
@@ -179,31 +259,31 @@ public class StrategyGame {
                         !(y >= 0 && y < FLD_HEIGHT)) {
                     System.out.print("Target cell of ");
                     System.out.printf("%s is out of the field\n",
-                                        this.player);
+                                        this.getPlayer());
                     System.out.println("Choose another direction.");
-                    dest = this.cell;
+                    dest = getCell();
                 }
-                else dest = this.cell.field.cells[x][y];
+                else dest = getCell().getField().cells[x][y];
 
                 return dest;
             }
 
             public boolean move(Direction direction) {
                 boolean isSuccess;
-                GameCell source = this.cell;
+                GameCell source = getCell();
                 GameCell dest;  // Destination cell
 
                 dest = destCell(direction);
                 if (dest == source) {
                     isSuccess = false;
                 } else {
-                    if (dest.building == null
-                            && dest.unit == null
-                            && dest.resource == null
-                            && dest.terrainType == TerrainType.PLATEAU) {
-                        dest.unit = source.unit;
-                        source.unit = null;
-			this.cell = dest;
+                    if (dest.getBuilding() == null
+                            && dest.getUnit() == null
+                            && dest.getResource() == null
+                            && dest.getTerrainType() == TerrainType.PLATEAU) {
+                        dest.setUnit(source.getUnit());
+                        source.setUnit(null);
+                        setCell(dest);
                         isSuccess = true;
                     }
                     else {
@@ -217,24 +297,24 @@ public class StrategyGame {
 
             public boolean action(Direction direction) {
                 boolean isSuccess;
-                GameCell source = this.cell;
+                GameCell source = getCell();
                 GameCell dest;  // Destination cell
 
                 dest = destCell(direction);
                 if (dest == source) {
                     isSuccess = false;
                 } else {
-                    if (dest.building == null
-                            && dest.unit == null
-                            && dest.resource == null) {
+                    if (dest.getBuilding() == null
+                            && dest.getUnit() == null
+                            && dest.getResource() == null) {
                         System.out.println(
                                 "Nothing to act upon in the target cell");
                         isSuccess = false;
                     }
                     else {
-                        if (dest.unit != null ||
-                                dest.resource != null) {
-                            dest.actUpon(source.unit);
+                        if (dest.getUnit() != null ||
+                                dest.getResource() != null) {
+                            dest.actUpon(source.getUnit());
                         }
                         isSuccess = true;
                     }
@@ -243,20 +323,20 @@ public class StrategyGame {
                 return isSuccess;
             }
 
-            public void attacked(int Damage) {
-                this.life -= (this.life > Damage ? Damage : this.life);
+            public void attacked(int damage) {
+                setLife(getLife() > damage ? damage : getLife());
             }
         }
 
         // почему нужно обязательно указывать static??
         class GameCell {
-            public TerrainType terrainType;
-            public Unit unit;
-            public Building building;
-            public Field field;
-            public Resource resource;
-            final public int xCell;
-            final public int yCell;     // coordinates of the cell in the field
+            private TerrainType terrainType;
+            private Unit unit;
+            private Building building;
+            private Field field;
+            private Resource resource;
+            private final int xCell;
+            private final int yCell;     // coordinates of the cell in the field
 
             public char[][] cellChars = new char[CELL_WIDTH][CELL_HEIGHT];
 
@@ -271,17 +351,62 @@ public class StrategyGame {
                 }
             }
             
+            public TerrainType getTerrainType() {
+                return this.terrainType;
+            }
+            
+            public void setTerrainType(TerrainType terrainType) {
+                this.terrainType = terrainType;
+            }
+            
+            public Unit getUnit() {
+                return this.unit;
+            }
+            
+            public void setUnit(Unit unit) {
+                this.unit = unit;
+            }
+            
+            public Building getBuilding() {
+                return this.building;
+            }
+            
+            public void setBuilding(Building building) {
+                this.building = building;
+            }
+            
             public Field getField() {
                 return this.field;
             }
             
+            public void setField(Field field) {
+                this.field = field;
+            }
+
+            public Resource getResource() {
+                return resource;
+            }
+
+            public void setResource(Resource resource) {
+                this.resource = resource;
+            }
+
+            public int getxCell() {
+                return xCell;
+            }
+
+            public int getyCell() {
+                return yCell;
+            }
+            
             public void checkCell() {
-                if (this.resource != null && this.resource.resourceQty == 0) {
-                    this.resource = null;
+                if (this.getResource() != null &&
+                    this.getResource().getResourceQty() == 0) {
+                    this.setResource(null);
                 }
                 
-                if (this.unit != null && this.unit.life == 0) {
-                    this.unit = null;
+                if (this.getUnit() != null && this.getUnit().getLife() == 0) {
+                    this.setUnit(null);
                 }
             }
 
@@ -313,7 +438,7 @@ public class StrategyGame {
 
             public char terrainFiller() {
                 char terrain = ' ';
-                switch (this.terrainType) {
+                switch (this.getTerrainType()) {
                     case PLATEAU -> terrain = ' ';
                     case MOUNTAIN -> terrain = 'X';
                     case WATER -> terrain = 'O';
@@ -322,7 +447,7 @@ public class StrategyGame {
             }
 
             public char playerFiller() {
-                return this.unit.player.symbol;
+                return this.getUnit().getPlayer().getSymbol();
             }
 
             public void fillTerrain() {
@@ -339,12 +464,12 @@ public class StrategyGame {
             }
 
             public GameCell(int xCell, int yCell, Field field) {
-                this.field = field;
+                this.setField(field);
                 this.xCell = xCell;
                 this.yCell = yCell;
-                this.terrainType = terrRand();
-                this.unit = null;
-                this.building = null;
+                this.setTerrainType(terrRand());
+                this.setUnit(null);
+                this.setBuilding(null);
                 // в чём проблема в overridable методе в конструкторе??
                 // Почему выскакивает предупреждение??
                 fillCellChars();
@@ -386,13 +511,13 @@ public class StrategyGame {
             public void fillCellChars() {
                 initCell();            
                 fillTerrain();
-                if (this.building != null) {
+                if (this.getBuilding() != null) {
                     fillBorder(true);
                     cellChars[0][0] = 'B';
                 }
                 else {
-                    if (this.unit != null ||
-                            this.resource != null) {
+                    if (this.getUnit() != null ||
+                            this.getResource() != null) {
                         fillBorder(false);
                     }
                 }
@@ -401,7 +526,7 @@ public class StrategyGame {
             }
             
             public void fillPlayerMark() {
-                if (this.unit != null) {
+                if (this.getUnit() != null) {
                     cellChars[0][0] = this.playerFiller();
                 }
             }
@@ -409,8 +534,8 @@ public class StrategyGame {
             public void fillCellLabel() {
                 String label = "NUL";
                 int indent;
-                if (this.resource != null) {
-                    switch (this.resource.resourceType) {
+                if (this.getResource() != null) {
+                    switch (this.getResource().getResourceType()) {
                         case GOLD -> label = "GLD";
                         case LUMBER -> label = "LMB";
                         case STONE -> label = "STN";
@@ -423,13 +548,15 @@ public class StrategyGame {
                     }
                 }
                 
-                if (this.resource != null || this.unit != null) {
-                    if (this.resource != null) {
-                        label = Integer.toString(this.resource.resourceQty);
+                if (this.getResource() != null || this.getUnit() != null) {
+                    if (this.getResource() != null) {
+                        label = Integer.toString(
+                                this.getResource().getResourceQty()
+                        );
                     }
                     
-                    if (this.unit != null) {
-                        label = Integer.toString(this.unit.life);
+                    if (this.getUnit() != null) {
+                        label = Integer.toString(this.getUnit().getLife());
                     }
                     
                     indent = LABEL_LEN - label.length();
@@ -455,12 +582,12 @@ public class StrategyGame {
             public boolean actUpon(Unit actUnit) {
                 boolean isSuccess = false;
                 
-                if (this.unit != null) {
-                    this.unit.attacked(actUnit.Damage);
+                if (this.getUnit() != null) {
+                    this.getUnit().attacked(actUnit.getDamage());
                     isSuccess = true;
                 }
                 else {
-                    if (this.resource != null) {
+                    if (this.getResource() != null) {
                         this.ExtractResource(actUnit);
                         isSuccess = true;
                     }
@@ -473,16 +600,16 @@ public class StrategyGame {
                 int extracted;
                 int newResQty;
                 ResourceType resourceType;
-                resourceType = this.resource.resourceType;
+                resourceType = this.getResource().getResourceType();
                 
-                if(this.resource.resourceQty > actUnit.ResExtrCapacity)
-                    extracted = actUnit.ResExtrCapacity;
+                if(this.getResource().getResourceQty() > actUnit.getResExtrCapacity())
+                    extracted = actUnit.getResExtrCapacity();
                 else
-                    extracted = this.resource.resourceQty;
-                this.resource.resourceQty -= extracted;
-                newResQty = actUnit.player.resources.get(resourceType);
+                    extracted = this.getResource().getResourceQty();
+                this.getResource().addResourceQty(-extracted);
+                newResQty = actUnit.getPlayer().resources.get(resourceType);
                 newResQty += extracted;
-                actUnit.player.resources.put(resourceType, newResQty);
+                actUnit.getPlayer().resources.put(resourceType, newResQty);
 
                 return extracted;
             }
@@ -491,12 +618,20 @@ public class StrategyGame {
         class Screen {
             public char[][] screen = new char[FLD_WIDTH * CELL_WIDTH]
                                             [FLD_HEIGHT * CELL_HEIGHT];
-            public Field field;
+            private Field field;
+
+            public Field getField() {
+                return field;
+            }
+
+            public void setField(Field field) {
+                this.field = field;
+            }
 
             public Screen(Field field) {
                 int x, y;
-                this.field = field;
-                assignAllCells(this.field);
+                this.setField(field);
+                assignAllCells();
                 for (y = 0; y < screen[0].length; y++) {
                     for (x = 0; x < screen.length; x++) {
                         this.screen[x][y] = ' ';
@@ -504,33 +639,33 @@ public class StrategyGame {
                 }
             }
 
-            public void assignCell(GameCell Cell) {
-                int strtX = Cell.xCell * CELL_WIDTH;
-                int strtY = Cell.yCell * CELL_HEIGHT; // Offset coordinates in
+            public void assignCell(GameCell cell) {
+                int strtX = cell.getxCell() * CELL_WIDTH;
+                int strtY = cell.getyCell() * CELL_HEIGHT; // Offset coordinates in
                 // the screen
                 int x, y; // Coordinates to loop in the screen
 
                 for (y = 0; y < CELL_HEIGHT; y++) {
                     for (x = 0; x < CELL_WIDTH; x++) {
                         this.screen[x + strtX][y + strtY]
-                                = Cell.cellChars[x][y];
+                                = cell.cellChars[x][y];
                     }
                 }
             }
 
-            public void assignAllCells(Field field) {
+            public void assignAllCells() {
                 int x, y;
-                field.recalcCells();
+                this.getField().recalcCells();
                 for (y = 0; y < FLD_HEIGHT; y++) {
                     for (x = 0; x < FLD_WIDTH; x++) {
-                        assignCell(field.cells[x][y]);
+                        assignCell(getField().cells[x][y]);
                     }
                 }
             }
 
             public void printScreen() {
                 int x, y;
-                assignAllCells(this.field);
+                assignAllCells();
                 for (y = 0; y < FLD_HEIGHT * CELL_HEIGHT; y++) {
                     for (x = 0; x < FLD_WIDTH * CELL_WIDTH; x++) {
                         System.out.print(screen[x][y]);
@@ -549,10 +684,10 @@ public class StrategyGame {
         }
 
         class Legend {
-            GameCell Cell = new GameCell();
-            GameCell terrains = new GameCell();
-            GameCell units = new GameCell();
-            GameCell buildings = new GameCell();
+            private GameCell cell = new GameCell();
+            private GameCell terrains = new GameCell();
+            private GameCell units = new GameCell();
+            private GameCell buildings = new GameCell();
 
             public void printLegend(Field field) {
                 System.out.println("Legend:");
@@ -563,13 +698,13 @@ public class StrategyGame {
                 System.out.println("Terrains:");
 
                 for (TerrainType terrain : TerrainType.values()) {
-                    Cell.terrainType = terrain;
+                    cell.setTerrainType(terrain);
 
-                    Cell.fillCellChars();
+                    cell.fillCellChars();
 
                     for (y = 0; y < CELL_HEIGHT; y++) {
                         for (x = 0; x < CELL_WIDTH; x++) {
-                            System.out.print(Cell.cellChars[x][y]);
+                            System.out.print(cell.cellChars[x][y]);
                         }
                         annotation =
                                 (y == CELL_MIDDLE - 1 ? "\t" + terrain : "");
@@ -578,11 +713,11 @@ public class StrategyGame {
                     System.out.println("");
                 }
 
-                for (Player Player_iter : field.Player) {
+                for (Player Player_iter : field.player) {
                     System.out.print("\n\n");
-                    System.out.printf("Player %c:\n", Player_iter.symbol);
+                    System.out.printf("Player %c:\n", Player_iter.getSymbol());
                     System.out.print("\n");
-                    System.out.printf("Damage:\t%d\n", Player_iter.unit.Damage);
+                    System.out.printf("Damage:\t%d\n", Player_iter.getUnit().getDamage());
                     System.out.print("\n");
                     
                     for (Map.Entry<ResourceType, Integer> entry :

@@ -24,11 +24,11 @@ public class MapFactory {
                     StrategyGame.Y_START_PL[i]
             ];
             
-            plateau.Player[i] =
+            plateau.player[i] =
                     plateau.new Player(StrategyGame.PLAYER_SYMBOL[i]);
-            cell.unit = plateau.new Unit(plateau.Player[i], cell);
-            plateau.Player[i].unit = cell.unit;
-            cell.unit.player = plateau.Player[i];
+            cell.setUnit(plateau.new Unit(plateau.player[i], cell));
+            plateau.player[i].setUnit(cell.getUnit());
+            cell.getUnit().setPlayer(plateau.player[i]);
         }
         
         return plateau;

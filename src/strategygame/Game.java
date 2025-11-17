@@ -13,17 +13,50 @@ import java.util.Scanner;
  * @author artyom
  */
 public class Game {
-    StrategyGame.Field field;
-    StrategyGame.Field.Legend legend;
-    StrategyGame.Field.Screen screen;
-    Scanner scanner = new Scanner(System.in);
+    private StrategyGame.Field field;
+    private StrategyGame.Field.Legend legend;
+    private StrategyGame.Field.Screen screen;
+    private Scanner scanner = new Scanner(System.in);
 
+    public StrategyGame.Field getField() {
+        return field;
+    }
+
+    public void setField(StrategyGame.Field field) {
+        this.field = field;
+    }
+
+    public StrategyGame.Field.Legend getLegend() {
+        return legend;
+    }
+
+    public void setLegend(StrategyGame.Field.Legend legend) {
+        this.legend = legend;
+    }
+
+    public StrategyGame.Field.Screen getScreen() {
+        return screen;
+    }
+
+    public void setScreen(StrategyGame.Field.Screen screen) {
+        this.screen = screen;
+    }
+
+    public Scanner getScanner() {
+        return scanner;
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    
     public Game() {
         MapFactory theMap = new MapFactory();
-        this.field = theMap.createPlateau();
-        this.legend = field.new Legend();
-        this.screen = field.new Screen(this.field);
-        field.updateScreen(this.legend, this.screen);
+        this.setField(theMap.createPlateau());
+        this.setLegend(getField().new Legend());
+        this.setScreen(getField().new Screen(this.getField()));
+        getField().updateScreen(this.getLegend(), this.getScreen());
     }
     
     public boolean turn(int playerIndex) {
@@ -34,10 +67,10 @@ public class Game {
         StrategyGame.Direction dir = null;
         StrategyGame.Field.Unit unitToGo;
 
-        unitToGo = field.Player[playerIndex].unit;
+        unitToGo = getField().player[playerIndex].getUnit();
 
         System.out.printf("Turn of Player %c.\n",
-                field.Player[playerIndex].symbol);
+                getField().player[playerIndex].getSymbol());
         
         GameUI ui = new GameUI();
         action = ui.getIsAction();

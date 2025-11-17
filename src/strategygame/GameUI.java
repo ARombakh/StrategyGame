@@ -12,19 +12,35 @@ import java.util.Scanner;
  * @author artyom
  */
 public class GameUI {
-    Scanner scanner = new Scanner(System.in);
-    String yes_no;
+    private Scanner scanner = new Scanner(System.in);
+    private String yes_no;
+
+    public Scanner getScanner() {
+        return scanner;
+    }
+
+    public void setScanner(Scanner scanner) {
+        this.scanner = scanner;
+    }
+
+    public String getYes_no() {
+        return yes_no;
+    }
+
+    public void setYes_no(String yes_no) {
+        this.yes_no = yes_no;
+    }
     
     public boolean getIsAction() {
         do {            
             System.out.print("Will it be action [y/n]? ");
-            yes_no = this.scanner.next();
-            if (!yes_no.equals("y") && !yes_no.equals("n")) {
+            setYes_no(this.getScanner().next());
+            if (!getYes_no().equals("y") && !getYes_no().equals("n")) {
                 System.out.println("Unrecognized input. Repeat the input.");
             }
-        } while (!yes_no.equals("y") && !yes_no.equals("n"));
+        } while (!getYes_no().equals("y") && !getYes_no().equals("n"));
         
-        return yes_no.equals("y");
+        return getYes_no().equals("y");
     }
     
     public StrategyGame.Direction getDirection () {
@@ -32,12 +48,12 @@ public class GameUI {
         String move;
                 
         System.out.print("Enter direction: ");
-        move = this.scanner.next();
+        move = this.getScanner().next();
         while ((dir = getDir(move)) == null) {
             System.out.print(
                     "Incorrect direction. Enter another direction: "
             );
-            move = this.scanner.next();
+            move = this.getScanner().next();
         }
         
         return dir;

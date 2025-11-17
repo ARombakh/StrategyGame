@@ -10,12 +10,36 @@ import strategygame.StrategyGame.*;
  * @author artyom
  */
 public class Maps {
-    public Field field;
-    public int width;
-    public int height;
+    private Field field;
+    private int width;
+    private int height;
+
+    public Field getField() {
+        return field;
+    }
+
+    public void setField(Field field) {
+        this.field = field;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
     
     public Maps() {
-        field = new Field();
+        setField(new Field());
     }
 
     public Field River() {
@@ -29,16 +53,17 @@ public class Maps {
                             (y >= 5 && y < 10 && x == 3) ||
                             (y >= 10 && y < 15 && x == 2)
                             ) {
-                        field.cells[x][y].terrainType = TerrainType.WATER;
+                        getField().cells[x][y].setTerrainType(TerrainType.WATER);
                     }
                     else {
-                        field.cells[x][y].terrainType = TerrainType.PLATEAU;
+                        getField().cells[x][y].
+                                setTerrainType(TerrainType.PLATEAU);
                         
                     }
                 }                
             }
         }
-        return field;
+        return getField();
     }
     
     public Field Plateau() {
@@ -47,19 +72,16 @@ public class Maps {
         if (StrategyGame.FLD_WIDTH == 8 && StrategyGame.FLD_HEIGHT == 8) {
             for (y = 0; y < StrategyGame.FLD_HEIGHT; y++) {
                 for (x = 0; x < StrategyGame.FLD_WIDTH; x++) {
-                    field.cells[x][y].terrainType = TerrainType.PLATEAU;    
+                    getField().cells[x][y].setTerrainType(TerrainType.PLATEAU);
                 }
             }
         }
 
-        field.cells[0][2].resource
-                = new Resource(ResourceType.GOLD, 25);
+        getField().cells[0][2].setResource(new Resource(ResourceType.GOLD, 25));
         
-        field.cells[2][1].resource
-                = new Resource(ResourceType.LUMBER, 100);
+        getField().cells[2][1].setResource(new Resource(ResourceType.LUMBER, 100));
         
-        field.cells[6][5].resource
-                = new Resource(ResourceType.STONE, 100);
-        return field;
+        getField().cells[6][5].setResource(new Resource(ResourceType.STONE, 100));
+        return getField();
     }
 }
