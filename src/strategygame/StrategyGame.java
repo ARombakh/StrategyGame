@@ -101,7 +101,7 @@ public class StrategyGame {
 
         public Field() {
             int x, y;
-
+            // возможно, стоит также инициализировать каждого player??
             this.cells = new GameCell[FLD_WIDTH][FLD_HEIGHT];
             this.player = new Field.Player[PLAYERS_COUNT];
                         
@@ -164,7 +164,9 @@ public class StrategyGame {
             
             for (y = 0; y < FLD_HEIGHT; y++) {
                 for (x = 0; x < FLD_WIDTH; x++) {
+                    // check that resource or unit still exists in the cell
                     cells[x][y].checkCell();
+                    // drawing full graphical representation of the cell
                     cells[x][y].fillCellChars();
                 }
             }
@@ -337,7 +339,7 @@ public class StrategyGame {
             private Resource resource;
             private final int xCell;
             private final int yCell;     // coordinates of the cell in the field
-
+            // array of symbols of graphic representation of the cell
             public char[][] cellChars = new char[CELL_WIDTH][CELL_HEIGHT];
 
             // Нужно ли инициализировать ячейку??
@@ -438,6 +440,7 @@ public class StrategyGame {
 
             public char terrainFiller() {
                 char terrain = ' ';
+                // Debug стоит вынести в константы
                 switch (this.getTerrainType()) {
                     case PLATEAU -> terrain = ' ';
                     case MOUNTAIN -> terrain = 'X';
@@ -568,7 +571,7 @@ public class StrategyGame {
                     }
                 }
             }
-
+            // Debug удалить метод, не пригодился
             public void printCell() {
                 int x, y;
                 for (y = 0; y < CELL_HEIGHT; y++) {

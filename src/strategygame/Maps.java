@@ -53,7 +53,8 @@ public class Maps {
                             (y >= 5 && y < 10 && x == 3) ||
                             (y >= 10 && y < 15 && x == 2)
                             ) {
-                        getField().cells[x][y].setTerrainType(TerrainType.WATER);
+                        getField().cells[x][y].
+                                setTerrainType(TerrainType.WATER);
                     }
                     else {
                         getField().cells[x][y].
@@ -77,11 +78,14 @@ public class Maps {
             }
         }
 
-        getField().cells[0][2].setResource(new Resource(ResourceType.GOLD, 25));
+        getField().cells[0][2].setResource(new 
+                                            Resource(ResourceType.GOLD, 25));
         
-        getField().cells[2][1].setResource(new Resource(ResourceType.LUMBER, 100));
+        getField().cells[2][1].setResource(new 
+                                            Resource(ResourceType.LUMBER, 100));
         
-        getField().cells[6][5].setResource(new Resource(ResourceType.STONE, 100));
+        getField().cells[6][5].setResource(new 
+                                            Resource(ResourceType.STONE, 100));
         return getField();
     }
 }
