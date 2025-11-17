@@ -324,7 +324,7 @@ public class StrategyGame {
             }
 
             public void attacked(int damage) {
-                setLife(getLife() > damage ? damage : getLife());
+                setLife(getLife() > damage ? getLife() - damage : 0);
             }
         }
 
