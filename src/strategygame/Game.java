@@ -7,6 +7,8 @@ package strategygame;
 import java.util.Scanner;
 //import static strategygame.StrategyGame.*;
 //import strategygame.MapFactory.*;
+// Debug
+import strategygame.DebugUI.*;
 
 /**
  *
@@ -16,7 +18,6 @@ public class Game {
     private StrategyGame.Field field;
     private StrategyGame.Field.Legend legend;
     private StrategyGame.Field.Screen screen;
-    private Scanner scanner = new Scanner(System.in);
 
     public StrategyGame.Field getField() {
         return field;
@@ -41,15 +42,6 @@ public class Game {
     public void setScreen(StrategyGame.Field.Screen screen) {
         this.screen = screen;
     }
-
-    public Scanner getScanner() {
-        return scanner;
-    }
-
-    public void setScanner(Scanner scanner) {
-        this.scanner = scanner;
-    }
-
     
     public Game() {
         MapFactory theMap = new MapFactory();
@@ -71,9 +63,14 @@ public class Game {
 
         System.out.printf("Turn of Player %c.\n",
                 getField().player[playerIndex].getSymbol());
-        
+        // Debug
+        System.out.printf("Turn no %d\n", DebugUI.getTurnNo());   // Debug
+        /*
         GameUI ui = new GameUI();
-        action = ui.getIsAction();
+        */
+        
+        DebugUI ui = new DebugUI();
+        action = ui.getIsAction();        
 
         if (action) {
             System.out.println("Action chosen. ");
