@@ -353,6 +353,32 @@ public class StrategyGame {
                 }
             }
             
+            private void validateCellIsEmpty() {
+                if (getTerrainType() != TerrainType.PLATEAU) {
+                    throw new IllegalStateException(
+                            "Terrain type is "+ this.terrainType +" not Plateau"
+                    );
+                }
+                
+                if (getBuilding() != null) {
+                    throw new IllegalStateException(
+                            "Cell already has a Building"
+                    );
+                }
+                
+                if (getResource() != null) {
+                    throw new IllegalStateException(
+                            "Cell already has a Resource"
+                    );
+                }
+                
+                if (getUnit()!= null) {
+                    throw new IllegalStateException(
+                            "Cell already has a Unit"
+                    );
+                }
+            }
+
             public TerrainType getTerrainType() {
                 return this.terrainType;
             }
@@ -366,6 +392,10 @@ public class StrategyGame {
             }
             
             public void setUnit(Unit unit) {
+                if (unit != null) {
+                    validateCellIsEmpty();
+                }
+                
                 this.unit = unit;
             }
             
@@ -374,6 +404,10 @@ public class StrategyGame {
             }
             
             public void setBuilding(Building building) {
+                if (building != null) {
+                    validateCellIsEmpty();
+                }
+
                 this.building = building;
             }
             
@@ -390,6 +424,10 @@ public class StrategyGame {
             }
 
             public void setResource(Resource resource) {
+                if (resource != null) {
+                    validateCellIsEmpty();
+                }
+                
                 this.resource = resource;
             }
 
@@ -475,6 +513,7 @@ public class StrategyGame {
                 this.setBuilding(null);
                 // в чём проблема в overridable методе в конструкторе??
                 // Почему выскакивает предупреждение??
+                // Debug убрать fillCellChars, перенести в Drawing
                 fillCellChars();
             }
 
@@ -605,7 +644,8 @@ public class StrategyGame {
                 ResourceType resourceType;
                 resourceType = this.getResource().getResourceType();
                 
-                if(this.getResource().getResourceQty() > actUnit.getResExtrCapacity())
+                if(this.getResource().getResourceQty() >
+                        actUnit.getResExtrCapacity())
                     extracted = actUnit.getResExtrCapacity();
                 else
                     extracted = this.getResource().getResourceQty();
