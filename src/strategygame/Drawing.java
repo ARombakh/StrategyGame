@@ -33,17 +33,7 @@ public class Drawing {
 
         public Field.GameCell getCell() {
             return cell;
-        }
-        
-        // There are two types of the cell:
-            // empty
-                // terrain
-            // resource, 3 layers:
-                // border
-                // label, 2 lines:
-                    // 
-                // symbol (for player)
-            
+        }          
 
         public void initCell() {
             int x = 0, y = 0;
