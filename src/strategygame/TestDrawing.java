@@ -16,7 +16,7 @@ public class TestDrawing {
         int x, y;
         Field field = new Field();
         Field.GameCell cell;
-        Resource stone = new Resource(ResourceType.STONE, 20);
+        Resource stone = new Resource(ResourceType.STONE, 25);
 
         x = 0;
         y = 0;
@@ -31,10 +31,20 @@ public class TestDrawing {
         gCellDrawn.fillCellChars();
         
         gCellDrawn.printCell();
-        
+
         Field.Player playerX = field.new Player('X');
         Field.Unit unitX = field.new Unit(playerX, cell);
         
-        cell.
+        cell.setResource(null);
+        cell.setUnit(unitX);
+        
+        System.out.println(cell.getTerrainType());
+        
+        gCellDrawn.fillCellChars();
+        gCellDrawn.printCell();
+        
+        Drawing.Screen screen = drawing.new Screen(field);
+        
+        screen.printScreen();
     }
 }
