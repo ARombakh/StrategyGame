@@ -185,9 +185,7 @@ public class Drawing {
     
     class Screen {
         // Debug нужен ли массив ячеек??
-        private GameCellDrawn[][] cells = new
-                    GameCellDrawn[StrategyGame.FLD_WIDTH]
-                            [StrategyGame.FLD_HEIGHT];
+        private GameCellDrawn[][] cells;
         
         private char[][] screen = new char[StrategyGame.FLD_WIDTH *
                                         StrategyGame.CELL_WIDTH]
@@ -204,14 +202,29 @@ public class Drawing {
             this.field = field;
         }
         
+        public Screen(Field field) {
+            int x, y;
+            this.field = field;
+            this.cells = new
+                    GameCellDrawn[StrategyGame.FLD_WIDTH]
+                            [StrategyGame.FLD_HEIGHT];
+            
+            for (y = 0; y < StrategyGame.FLD_HEIGHT; y++) {
+                for (x = 0; x < StrategyGame.FLD_WIDTH; x++) {
+                    this.cells[x][y] =
+                            new GameCellDrawn(this.field.cells[x][y]);
+                }
+            }
+        }
+        
         // Field coordinates of the cell are passed
         public void drawCell(int xF, int yF) {
             int x, y;   // coordinates in the screen
             int xC, yC; // coordinates in the cell
             cells[xF][yF].fillCellChars();
 
-            for (xC = 0; xC < StrategyGame.CELL_WIDTH; xC++) {
-                for (yC = 0; yC < StrategyGame.CELL_HEIGHT; yC++) {
+            for (yC = 0; yC < StrategyGame.CELL_HEIGHT; yC++) {
+                for (xC = 0; xC < StrategyGame.CELL_WIDTH; xC++) {
                     x = StrategyGame.CELL_WIDTH * xF + xC;
                     y = StrategyGame.CELL_HEIGHT * yF + yC;
                     
@@ -227,6 +240,23 @@ public class Drawing {
                 for (y = 0; y < StrategyGame.FLD_HEIGHT; y++) {
                     drawCell(x, y);
                 }
+            }
+        }
+        
+        public void printScreen() {
+            int x, y;
+            int xMax, yMax;
+                        
+            xMax = StrategyGame.CELL_WIDTH * StrategyGame.FLD_WIDTH;
+            yMax = StrategyGame.CELL_HEIGHT * StrategyGame.FLD_HEIGHT;
+            
+            drawAllCells();
+
+            for (y = 0; y < yMax; y++) {
+                for (x = 0; x < xMax; x++) {
+                    System.out.print(screen[x][y]);
+                }                
+                System.out.println("");
             }
         }
     }
