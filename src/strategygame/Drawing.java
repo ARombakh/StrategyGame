@@ -11,6 +11,10 @@ import strategygame.StrategyGame.*;
  * @author artyom
  */
 public class Drawing {
+    
+    public final static char PLATEAU_SYM = ' '; 
+    public final static char MOUNTAIN_SYM = 'X';
+    public final static char WATER_SYM = 'O';
 
     class GameCellDrawn {
         // The array of characters within the cell
@@ -55,9 +59,9 @@ public class Drawing {
             char terrain = ' ';
             // Debug стоит вынести в константы
             switch (cell.getTerrainType()) {
-                case PLATEAU -> terrain = ' ';
-                case MOUNTAIN -> terrain = 'X';
-                case WATER -> terrain = 'O';
+                case PLATEAU -> terrain = PLATEAU_SYM;
+                case MOUNTAIN -> terrain = MOUNTAIN_SYM;
+                case WATER -> terrain = WATER_SYM;
             }
             return terrain;
         }
