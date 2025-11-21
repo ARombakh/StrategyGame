@@ -508,7 +508,7 @@ public class StrategyGame {
                 this.setField(field);
                 this.xCell = xCell;
                 this.yCell = yCell;
-                this.setTerrainType(terrRand());
+                this.setTerrainType(TerrainType.PLATEAU); //terrRand());
                 this.setUnit(null);
                 this.setBuilding(null);
                 // в чём проблема в overridable методе в конструкторе??
