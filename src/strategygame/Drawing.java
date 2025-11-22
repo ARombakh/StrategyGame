@@ -217,6 +217,7 @@ public class Drawing {
         public void drawCell(int xF, int yF) {
             int x, y;   // coordinates in the screen
             int xC, yC; // coordinates in the cell
+            this.field.recalcCells();
             cells[xF][yF].fillCellChars();
 
             for (yC = 0; yC < StrategyGame.CELL_HEIGHT; yC++) {
@@ -258,7 +259,8 @@ public class Drawing {
         
         public void printSeparator() {
             char sep = (char) 0x2588;
-            for (int i = 0; i < StrategyGame.FLD_WIDTH * StrategyGame.CELL_WIDTH;
+            for (int i = 0; i < StrategyGame.FLD_WIDTH *
+                    StrategyGame.CELL_WIDTH;
                     i++) {
                 System.out.print(sep);
             }
@@ -283,11 +285,12 @@ public class Drawing {
             for (TerrainType terrain : TerrainType.values()) {
                 cell.setTerrainType(terrain);
 
-                cell.fillCellChars();
+                GameCellDrawn cellDrawn = new GameCellDrawn(cell);
+                cellDrawn.fillCellChars();
 
                 for (y = 0; y < StrategyGame.CELL_HEIGHT; y++) {
                     for (x = 0; x < StrategyGame.CELL_WIDTH; x++) {
-                        System.out.print(cell.cellChars[x][y]);
+                        System.out.print(cellDrawn.cellChars[x][y]);
                     }
                     annotation =
                             (y == StrategyGame.CELL_MIDDLE - 1 ?
