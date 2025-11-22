@@ -15,7 +15,7 @@ public class TestDrawing {
     public static void main(String[] args) {
         int x, y;
         Field field = new Field();
-        Field.GameCell cell;
+        GameCell cell;
         Resource stone = new Resource(ResourceType.STONE, 25);
 
         x = 0;
@@ -32,8 +32,8 @@ public class TestDrawing {
         
         gCellDrawn.printCell();
 
-        Field.Player playerX = field.new Player('X');
-        Field.Unit unitX = field.new Unit(playerX, cell);
+        Player playerX = new Player('X');
+        Unit unitX = new Unit(playerX, cell);
         
         cell.setResource(null);
         cell.setUnit(unitX);

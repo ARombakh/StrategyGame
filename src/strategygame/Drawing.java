@@ -18,20 +18,20 @@ public class Drawing {
 
     class GameCellDrawn {
         // The array of characters within the cell
-        private StrategyGame.Field.GameCell cell;
+        private StrategyGame.GameCell cell;
         private char[][] cellChars;
 
-        public GameCellDrawn(Field.GameCell cell) {
+        public GameCellDrawn(GameCell cell) {
             setCell(cell);
             cellChars = new char[StrategyGame.CELL_WIDTH]
                                 [StrategyGame.CELL_HEIGHT];
         }
         
-        public void setCell(Field.GameCell cell) {
+        public void setCell(GameCell cell) {
             this.cell = cell;
         }
 
-        public Field.GameCell getCell() {
+        public GameCell getCell() {
             return cell;
         }          
 
