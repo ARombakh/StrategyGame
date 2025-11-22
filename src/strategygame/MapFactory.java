@@ -18,15 +18,15 @@ public class MapFactory {
         
         for (int i = 0; i < StrategyGame.PLAYERS_COUNT; i++) {
             // как оптимальнее разбить эту строку??
-            Field.GameCell cell = plateau.cells[
+            GameCell cell = plateau.cells[
                     StrategyGame.X_START_PL[i]
             ][
                     StrategyGame.Y_START_PL[i]
             ];
             
             plateau.player[i] =
-                    plateau.new Player(StrategyGame.PLAYER_SYMBOL[i]);
-            cell.setUnit(plateau.new Unit(plateau.player[i], cell));
+                    new Player(StrategyGame.PLAYER_SYMBOL[i]);
+            cell.setUnit(new Unit(plateau.player[i], cell));
             plateau.player[i].setUnit(cell.getUnit());
             cell.getUnit().setPlayer(plateau.player[i]);
         }

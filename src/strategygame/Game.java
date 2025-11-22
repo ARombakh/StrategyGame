@@ -16,8 +16,8 @@ import strategygame.DebugUI.*;
  */
 public class Game {
     private StrategyGame.Field field;
-    private StrategyGame.Field.Legend legend;
-    private StrategyGame.Field.Screen screen;
+    private Drawing.Legend legend;
+    private Drawing.Screen screen;
 
     public StrategyGame.Field getField() {
         return field;
@@ -27,28 +27,28 @@ public class Game {
         this.field = field;
     }
 
-    public StrategyGame.Field.Legend getLegend() {
+    public Drawing.Legend getLegend() {
         return legend;
     }
 
-    public void setLegend(StrategyGame.Field.Legend legend) {
+    public void setLegend(Drawing.Legend legend) {
         this.legend = legend;
     }
 
-    public StrategyGame.Field.Screen getScreen() {
+    public Drawing.Screen getScreen() {
         return screen;
     }
 
-    public void setScreen(StrategyGame.Field.Screen screen) {
+    public void setScreen(Drawing.Screen screen) {
         this.screen = screen;
     }
     
     public Game() {
         MapFactory theMap = new MapFactory();
         this.setField(theMap.createPlateau());
-        this.setLegend(getField().new Legend());
-        this.setScreen(getField().new Screen(this.getField()));
-        getField().updateScreen(this.getLegend(), this.getScreen());
+        this.setLegend(new Drawing.Legend());
+        this.setScreen(new Drawing.Screen(this.getField()));
+        Drawing.updateScreen(this.getLegend(), this.getScreen(), field);
     }
     
     public boolean turn(int playerIndex) {
@@ -57,7 +57,7 @@ public class Game {
         String yes_no;
         boolean action;
         StrategyGame.Direction dir = null;
-        StrategyGame.Field.Unit unitToGo;
+        StrategyGame.Unit unitToGo;
 
         unitToGo = getField().player[playerIndex].getUnit();
 
@@ -65,11 +65,11 @@ public class Game {
                 getField().player[playerIndex].getSymbol());
         // Debug
         System.out.printf("Turn no %d\n", DebugUI.getTurnNo());   // Debug
-        /*
+
         GameUI ui = new GameUI();
-        */
+
         
-        DebugUI ui = new DebugUI();
+//        DebugUI ui = new DebugUI();
         action = ui.getIsAction();        
 
         if (action) {

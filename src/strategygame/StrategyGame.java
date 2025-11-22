@@ -657,7 +657,7 @@ public class StrategyGame {
                 }
             }
         }
-        
+        /*
         class Screen {
             public char[][] screen = new char[FLD_WIDTH * CELL_WIDTH]
                                             [FLD_HEIGHT * CELL_HEIGHT];
@@ -780,5 +780,6 @@ public class StrategyGame {
             screen.printScreen();
             screen.printSeparator();
         }
+        */
     }
 }

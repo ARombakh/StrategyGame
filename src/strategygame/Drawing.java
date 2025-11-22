@@ -5,6 +5,8 @@
 package strategygame;
 
 import strategygame.StrategyGame.*;
+import java.util.EnumMap;
+import java.util.Map;
 
 /**
  *
@@ -16,7 +18,7 @@ public class Drawing {
     public final static char MOUNTAIN_SYM = 'X';
     public final static char WATER_SYM = 'O';
 
-    class GameCellDrawn {
+    static class GameCellDrawn {
         // The array of characters within the cell
         private StrategyGame.GameCell cell;
         private char[][] cellChars;
@@ -177,7 +179,7 @@ public class Drawing {
         }
     }
     
-    class Screen {
+    static class Screen {
         // Debug нужен ли массив ячеек??
         private GameCellDrawn[][] cells;
         
@@ -253,5 +255,70 @@ public class Drawing {
                 System.out.println("");
             }
         }
+        
+        public void printSeparator() {
+            char sep = (char) 0x2588;
+            for (int i = 0; i < StrategyGame.FLD_WIDTH * StrategyGame.CELL_WIDTH;
+                    i++) {
+                System.out.print(sep);
+            }
+            System.out.println("");
+        }
+    }
+
+    static class Legend {
+        private GameCell cell = new GameCell();
+        private GameCell terrains = new GameCell();
+        private GameCell units = new GameCell();
+        private GameCell buildings = new GameCell();
+
+        public void printLegend(Field field) {
+            System.out.println("Legend:");
+            int x = 0, y = 0;
+            String annotation;
+
+            System.out.print("\n");
+            System.out.println("Terrains:");
+
+            for (TerrainType terrain : TerrainType.values()) {
+                cell.setTerrainType(terrain);
+
+                cell.fillCellChars();
+
+                for (y = 0; y < StrategyGame.CELL_HEIGHT; y++) {
+                    for (x = 0; x < StrategyGame.CELL_WIDTH; x++) {
+                        System.out.print(cell.cellChars[x][y]);
+                    }
+                    annotation =
+                            (y == StrategyGame.CELL_MIDDLE - 1 ?
+                                        "\t" + terrain : "");
+                    System.out.print(annotation + "\n");
+                }
+                System.out.println("");
+            }
+
+            for (Player Player_iter : field.player) {
+                System.out.print("\n\n");
+                System.out.printf("Player %c:\n", Player_iter.getSymbol());
+                System.out.print("\n");
+                System.out.printf("Damage:\t%d\n", Player_iter.
+                        getUnit().getDamage());
+                System.out.print("\n");
+
+                for (Map.Entry<ResourceType, Integer> entry :
+                        Player_iter.resources.entrySet()) {
+                    ResourceType key = entry.getKey();
+                    Integer value = entry.getValue();
+                    System.out.printf("%s: %d\n", key, value);                        
+                }
+            }
+        }
+    }
+
+    public static void updateScreen(Legend legend, Screen screen, Field field) {
+        screen.printSeparator();
+        legend.printLegend(field);
+        screen.printScreen();
+        screen.printSeparator();
     }
 }

@@ -25,10 +25,10 @@ public class Main {
                 System.out.println("Turn unsuccessfull, repeat the turn!");
             }
             
-            field.updateScreen(game.getLegend(), game.getScreen());
+            Drawing.updateScreen(game.getLegend(), game.getScreen(), field);
             i = (i == StrategyGame.PLAYERS_COUNT - 1 ? 0 : i + 1);
             
-            for (Field.Player player : field.player) {
+            for (Player player : field.player) {
                 if (player.getUnit().getLife() == 0) {
                     playerIsDead = true;
                     deadPlayerSymb = player.getSymbol();
