@@ -35,6 +35,9 @@ public class StrategyGame {
     public static final char[] PLAYER_SYMBOL = {'X', 'O'};
     
     public static final int PLAYERS_COUNT = 2;
+    public static final int BUILD_CAPACITY = 5;
+    
+    public static final int BUILDING_MAX_LIFE = 100;
     
     public enum TerrainType {
         PLATEAU,
@@ -56,8 +59,9 @@ public class StrategyGame {
     }
     
     public enum ActionType {
-        ATTACK,
-        COLLECT
+        MOVE,
+        INTERACT,
+        BUILD
     }
     
     static class Resource {
@@ -283,7 +287,7 @@ public class StrategyGame {
             }
             else {
                 if (this.getResource() != null) {
-                    this.ExtractResource(actUnit);
+                    this.extractResource(actUnit);
                     isSuccess = true;
                 }
             }
@@ -291,7 +295,7 @@ public class StrategyGame {
             return isSuccess;
         }
 
-        public int ExtractResource(Unit actUnit) {
+        public int extractResource(Unit actUnit) {
             int extracted;
             int newResQty;
             ResourceType resourceType;
@@ -313,6 +317,30 @@ public class StrategyGame {
 
     static class Building {
         private int life;
+        private int maxLife;
+
+        public int getLife() {
+            return life;
+        }
+
+        public void setLife(int life) {
+            this.life = life;
+        }
+        
+        public Building(int life) {
+            this.life = life;
+        }
+        
+        public void build(Unit unit) {
+            int new_life;
+            
+            new_life = getLife();
+            if(new_life + unit.getBuildCapacity() > BUILDING_MAX_LIFE)
+                new_life += unit.getBuildCapacity();
+            else
+                new_life = BUILDING_MAX_LIFE;
+            setLife(new_life);
+        }
     }
     
     static class Unit {
@@ -321,6 +349,7 @@ public class StrategyGame {
         private int life;
         private int damage;
         private int resExtrCapacity;
+        private int buildCapacity;
 
         public Player getPlayer() {
             return player;
@@ -362,12 +391,21 @@ public class StrategyGame {
             this.resExtrCapacity = resExtrCapacity;
         }
 
+        public int getBuildCapacity() {
+            return buildCapacity;
+        }
+
+        public void setBuildCapacity(int buildCapacity) {
+            this.buildCapacity = buildCapacity;
+        }
+
         public Unit (Player player, GameCell cell) {
             this.setPlayer(player);
             this.setCell(cell);
             this.setLife(LIFE);
             this.setDamage(DAMAGE);
             this.setResExtrCapacity(EXTRACT_CAPACITY);
+            setBuildCapacity(BUILD_CAPACITY);
         }
 
         // Насколько разумно возвращать метод ту же GameCell в случае
@@ -466,6 +504,159 @@ public class StrategyGame {
 
         public void attacked(int damage) {
             setLife(getLife() > damage ? getLife() - damage : 0);
+        }
+    }
+    
+    public static class Action {
+        private Unit unit;
+        private Direction dir;
+        private GameCell src;
+        private GameCell dest;
+        private ActionType action;
+
+        public Unit getUnit() {
+            return unit;
+        }
+
+        public Direction getDir() {
+            return dir;
+        }
+
+        public GameCell getSrc() {
+            return src;
+        }
+
+        public GameCell getDest() {
+            return dest;
+        }
+
+        public ActionType getAction() {
+            return action;
+        }
+
+        public void setUnit(Unit unit) {
+            this.unit = unit;
+        }
+
+        public void setDir(Direction dir) {
+            this.dir = dir;
+        }
+
+        public void setSrc(GameCell src) {
+            this.src = src;
+        }
+
+        public void setDest(GameCell dest) {
+            this.dest = dest;
+        }
+
+        public void setAction(ActionType action) {
+            this.action = action;
+        }
+        
+        // Насколько разумно возвращать метод ту же GameCell в случае
+        // неудачи??
+        public void calcDest() {
+            int x = getSrc().getxCell(), y = getSrc().getyCell();
+
+            switch (dir) {
+                case UP -> {
+                    x += 0;
+                    y += -1;
+                }
+                case DOWN -> {
+                    x += 0;
+                    y += 1;
+                }
+                case LEFT -> {
+                    x += -1;
+                    y += 0;
+                }
+                case RIGHT -> {
+                    x += 1;
+                    y += 0;
+                }
+            }
+
+            if (!(x >= 0 && x < FLD_WIDTH) ||
+                    !(y >= 0 && y < FLD_HEIGHT)) {
+                this.setDest(null);
+            }
+            else this.setDest(getSrc().getField().cells[x][y]);
+        }
+        
+        public boolean checkDest() {
+            return getDest() != null;
+        }
+        
+        public boolean move() {
+            boolean isSuccess;
+            
+            if(!checkDest()) return false;
+
+            if (getDest().getBuilding() == null
+                    && getDest().getUnit() == null
+                    && getDest().getResource() == null
+                    && getDest().getTerrainType() == TerrainType.PLATEAU) {
+                getDest().setUnit(getSrc().getUnit());
+                getSrc().setUnit(null);
+                getUnit().setCell(getDest());
+                isSuccess = true;
+            }
+            else {
+                System.out.println("The destination cell is taken");
+                isSuccess = false;
+            }
+            
+            return isSuccess;
+        }
+        
+        public boolean action() {
+            boolean isSuccess;
+            
+            if(!checkDest()) return false;
+            
+            if (getDest().getBuilding() == null
+                    && getDest().getUnit() == null
+                    && getDest().getResource() == null) {
+                System.out.println(
+                        "Nothing to act upon in the target cell");
+                isSuccess = false;
+            }
+            else {
+                if (getDest().getUnit() != null ||
+                        getDest().getResource() != null) {
+                    getDest().actUpon(getSrc().getUnit());
+                }
+                isSuccess = true;
+            }
+            
+            return isSuccess;
+        }
+        
+        public boolean build() {
+            boolean isSuccess;
+            
+            if(!checkDest()) return false;
+            
+            if (getDest().getUnit() != null
+                    && getDest().getResource() != null) {
+                System.out.println(
+                        "Impossible to build in the target cell");
+                isSuccess = false;
+            }
+            else {
+                if (getDest().getBuilding() == null) {
+                    Building building = new Building(0);
+                    getDest().setBuilding(building);
+                }
+
+                getDest().getBuilding().build(unit);
+                    
+                isSuccess = true;
+            }
+            
+            return isSuccess;
         }
     }
 

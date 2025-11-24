@@ -11,7 +11,7 @@ import strategygame.Game.*;
  *
  * @author artyom
  */
-public class Main {
+public class Main {/*
     public static void main(String[] args) {
         Game game = new Game();
         Field field = game.getField();
@@ -38,5 +38,5 @@ public class Main {
         }
 
         System.out.printf("Player %c lost!", deadPlayerSymb);
-    }
+    }*/
 }

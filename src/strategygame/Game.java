@@ -48,7 +48,7 @@ public class Game {
         this.setField(theMap.createPlateau());
         this.setLegend(new Drawing.Legend());
         this.setScreen(new Drawing.Screen(this.getField()));
-        Drawing.updateScreen(this.getLegend(), this.getScreen(), field);
+//        Drawing.updateScreen(this.getLegend(), this.getScreen(), field);
     }
     
     public boolean turn(int playerIndex) {
@@ -66,10 +66,10 @@ public class Game {
         // Debug
         System.out.printf("Turn no %d\n", DebugUI.getTurnNo());   // Debug
 
-        GameUI ui = new GameUI();
+//        GameUI ui = new GameUI();
 
         
-//        DebugUI ui = new DebugUI();
+        DebugUI ui = new DebugUI();
         action = ui.getIsAction();        
 
         if (action) {
