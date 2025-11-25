@@ -408,100 +408,6 @@ public class StrategyGame {
             setBuildCapacity(BUILD_CAPACITY);
         }
 
-        // Насколько разумно возвращать метод ту же GameCell в случае
-        // неудачи??
-        public GameCell destCell(Direction direction) {
-            GameCell dest;
-
-            int x = getCell().getxCell(), y = getCell().getyCell();
-
-            switch (direction) {
-                case UP -> {
-                    x += 0;
-                    y += -1;
-                }
-                case DOWN -> {
-                    x += 0;
-                    y += 1;
-                }
-                case LEFT -> {
-                    x += -1;
-                    y += 0;
-                }
-                case RIGHT -> {
-                    x += 1;
-                    y += 0;
-                }
-            }
-
-            if (!(x >= 0 && x < FLD_WIDTH) ||
-                    !(y >= 0 && y < FLD_HEIGHT)) {
-                System.out.print("Target cell of ");
-                System.out.printf("%s is out of the field\n",
-                                    this.getPlayer());
-                System.out.println("Choose another direction.");
-                dest = getCell();
-            }
-            else dest = getCell().getField().cells[x][y];
-
-            return dest;
-        }
-
-        public boolean move(Direction direction) {
-            boolean isSuccess;
-            GameCell source = getCell();
-            GameCell dest;  // Destination cell
-
-            dest = destCell(direction);
-            if (dest == source) {
-                isSuccess = false;
-            } else {
-                if (dest.getBuilding() == null
-                        && dest.getUnit() == null
-                        && dest.getResource() == null
-                        && dest.getTerrainType() == TerrainType.PLATEAU) {
-                    dest.setUnit(source.getUnit());
-                    source.setUnit(null);
-                    setCell(dest);
-                    isSuccess = true;
-                }
-                else {
-                    System.out.println("The destination cell is taken");
-                    isSuccess = false;
-                }
-            }
-
-            return isSuccess;
-        }
-
-        public boolean action(Direction direction) {
-            boolean isSuccess;
-            GameCell source = getCell();
-            GameCell dest;  // Destination cell
-
-            dest = destCell(direction);
-            if (dest == source) {
-                isSuccess = false;
-            } else {
-                if (dest.getBuilding() == null
-                        && dest.getUnit() == null
-                        && dest.getResource() == null) {
-                    System.out.println(
-                            "Nothing to act upon in the target cell");
-                    isSuccess = false;
-                }
-                else {
-                    if (dest.getUnit() != null ||
-                            dest.getResource() != null) {
-                        dest.actUpon(source.getUnit());
-                    }
-                    isSuccess = true;
-                }
-            }
-
-            return isSuccess;
-        }
-
         public void attacked(int damage) {
             setLife(getLife() > damage ? getLife() - damage : 0);
         }
@@ -592,6 +498,8 @@ public class StrategyGame {
         public boolean move() {
             boolean isSuccess;
             
+            calcDest();
+            
             if(!checkDest()) return false;
 
             if (getDest().getBuilding() == null
@@ -613,6 +521,8 @@ public class StrategyGame {
         
         public boolean action() {
             boolean isSuccess;
+            
+            calcDest();
             
             if(!checkDest()) return false;
             

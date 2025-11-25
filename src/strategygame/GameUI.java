@@ -31,9 +31,9 @@ public class GameUI {
         this.yes_no = yes_no;
     }
     
-    public boolean getIsAction() {
+    public boolean getIsMove() {
         do {            
-            System.out.print("Will it be action [y/n]? ");
+            System.out.print("Will it be move [y/n]? ");
             setYes_no(this.getScanner().next());
             if (!getYes_no().equals("y") && !getYes_no().equals("n")) {
                 System.out.println("Unrecognized input. Repeat the input.");

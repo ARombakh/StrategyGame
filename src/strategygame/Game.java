@@ -55,7 +55,7 @@ public class Game {
         boolean isSuccess;
         String move;
         String yes_no;
-        boolean action;
+        boolean isMove;
         StrategyGame.Direction dir = null;
         StrategyGame.Unit unitToGo;
 
@@ -66,26 +66,30 @@ public class Game {
         // Debug
         System.out.printf("Turn no %d\n", DebugUI.getTurnNo());   // Debug
 
-//        GameUI ui = new GameUI();
-
+        StrategyGame.Action action = new StrategyGame.Action();
+        GameUI ui = new GameUI();
         
-        DebugUI ui = new DebugUI();
-        action = ui.getIsAction();        
+        action.setUnit(unitToGo);
+        action.setSrc(unitToGo.getCell());
+        
+//        DebugUI ui = new DebugUI();
+        isMove = ui.getIsMove();        
 
-        if (action) {
-            System.out.println("Action chosen. ");
+        if (isMove) {
+            System.out.println("Move chosen. ");
         }
         else {
-            System.out.println("Move chosen. ");
+            System.out.println("Action chosen. ");
         }
 
         dir = ui.getDirection();
+        action.setDir(dir);
 
-        if (action) {
-            isSuccess = unitToGo.action(dir);
+        if (isMove) {
+            isSuccess = action.move();
         }
         else {
-            isSuccess = unitToGo.move(dir);
+            isSuccess = action.action();
         }
 
         return isSuccess;

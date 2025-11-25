@@ -11,7 +11,7 @@ import strategygame.Game.*;
  *
  * @author artyom
  */
-public class Main {/*
+public class Main {
     public static void main(String[] args) {
         Game game = new Game();
         Field field = game.getField();
@@ -19,6 +19,7 @@ public class Main {/*
         boolean playerIsDead = false;
         char deadPlayerSymb = 'Z';
         
+        Drawing.updateScreen(game.getLegend(), game.getScreen(), field);
         Outer:
         while (!playerIsDead) {
             while (!game.turn(i)) {
@@ -38,5 +39,5 @@ public class Main {/*
         }
 
         System.out.printf("Player %c lost!", deadPlayerSymb);
-    }*/
+    }
 }

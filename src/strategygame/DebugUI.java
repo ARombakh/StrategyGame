@@ -21,7 +21,7 @@ public class DebugUI {
         boolean action = false;
         switch(turnNo) {
             case 1 -> {
-                action = false;
+                action = true;
             }
             case 2 -> {
                 action = false;
