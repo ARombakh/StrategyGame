@@ -547,6 +547,8 @@ public class StrategyGame {
         public boolean build() {
             boolean isSuccess;
             
+            calcDest();
+
             if(!checkDest()) return false;
             
             if (getDest().getUnit() != null
@@ -556,6 +558,7 @@ public class StrategyGame {
                 isSuccess = false;
             }
             else {
+                System.out.printf("Building in destination\n");   // Debug
                 if (getDest().getBuilding() == null) {
                     Building building = new Building(0);
                     getDest().setBuilding(building);
@@ -564,6 +567,28 @@ public class StrategyGame {
                 getDest().getBuilding().build(unit);
                     
                 isSuccess = true;
+            }
+            
+            return isSuccess;
+        }
+        
+        public boolean act() {
+            boolean isSuccess = false;
+            switch (action) {
+                case BUILD:
+                    isSuccess = build();
+                    break;
+                case INTERACT:
+                    isSuccess = action();
+                    isSuccess = true;
+                    break;
+                case MOVE:
+                    isSuccess = move();
+                    isSuccess = true;
+                    break;
+                default:
+                    isSuccess = false;
+                    throw new AssertionError("Wrong type of action");
             }
             
             return isSuccess;

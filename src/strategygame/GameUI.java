@@ -58,6 +58,27 @@ public class GameUI {
         
         return dir;
     }
+    
+    public ActionType getActionType() {
+        String input;
+        ActionType actType = null;
+        boolean wrongInput = false;
+        do {            
+            System.out.println("What action do you choose? [Move/Build/Act]");
+            input = this.getScanner().next().toLowerCase();
+            switch (input) {
+                case "move" -> actType = ActionType.MOVE;
+                case "build" -> actType = ActionType.BUILD;
+                case "act" -> actType = ActionType.INTERACT;
+                default -> {
+                    System.out.println("Wrong action, enter another action\n");
+                    wrongInput = true;
+                }
+            }
+        } while (wrongInput);
+        
+        return actType;
+    }
 
     public StrategyGame.Direction getDir(String move) {
         StrategyGame.Direction dir = null;
