@@ -14,8 +14,8 @@ import java.util.Random;
  */
 public class StrategyGame {
 
-    public static final int FLD_WIDTH = 8;
-    public static final int FLD_HEIGHT = 8;
+    public static final int FLD_WIDTH = 15;
+    public static final int FLD_HEIGHT = 15;
     
     public static final int CELL_WIDTH = 5;
     public static final int CELL_HEIGHT = 4;

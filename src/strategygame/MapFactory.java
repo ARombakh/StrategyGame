@@ -33,4 +33,30 @@ public class MapFactory {
         
         return plateau;
     }
+    
+    public Field createRiver() {
+        // Можно ли наполнить поле без создания нового объекта "карта"??
+        Maps map = new Maps();
+        Field river = map.River();
+        
+        for (int i = 0; i < StrategyGame.PLAYERS_COUNT; i++) {
+            // как оптимальнее разбить эту строку??
+            System.out.printf("Player%d\n, x = %d, y = %d\n", i,
+                                StrategyGame.X_START_PL[i],
+                                StrategyGame.Y_START_PL[i]);   // Debug
+            GameCell cell = river.cells[
+                                        StrategyGame.X_START_PL[i]
+                                        ][
+                                        StrategyGame.Y_START_PL[i]
+                                        ];
+            
+            river.player[i] =
+                    new Player(StrategyGame.PLAYER_SYMBOL[i]);
+            cell.setUnit(new Unit(river.player[i], cell));
+            river.player[i].setUnit(cell.getUnit());
+            cell.getUnit().setPlayer(river.player[i]);
+        }
+        
+        return river;
+    }
 }

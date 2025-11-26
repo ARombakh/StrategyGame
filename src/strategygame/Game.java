@@ -46,7 +46,7 @@ public class Game {
     
     public Game() {
         MapFactory theMap = new MapFactory();
-        this.setField(theMap.createPlateau());
+        this.setField(theMap.createRiver());
         this.setLegend(new Drawing.Legend());
         this.setScreen(new Drawing.Screen(this.getField()));
 //        Drawing.updateScreen(this.getLegend(), this.getScreen(), field);
