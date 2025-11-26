@@ -49,7 +49,6 @@ public class Game {
         this.setField(theMap.createRiver());
         this.setLegend(new Drawing.Legend());
         this.setScreen(new Drawing.Screen(this.getField()));
-//        Drawing.updateScreen(this.getLegend(), this.getScreen(), field);
     }
     
     public boolean turn(int playerIndex) {
@@ -64,8 +63,6 @@ public class Game {
 
         System.out.printf("Turn of Player %c.\n",
                 getField().player[playerIndex].getSymbol());
-        // Debug
-        System.out.printf("Turn no %d\n", DebugUI.getTurnNo());   // Debug
 
         Action action = new Action();
         GameUI ui = new GameUI();
