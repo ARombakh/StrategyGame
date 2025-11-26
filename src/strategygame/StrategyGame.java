@@ -579,21 +579,21 @@ public class StrategyGame {
 
             if(!checkDest()) return false;
             
-            if (getDest().getUnit() != null
-                    && getDest().getResource() != null) {
-                System.out.println(
-                        "Impossible to build in the target cell");
-                isSuccess = false;
-            }
-            else {
-                if (getDest().getBuilding() == null) {
+            switch (getDest().whatInCell()) {
+                case UNIT, RESOURCE:
+                    System.out.println(
+                            "Impossible to build in the target cell");
+                    isSuccess = false;                    
+                    break;
+                case null:
                     Building building = new Building(0);
                     getDest().setBuilding(building);
-                }
-
-                getDest().getBuilding().build(unit);
-                    
-                isSuccess = true;
+                    // Deliberately no break so that after the creation of 
+                    // building it starts to build
+                case BUILDING:
+                    getDest().getBuilding().build(unit);
+                    isSuccess = true;
+                    break;
             }
             
             return isSuccess;
