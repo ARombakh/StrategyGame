@@ -45,6 +45,12 @@ public class StrategyGame {
         MOUNTAIN
     }
     
+    public enum CellFillType {
+        RESOURCE,
+        UNIT,
+        BUILDING
+    }
+    
     public enum Direction {
         UP,
         DOWN,
@@ -139,29 +145,37 @@ public class StrategyGame {
         private final int xCell;
         private final int yCell;     // coordinates of the cell in the field
 
+        public CellFillType whatInCell() {
+            CellFillType inCell = null;
+            if (getBuilding() != null) inCell = CellFillType.BUILDING;
+
+            if (getResource() != null) inCell = CellFillType.RESOURCE;
+
+            if (getUnit()!= null) inCell = CellFillType.UNIT;
+            
+            return inCell;
+        }
+
         private void validateCellIsEmpty() {
+            
             if (getTerrainType() != TerrainType.PLATEAU) {
                 throw new IllegalStateException(
                         "Terrain type is "+ this.terrainType +" not Plateau"
                 );
             }
 
-            if (getBuilding() != null) {
-                throw new IllegalStateException(
-                        "Cell already has a Building"
-                );
-            }
-
-            if (getResource() != null) {
-                throw new IllegalStateException(
-                        "Cell already has a Resource"
-                );
-            }
-
-            if (getUnit()!= null) {
-                throw new IllegalStateException(
-                        "Cell already has a Unit"
-                );
+            if (whatInCell() != null) {
+                switch (whatInCell()) {
+                    case BUILDING -> throw new IllegalStateException(
+                                "Cell already has a Building"
+                        );
+                    case RESOURCE -> throw new IllegalStateException(
+                                "Cell already has Resource"
+                        );
+                    case UNIT -> throw new IllegalStateException(
+                                "Cell already has Unit"
+                        );
+                }
             }
         }
 
@@ -226,13 +240,19 @@ public class StrategyGame {
         }
 
         public void checkCell() {
-            if (this.getResource() != null &&
-                this.getResource().getResourceQty() == 0) {
+            if (whatInCell() == CellFillType.RESOURCE &&
+                    this.getResource().getResourceQty() == 0) {
                 this.setResource(null);
             }
 
-            if (this.getUnit() != null && this.getUnit().getLife() == 0) {
+            if (whatInCell() == CellFillType.UNIT &&
+                    this.getUnit().getLife() == 0) {
                 this.setUnit(null);
+            }
+            
+            if (whatInCell() == CellFillType.BUILDING &&
+                    this.getBuilding().getLife() == 0) {
+                this.setBuilding(null);
             }
         }
 
@@ -281,12 +301,12 @@ public class StrategyGame {
         public boolean actUpon(Unit actUnit) {
             boolean isSuccess = false;
 
-            if (this.getUnit() != null) {
-                this.getUnit().attacked(actUnit.getDamage());
-                isSuccess = true;
-            }
-            else {
-                if (this.getResource() != null) {
+            switch (whatInCell()) {
+                case UNIT -> {
+                    this.getUnit().attacked(actUnit.getDamage());
+                    isSuccess = true;
+                }
+                case RESOURCE -> {
                     this.extractResource(actUnit);
                     isSuccess = true;
                 }
@@ -502,9 +522,7 @@ public class StrategyGame {
             
             if(!checkDest()) return false;
 
-            if (getDest().getBuilding() == null
-                    && getDest().getUnit() == null
-                    && getDest().getResource() == null
+            if (getDest().whatInCell() == null
                     && getDest().getTerrainType() == TerrainType.PLATEAU) {
                 getDest().setUnit(getSrc().getUnit());
                 getSrc().setUnit(null);
@@ -512,7 +530,15 @@ public class StrategyGame {
                 isSuccess = true;
             }
             else {
-                System.out.println("The destination cell is taken");
+                if (getDest().whatInCell() != null) {
+                    System.out.println("The destination cell is taken");
+                }
+                
+                if (getDest().getTerrainType() != TerrainType.PLATEAU) {
+                    System.out.printf("Can't move to %s terrain\n",
+                            getDest().getTerrainType());
+                }
+
                 isSuccess = false;
             }
             
@@ -526,19 +552,21 @@ public class StrategyGame {
             
             if(!checkDest()) return false;
             
-            if (getDest().getBuilding() == null
-                    && getDest().getUnit() == null
-                    && getDest().getResource() == null) {
-                System.out.println(
-                        "Nothing to act upon in the target cell");
-                isSuccess = false;
-            }
-            else {
-                if (getDest().getUnit() != null ||
-                        getDest().getResource() != null) {
+            switch (getDest().whatInCell()) {
+                case RESOURCE, UNIT:
                     getDest().actUpon(getSrc().getUnit());
-                }
-                isSuccess = true;
+                    isSuccess = true;
+                    break;
+                case BUILDING:
+                    System.out.println(
+                        "Nothing to act upon in the target cell");
+                    isSuccess = false;
+                    break;
+                case null:
+                    System.out.println(
+                        "Nothing to act upon in the target cell");
+                    isSuccess = false;
+                    break;
             }
             
             return isSuccess;
@@ -561,7 +589,6 @@ public class StrategyGame {
                 if (getDest().getBuilding() == null) {
                     Building building = new Building(0);
                     getDest().setBuilding(building);
-                    System.out.printf("Life of new building is %d\n", building.getLife());   // Debug
                 }
 
                 getDest().getBuilding().build(unit);
@@ -575,18 +602,13 @@ public class StrategyGame {
         public boolean act() {
             boolean isSuccess = false;
             switch (action) {
-                case BUILD:
-                    isSuccess = build();
-                    break;
-                case INTERACT:
-                    isSuccess = action();
-                    break;
-                case MOVE:
-                    isSuccess = move();
-                    break;
-                default:
+                case BUILD -> isSuccess = build();
+                case INTERACT -> isSuccess = action();
+                case MOVE -> isSuccess = move();
+                default -> {
                     isSuccess = false;
                     throw new AssertionError("Wrong type of action");
+                }
             }
             
             return isSuccess;

@@ -72,30 +72,11 @@ public class Game {
         action.setUnit(unitToGo);
         action.setSrc(unitToGo.getCell());
         action.setAction(ui.getActionType());
-        
-//        DebugUI ui = new DebugUI();
-/*        isMove = ui.getIsMove();        
-
-        if (isMove) {
-            System.out.println("Move chosen. ");
-        }
-        else {
-            System.out.println("Action chosen. ");
-        }*/
 
         dir = ui.getDirection();
         action.setDir(dir);
         
         isSuccess = action.act();
-
-        /*
-        if (isMove) {
-            isSuccess = action.move();
-        }
-        else {
-            isSuccess = action.action();
-        }
-        */
 
         return isSuccess;
     }
