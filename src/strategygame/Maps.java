@@ -86,6 +86,8 @@ public class Maps {
         
         getField().cells[6][5].setResource(new 
                                             Resource(ResourceType.STONE, 100));
+        getField().cells[0][1].setBuilding(new Building(85));
+        getField().cells[7][6].setBuilding(new Building(85));
         return getField();
     }
 }

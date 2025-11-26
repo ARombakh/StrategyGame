@@ -35,7 +35,7 @@ public class StrategyGame {
     public static final char[] PLAYER_SYMBOL = {'X', 'O'};
     
     public static final int PLAYERS_COUNT = 2;
-    public static final int BUILD_CAPACITY = 5;
+    public static final int BUILD_CAPACITY = 7;
     
     public static final int BUILDING_MAX_LIFE = 100;
     
@@ -496,9 +496,7 @@ public class StrategyGame {
         public void setAction(ActionType action) {
             this.action = action;
         }
-        
-        // Насколько разумно возвращать метод ту же GameCell в случае
-        // неудачи??
+
         public void calcDest() {
             int x = getSrc().getxCell(), y = getSrc().getyCell();
 
@@ -526,17 +524,20 @@ public class StrategyGame {
                 this.setDest(null);
             }
             else this.setDest(getSrc().getField().cells[x][y]);
-        }
-        
+            }
+            
         public boolean checkDest() {
-            return getDest() != null;
+            calcDest();
+            if(getDest() == null) {
+                System.out.println("Destination is out of field borders");
+                return false;
+            }
+            return true;
         }
         
         public boolean move() {
             boolean isSuccess;
-            
-            calcDest();
-            
+        
             if(!checkDest()) return false;
 
             if (getDest().whatInCell() == null
@@ -564,9 +565,7 @@ public class StrategyGame {
         
         public boolean action() {
             boolean isSuccess;
-            
-            calcDest();
-            
+        
             if(!checkDest()) return false;
             
             switch (getDest().whatInCell()) {
@@ -591,9 +590,12 @@ public class StrategyGame {
         
         public boolean tryBuild() {
             boolean isSuccess = false;
+        
+            if(!checkDest()) return false;
+            
             switch (build()) {
                 case BUILDING_BUILT:
-                    System.out.println("Building is already built." +
+                    System.out.println("Building is already built. " +
                             "Choose another action.");
                     isSuccess = false;
                     break;
@@ -611,6 +613,9 @@ public class StrategyGame {
                 case BUILDING_SUCCESSFUL:
                     isSuccess = true;
                     break;
+                case null:
+                    isSuccess = false;
+                    break;
             }
             
             return isSuccess;
@@ -618,9 +623,7 @@ public class StrategyGame {
         
         private BuildResultType build() {
             BuildResultType buildResult;
-            
-            calcDest();
-
+        
             if(!checkDest()) return null;
             
             if(getDest().getTerrainType() != TerrainType.PLATEAU)

@@ -67,13 +67,22 @@ public class GameUI {
             System.out.println("What action do you choose? [Move/Build/Act]");
             input = this.getScanner().next().toLowerCase();
             switch (input) {
-                case "move" -> actType = ActionType.MOVE;
-                case "build" -> actType = ActionType.BUILD;
-                case "act" -> actType = ActionType.INTERACT;
-                default -> {
+                case "move":
+                    actType = ActionType.MOVE;
+                    wrongInput = false;
+                    break;
+                case "build":
+                    actType = ActionType.BUILD;
+                    wrongInput = false;
+                    break;
+                case "act":
+                    actType = ActionType.INTERACT;
+                    wrongInput = false;
+                    break;
+                default:
                     System.out.println("Wrong action, enter another action\n");
                     wrongInput = true;
-                }
+                    break;
             }
         } while (wrongInput);
         
