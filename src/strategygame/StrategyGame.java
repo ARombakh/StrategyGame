@@ -27,7 +27,7 @@ public class StrategyGame {
     public static final int[] Y_START_PL = {0, FLD_HEIGHT - 1};
     
     public static final int LIFE = 20;
-    public static final int DAMAGE = 5;
+    public static final int DAMAGE = 35;
     public static final int EXTRACT_CAPACITY = 5;
     
     public static final int LABEL_LEN = 3;
@@ -298,7 +298,6 @@ public class StrategyGame {
             this.setBuilding(null);
             // в чём проблема в overridable методе в конструкторе??
             // Почему выскакивает предупреждение??
-            // Debug убрать fillCellChars, перенести в Drawing
         }
 
         public GameCell() {
@@ -316,6 +315,9 @@ public class StrategyGame {
                 case RESOURCE -> {
                     this.extractResource(actUnit);
                     isSuccess = true;
+                }
+                case BUILDING -> {
+                    this.getBuilding().attacked(actUnit.getDamage());
                 }
             }
 
@@ -377,6 +379,15 @@ public class StrategyGame {
             
             result = BuildResultType.BUILDING_SUCCESSFUL;
             return result;
+        }
+        
+        public void attacked(int damage) {
+            if (getLife() - damage < 0) {
+                setLife(0);
+            }
+            else {
+                setLife(getLife() - damage);
+            }
         }
     }
     

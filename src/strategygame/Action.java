@@ -5,6 +5,7 @@
 package strategygame;
 
 import strategygame.StrategyGame.*;
+import static strategygame.StrategyGame.*;
 
 /**
  *
@@ -89,7 +90,7 @@ public class Action {
     public boolean checkDest() {
         calcDest();
         if(getDest() == null) {
-            System.out.println("Destination is out of field borders");
+            System.out.println("Destination is out of field borders!");
             return false;
         }
         return true;
@@ -129,14 +130,9 @@ public class Action {
         if(!checkDest()) return false;
 
         switch (getDest().whatInCell()) {
-            case RESOURCE, UNIT:
+            case RESOURCE, UNIT, BUILDING:
                 getDest().actUpon(getSrc().getUnit());
                 isSuccess = true;
-                break;
-            case BUILDING:
-                System.out.println(
-                    "Nothing to act upon in the target cell");
-                isSuccess = false;
                 break;
             case null:
                 System.out.println(
