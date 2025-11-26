@@ -9,6 +9,7 @@ import java.util.Scanner;
 //import strategygame.MapFactory.*;
 // Debug
 import strategygame.DebugUI.*;
+import strategygame.Action.*;
 
 /**
  *
@@ -66,7 +67,7 @@ public class Game {
         // Debug
         System.out.printf("Turn no %d\n", DebugUI.getTurnNo());   // Debug
 
-        StrategyGame.Action action = new StrategyGame.Action();
+        Action action = new Action();
         GameUI ui = new GameUI();
         
         action.setUnit(unitToGo);
