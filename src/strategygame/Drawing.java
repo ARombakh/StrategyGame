@@ -145,7 +145,8 @@ public class Drawing {
                 }
             }
 
-            if (cell.getResource() != null || cell.getUnit() != null) {
+            if (cell.getResource() != null || cell.getUnit() != null ||
+                    cell.getBuilding() != null) {
                 if (cell.getResource() != null) {
                     label = Integer.toString(
                             cell.getResource().getResourceQty()
@@ -154,6 +155,10 @@ public class Drawing {
 
                 if (cell.getUnit() != null) {
                     label = Integer.toString(cell.getUnit().getLife());
+                }
+
+                if (cell.getBuilding() != null) {
+                    label = Integer.toString(cell.getBuilding().getLife());
                 }
 
                 indent = StrategyGame.LABEL_LEN - label.length();

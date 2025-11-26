@@ -580,11 +580,9 @@ public class StrategyGame {
                     break;
                 case INTERACT:
                     isSuccess = action();
-                    isSuccess = true;
                     break;
                 case MOVE:
                     isSuccess = move();
-                    isSuccess = true;
                     break;
                 default:
                     isSuccess = false;

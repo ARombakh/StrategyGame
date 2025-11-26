@@ -87,6 +87,8 @@ public class Game {
         action.setDir(dir);
         
         isSuccess = action.act();
+        
+        System.out.printf("Successful action %b\n", isSuccess);   // Debug
 
         /*
         if (isMove) {
