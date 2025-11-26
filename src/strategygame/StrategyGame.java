@@ -335,10 +335,10 @@ public class StrategyGame {
             int new_life;
             
             new_life = getLife();
-            if(new_life + unit.getBuildCapacity() > BUILDING_MAX_LIFE)
-                new_life += unit.getBuildCapacity();
-            else
+            if(new_life + unit.getBuildCapacity() > BUILDING_MAX_LIFE) 
                 new_life = BUILDING_MAX_LIFE;
+            else
+                new_life += unit.getBuildCapacity();
             setLife(new_life);
         }
     }
@@ -558,10 +558,10 @@ public class StrategyGame {
                 isSuccess = false;
             }
             else {
-                System.out.printf("Building in destination\n");   // Debug
                 if (getDest().getBuilding() == null) {
                     Building building = new Building(0);
                     getDest().setBuilding(building);
+                    System.out.printf("Life of new building is %d\n", building.getLife());   // Debug
                 }
 
                 getDest().getBuilding().build(unit);
