@@ -45,23 +45,11 @@ public class StrategyGame {
         MOUNTAIN
     }
     
-    public enum CellFillType {
-        RESOURCE,
-        UNIT,
-        BUILDING
-    }
-    
     public enum Direction {
         UP,
         DOWN,
         LEFT,
         RIGHT
-    }
-    
-    public enum ResourceType {
-        LUMBER,
-        GOLD,
-        STONE
     }
     
     public enum ActionType {
@@ -70,6 +58,25 @@ public class StrategyGame {
         BUILD
     }
     
+    public enum CellFillType {
+        RESOURCE,
+        UNIT,
+        BUILDING
+    }
+    
+    public enum ResourceType {
+        LUMBER,
+        GOLD,
+        STONE
+    }
+
+    public enum BuildResultType {
+        WRONG_TERRAIN,
+        CELL_OCCUPIED,
+        BUILDING_BUILT,
+        BUILDING_SUCCESSFUL
+    }
+
     static class Resource {
         private ResourceType resourceType;
         private int resourceQty;
@@ -351,15 +358,25 @@ public class StrategyGame {
             this.life = life;
         }
         
-        public void build(Unit unit) {
+        public BuildResultType build(Unit unit) {
+            BuildResultType result = null;
             int new_life;
             
             new_life = getLife();
+            
+            if (new_life == BUILDING_MAX_LIFE) {
+                result = BuildResultType.BUILDING_BUILT;
+                return result;
+            }
+            
             if(new_life + unit.getBuildCapacity() > BUILDING_MAX_LIFE) 
                 new_life = BUILDING_MAX_LIFE;
             else
                 new_life += unit.getBuildCapacity();
             setLife(new_life);
+            
+            result = BuildResultType.BUILDING_SUCCESSFUL;
+            return result;
         }
     }
     
@@ -572,26 +589,26 @@ public class StrategyGame {
             return isSuccess;
         }
         
-        public boolean build() {
-            boolean isSuccess;
-            
-            calcDest();
-
-            if(!checkDest()) return false;
-            
-            switch (getDest().whatInCell()) {
-                case UNIT, RESOURCE:
-                    System.out.println(
-                            "Impossible to build in the target cell");
-                    isSuccess = false;                    
+        public boolean tryBuild() {
+            boolean isSuccess = false;
+            switch (build()) {
+                case BUILDING_BUILT:
+                    System.out.println("Building is already built." +
+                            "Choose another action.");
+                    isSuccess = false;
                     break;
-                case null:
-                    Building building = new Building(0);
-                    getDest().setBuilding(building);
-                    // Deliberately no break so that after the creation of 
-                    // building it starts to build
-                case BUILDING:
-                    getDest().getBuilding().build(unit);
+                case CELL_OCCUPIED:
+                    System.out.println("The cell you want to build in " +
+                            "is occupied. Choose another cell.");
+                    isSuccess = false;
+                    break;
+                case WRONG_TERRAIN:
+                    System.out.println("The cell you want to build in " +
+                            "doesn't have appropriate terrain. Choose " +
+                            "another cell.");
+                    isSuccess = false;
+                    break;
+                case BUILDING_SUCCESSFUL:
                     isSuccess = true;
                     break;
             }
@@ -599,10 +616,37 @@ public class StrategyGame {
             return isSuccess;
         }
         
+        private BuildResultType build() {
+            BuildResultType buildResult;
+            
+            calcDest();
+
+            if(!checkDest()) return null;
+            
+            if(getDest().getTerrainType() != TerrainType.PLATEAU)
+                return BuildResultType.WRONG_TERRAIN;
+            
+            switch (getDest().whatInCell()) {
+                case UNIT, RESOURCE:
+                    buildResult = BuildResultType.CELL_OCCUPIED;                    
+                    break;
+                case null:
+                    Building building = new Building(0);
+                    getDest().setBuilding(building);
+                    // Deliberately no break so that after the creation of 
+                    // building it starts to build
+                case BUILDING:
+                    buildResult = getDest().getBuilding().build(unit);
+                    break;
+            }
+            
+            return buildResult;
+        }
+        
         public boolean act() {
             boolean isSuccess = false;
             switch (action) {
-                case BUILD -> isSuccess = build();
+                case BUILD -> isSuccess = tryBuild();
                 case INTERACT -> isSuccess = action();
                 case MOVE -> isSuccess = move();
                 default -> {
