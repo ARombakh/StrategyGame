@@ -74,9 +74,15 @@ public class StrategyGame {
 
     public enum BuildResultType {
         WRONG_TERRAIN,
+        OTHER_BUILDING,
         CELL_OCCUPIED,
         BUILDING_BUILT,
         BUILDING_SUCCESSFUL
+    }
+    
+    public enum BuildingType {
+        BRIDGE,
+        HOUSE
     }
 
     static class Resource {
@@ -166,13 +172,7 @@ public class StrategyGame {
         }
 
         private void validateCellIsEmpty() {
-            
-            if (getTerrainType() != TerrainType.PLATEAU) {
-                throw new IllegalStateException(
-                        "Terrain type is "+ this.terrainType +" not Plateau"
-                );
-            }
-
+            //Debug simplify expression
             if (whatInCell() != null) {
                 switch (whatInCell()) {
                     case BUILDING -> throw new IllegalStateException(

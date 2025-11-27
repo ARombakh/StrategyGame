@@ -101,15 +101,17 @@ public class Drawing {
         }
 
         public void fillCellChars() {
-            initCell();            
+            initCell();
             fillTerrain();
             if (cell.getBuilding() != null) {
+                initCell();
                 fillBorder(true);
                 cellChars[0][0] = 'B';
             }
             else {
                 if (cell.getUnit() != null ||
                         cell.getResource() != null) {
+                    initCell();
                     fillBorder(false);
                 }
             }

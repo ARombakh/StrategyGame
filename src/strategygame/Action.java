@@ -6,17 +6,28 @@ package strategygame;
 
 import strategygame.StrategyGame.*;
 import static strategygame.StrategyGame.*;
+import strategygame.House.*;
+import strategygame.Bridge.*;
 
 /**
  *
  * @author artyom
  */
-public class Action {
+public class Action {    
     private Unit unit;
     private Direction dir;
     private GameCell src;
     private GameCell dest;
     private ActionType action;
+    private BuildingType buildingType;
+
+    public BuildingType getBuildingType() {
+        return buildingType;
+    }
+
+    public void setBuildingType(BuildingType buildingType) {
+        this.buildingType = buildingType;
+    }
 
     public Unit getUnit() {
         return unit;
@@ -166,6 +177,11 @@ public class Action {
                         "another cell.");
                 isSuccess = false;
                 break;
+            case OTHER_BUILDING:
+                System.out.println("Another building is in the cell you want "
+                        + "to build in.");
+                isSuccess = false;
+                break;
             case BUILDING_SUCCESSFUL:
                 isSuccess = true;
                 break;
@@ -182,21 +198,36 @@ public class Action {
 
         if(!checkDest()) return null;
 
-        if(getDest().getTerrainType() != TerrainType.PLATEAU)
-            return BuildResultType.WRONG_TERRAIN;
-
         switch (getDest().whatInCell()) {
             case UNIT, RESOURCE:
                 buildResult = BuildResultType.CELL_OCCUPIED;                    
                 break;
-            case null:
-                Building building = new Building(0);
-                getDest().setBuilding(building);
-                // Deliberately no break so that after the creation of 
-                // building it starts to build
             case BUILDING:
-                buildResult = getDest().getBuilding().build(unit);
+                if (buildingType.equals(getDest().
+                        getBuilding().getBuildingType())) {
+                    buildResult = getDest().getBuilding().build(unit);
+                }
+                else {
+                    buildResult = BuildResultType.OTHER_BUILDING;
+                }
                 break;
+            case null:
+                Building building = new Building(LIFE, TerrainType.MOUNTAIN,
+                                                buildingType);
+                switch (buildingType) {
+                    case HOUSE:
+                        building = new House();
+                        break;
+                    case BRIDGE:
+                        building = new Bridge();
+                        break;
+                }
+                
+                if(getDest().getTerrainType() != building.getTerrain())
+                    return BuildResultType.WRONG_TERRAIN;
+
+                getDest().setBuilding(building);
+                buildResult = getDest().getBuilding().build(unit);
         }
 
         return buildResult;

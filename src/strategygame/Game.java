@@ -70,6 +70,10 @@ public class Game {
         action.setUnit(unitToGo);
         action.setSrc(unitToGo.getCell());
         action.setAction(ui.getActionType());
+        
+        if (action.getAction() == StrategyGame.ActionType.BUILD) {
+            action.setBuildingType(ui.getBuildingType());
+        }
 
         dir = ui.getDirection();
         action.setDir(dir);

@@ -80,13 +80,39 @@ public class GameUI {
                     wrongInput = false;
                     break;
                 default:
-                    System.out.println("Wrong action, enter another action\n");
+                    System.out.println("Wrong action, enter another action");
                     wrongInput = true;
                     break;
             }
         } while (wrongInput);
         
         return actType;
+    }
+    
+    public BuildingType getBuildingType() {
+        String input;
+        BuildingType buildingType = null;
+        boolean wrongInput = false;
+        do {            
+            System.out.println("What building do you choose? [House/Bridge]");
+            input = this.getScanner().next().toLowerCase();
+            switch (input) {
+                case "house":
+                    buildingType = BuildingType.HOUSE;
+                    wrongInput = false;
+                    break;
+                case "bridge":
+                    buildingType = BuildingType.BRIDGE;
+                    wrongInput = false;
+                    break;
+                default:
+                    System.out.println("Wrong building, enter "
+                            + "another building");
+                    wrongInput = true;
+                    break;
+            }
+        } while (wrongInput);
+        return buildingType;
     }
 
     public StrategyGame.Direction getDir(String move) {

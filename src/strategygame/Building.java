@@ -14,6 +14,24 @@ import static strategygame.StrategyGame.*;
 public class Building {
     private int life;
     private int maxLife;
+    private TerrainType terrain;
+    private BuildingType buildingType;
+
+    public BuildingType getBuildingType() {
+        return buildingType;
+    }
+
+    public void setBuildingType(BuildingType building) {
+        this.buildingType = building;
+    }
+
+    public TerrainType getTerrain() {
+        return terrain;
+    }
+
+    public void setTerrain(TerrainType terrain) {
+        this.terrain = terrain;
+    }
 
     public int getLife() {
         return life;
@@ -23,8 +41,10 @@ public class Building {
         this.life = life;
     }
 
-    public Building(int life) {
-        this.life = life;
+    public Building(int life, TerrainType terrain, BuildingType building) {
+        setLife(life);
+        setTerrain(terrain);
+        setBuildingType(building);
     }
 
     public BuildResultType build(Unit unit) {
