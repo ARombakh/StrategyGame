@@ -112,8 +112,14 @@ public class Action {
 
         if(!checkDest()) return false;
 
-        if (getDest().whatInCell() == null
-                && getDest().getTerrainType() == TerrainType.PLATEAU) {
+        // if destination cell [is empty and has Plateau terrain type]
+        // or [if it has bridge] then one can go on this cell
+        if ((getDest().whatInCell() == null &&
+                getDest().getTerrainType() == TerrainType.PLATEAU)
+                ||
+                (getDest().whatInCell() == CellFillType.BUILDING &&                
+                getDest().getBuilding().getBuildingType() ==
+                BuildingType.BRIDGE)) {
             getDest().setUnit(getSrc().getUnit());
             getSrc().setUnit(null);
             getUnit().setCell(getDest());

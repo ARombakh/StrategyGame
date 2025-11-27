@@ -108,14 +108,14 @@ public class Drawing {
                 fillBorder(true);
                 cellChars[0][0] = 'B';
             }
-            else {
-                if (cell.getUnit() != null ||
-                        cell.getResource() != null) {
-                    initCell();
-                    fillBorder(false);
-                }
+            
+            if (cell.getUnit() != null ||
+                    cell.getResource() != null) {
+                initCell();
+                fillBorder(false);
+                fillPlayerMark();
             }
-            fillPlayerMark();
+
             fillCellLabel();
         }
 

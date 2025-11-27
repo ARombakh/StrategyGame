@@ -201,10 +201,6 @@ public class StrategyGame {
         }
 
         public void setUnit(Unit unit) {
-            if (unit != null) {
-                validateCellIsEmpty();
-            }
-
             this.unit = unit;
         }
 
