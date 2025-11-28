@@ -331,7 +331,7 @@ public class Drawing {
                 System.out.print("\n");
 
                 for (Map.Entry<ResourceType, Integer> entry :
-                        Player_iter.resources.entrySet()) {
+                        Player_iter.getResources().entrySet()) {
                     ResourceType key = entry.getKey();
                     Integer value = entry.getValue();
                     System.out.printf("%s: %d\n", key, value);                        

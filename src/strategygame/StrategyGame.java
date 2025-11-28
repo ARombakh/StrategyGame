@@ -4,6 +4,8 @@
  */
 package strategygame;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
@@ -84,6 +86,17 @@ public class StrategyGame {
         BRIDGE,
         HOUSE
     }
+    
+    static class ResourceList {
+        private EnumMap<ResourceType, Integer> resources =
+                new EnumMap<>(ResourceType.class);
+        
+        public ResourceList() {
+            for(ResourceType Res: ResourceType.values()) {
+                resources.put(Res, 0);
+            }
+        }
+    }
 
     static class Resource {
         private ResourceType resourceType;
@@ -122,8 +135,9 @@ public class StrategyGame {
     static class Player {
         private char symbol;
         private Unit unit;
-        public EnumMap<ResourceType, Integer> resources =
-                new EnumMap<>(ResourceType.class);
+        /*public EnumMap<ResourceType, Integer> resources =
+                new EnumMap<>(ResourceType.class);*/
+        private ResourceList res = new ResourceList();
 
         public char getSymbol() {
             return this.symbol;
@@ -141,12 +155,20 @@ public class StrategyGame {
             this.unit = unit;
         }
 
+        public int getResource(ResourceType resType) {
+            return res.resources.get(resType);
+        }
+        
+        public Map<ResourceType, Integer> getResources() {
+            return Collections.unmodifiableMap(res.resources);
+        }
+        
+        public void setResource(ResourceType resType, int qty) {
+            res.resources.put(resType, qty);
+        }
+        
         public Player(char symbol) {
             this.setSymbol(symbol);
-
-            for (ResourceType Res : ResourceType.values()) {
-                resources.put(Res, 0);
-            }
         }
     }
     
@@ -334,9 +356,9 @@ public class StrategyGame {
             else
                 extracted = this.getResource().getResourceQty();
             this.getResource().addResourceQty(-extracted);
-            newResQty = actUnit.getPlayer().resources.get(resourceType);
+            newResQty = actUnit.getPlayer().getResource(resourceType);
             newResQty += extracted;
-            actUnit.getPlayer().resources.put(resourceType, newResQty);
+            actUnit.getPlayer().setResource(resourceType, newResQty);
 
             return extracted;
         }
