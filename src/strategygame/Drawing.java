@@ -162,8 +162,17 @@ public class Drawing {
                     fillIntLabel(cell.getUnit().getLife());
                     break;
                 case BUILDING:
+                    char symbol = 'C';
+                    switch (cell.getBuilding().getBuildingType()) {
+                        case BRIDGE:
+                            symbol = 'B';
+                            break;
+                        case HOUSE:
+                            symbol = 'H';
+                            break;
+                    }
                     fillAll(true);
-                    fillSymbol('B');
+                    fillSymbol(symbol);
                     fillIntLabel(cell.getBuilding().getLife());
                     break;
                 case RESOURCE:

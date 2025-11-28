@@ -16,6 +16,7 @@ public class Building {
     private int maxLife;
     private TerrainType terrain;
     private BuildingType buildingType;
+    private char symbol;
 
     public BuildingType getBuildingType() {
         return buildingType;
@@ -41,10 +42,20 @@ public class Building {
         this.life = life;
     }
 
-    public Building(int life, TerrainType terrain, BuildingType building) {
+    public char getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(char symbol) {
+        this.symbol = symbol;
+    }
+
+    public Building(int life, TerrainType terrain, BuildingType building,
+                    char symbol) {
         setLife(life);
         setTerrain(terrain);
         setBuildingType(building);
+        setSymbol(symbol);
     }
 
     public BuildResultType build(Unit unit) {

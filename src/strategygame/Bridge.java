@@ -13,7 +13,7 @@ import static strategygame.StrategyGame.*;
  * @author artyom
  */
 public class Bridge extends Building {
-    public Bridge() {
-        super(0, TerrainType.WATER, BuildingType.BRIDGE);
+    public Bridge(int life) {
+        super(life, TerrainType.WATER, BuildingType.BRIDGE, 'B');
     }
 }

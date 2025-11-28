@@ -13,7 +13,7 @@ import static strategygame.StrategyGame.*;
  * @author artyom
  */
 public class House extends Building {
-    public House() {
-        super(0, TerrainType.PLATEAU, BuildingType.HOUSE);
+    public House(int life) {
+        super(life, TerrainType.PLATEAU, BuildingType.HOUSE, 'H');
     }
 }

@@ -219,13 +219,13 @@ public class Action {
                 break;
             case null:
                 Building building = new Building(LIFE, TerrainType.MOUNTAIN,
-                                                buildingType);
+                                                buildingType, 'C');
                 switch (buildingType) {
                     case HOUSE:
-                        building = new House();
+                        building = new House(0);
                         break;
                     case BRIDGE:
-                        building = new Bridge();
+                        building = new Bridge(0);
                         break;
                 }
                 
