@@ -99,24 +99,9 @@ public class Drawing {
                 }
             }
         }
-
-        public void fillCellChars() {
-            initCell();
-            fillTerrain();
-            if (cell.getBuilding() != null) {
-                initCell();
-                fillBorder(true);
-                cellChars[0][0] = 'B';
-            }
-            
-            if (cell.getUnit() != null ||
-                    cell.getResource() != null) {
-                initCell();
-                fillBorder(false);
-                fillPlayerMark();
-            }
-
-            fillCellLabel();
+    
+        public void fillSymbol(char symb) {
+            cellChars[0][0] = symb;
         }
 
         public char playerFiller() {
@@ -128,48 +113,69 @@ public class Drawing {
                 cellChars[0][0] = this.playerFiller();
             }
         }
-
-        public void fillCellLabel() {
-            String label = "NUL";
-            int indent;
-            if (cell.getResource() != null) {
-                switch (cell.getResource().getResourceType()) {
-                    case GOLD -> label = "GLD";
-                    case LUMBER -> label = "LMB";
-                    case STONE -> label = "STN";
-                    default ->
-                        throw new AssertionError("Incorrect resource type");
-                }
-
-                for (int i = 0; i < StrategyGame.LABEL_LEN; i++) {
-                    cellChars[i + 1][StrategyGame.CELL_MIDDLE] =
-                            label.charAt(i);
-                }
+        
+        public void fillLabel(String label, int offset) {
+            if (label.length() > StrategyGame.CELL_WIDTH - 2) {
+                throw new IllegalArgumentException("The length of label " +
+                                                label + " is too long");
             }
-
-            if (cell.getResource() != null || cell.getUnit() != null ||
-                    cell.getBuilding() != null) {
-                if (cell.getResource() != null) {
-                    label = Integer.toString(
-                            cell.getResource().getResourceQty()
-                    );
-                }
-
-                if (cell.getUnit() != null) {
-                    label = Integer.toString(cell.getUnit().getLife());
-                }
-
-                if (cell.getBuilding() != null) {
-                    label = Integer.toString(cell.getBuilding().getLife());
-                }
-
-                indent = StrategyGame.LABEL_LEN - label.length();
-                // The quantity of resource is ought to be aligned at
-                // the right margin
-                for (int i = 0; i < label.length(); i++) {
-                    cellChars[i + 1 + indent][StrategyGame.CELL_MIDDLE - 1] =
-                            label.charAt(i);
-                }
+            int indent = StrategyGame.LABEL_LEN - label.length();
+            for (int i = 0; i < label.length(); i++) {
+                cellChars[i + 1 + indent][StrategyGame.CELL_MIDDLE + offset] =
+                        label.charAt(i);
+            }
+        }
+        
+        public void fillIntLabel(int label) {
+            String strLabel = Integer.toString(label);
+            fillLabel(strLabel, -1);
+        }
+    
+        public void fillStrLabel(String label) {
+            fillLabel(label, 0);
+        }
+        
+        public void fillAll(boolean thick) {
+            initCell();
+            fillBorder(thick);
+        }
+        
+        public String getResName(ResourceType resType) {
+            switch (resType) {
+                case GOLD:
+                    return "GLD";
+                case LUMBER:
+                    return "LMB";
+                case STONE:
+                    return "STN";
+                default:
+                    throw new AssertionError("Incorrect resource type");
+            }
+        }
+        
+        public void fillCellChars() {
+            initCell();
+            switch (cell.whatInCell()) {
+                case UNIT:
+                    fillAll(false);
+                    fillSymbol(playerFiller());
+                    fillIntLabel(cell.getUnit().getLife());
+                    break;
+                case BUILDING:
+                    fillAll(true);
+                    fillSymbol('B');
+                    fillIntLabel(cell.getBuilding().getLife());
+                    break;
+                case RESOURCE:
+                    String label = getResName(cell.getResource().
+                            getResourceType());
+                    fillAll(false);
+                    fillStrLabel(label);
+                    fillIntLabel(cell.getResource().getResourceQty());
+                    break;
+                case null:
+                    fillTerrain();
+                    break;
             }
         }
         
