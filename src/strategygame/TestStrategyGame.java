@@ -7,6 +7,7 @@ package strategygame;
 import strategygame.StrategyGame.*;
 import strategygame.Game.*;
 import strategygame.Drawing.*;
+import strategygame.GameCell.*;
 
 /**
  *

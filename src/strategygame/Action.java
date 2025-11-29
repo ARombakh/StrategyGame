@@ -8,6 +8,7 @@ import strategygame.StrategyGame.*;
 import static strategygame.StrategyGame.*;
 import strategygame.House.*;
 import strategygame.Bridge.*;
+import strategygame.GameCell.*;
 
 /**
  *

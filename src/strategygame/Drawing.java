@@ -7,6 +7,7 @@ package strategygame;
 import strategygame.StrategyGame.*;
 import java.util.EnumMap;
 import java.util.Map;
+import strategygame.GameCell.*;
 
 /**
  *
@@ -20,7 +21,7 @@ public class Drawing {
 
     static class GameCellDrawn {
         // The array of characters within the cell
-        private StrategyGame.GameCell cell;
+        private GameCell cell;
         private char[][] cellChars;
 
         public GameCellDrawn(GameCell cell) {
