@@ -96,6 +96,18 @@ public class StrategyGame {
                 resources.put(Res, 0);
             }
         }
+        
+        public int getResource(ResourceType resType) {
+            return resources.get(resType);
+        }
+        
+        public void setResource(ResourceType resType, int qty) {
+            resources.put(resType, qty);
+        }
+        
+        public Map<ResourceType, Integer> getResources() {
+            return Collections.unmodifiableMap(resources);
+        }
     }
 
     static class Resource {
@@ -156,7 +168,7 @@ public class StrategyGame {
         }
 
         public int getResource(ResourceType resType) {
-            return res.resources.get(resType);
+            return res.getResource(resType);
         }
         
         public Map<ResourceType, Integer> getResources() {
@@ -164,7 +176,7 @@ public class StrategyGame {
         }
         
         public void setResource(ResourceType resType, int qty) {
-            res.resources.put(resType, qty);
+            res.setResource(resType, qty);
         }
         
         public Player(char symbol) {
