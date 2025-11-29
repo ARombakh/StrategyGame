@@ -206,18 +206,6 @@ public class Action {
         if(!checkDest()) return null;
 
         switch (getDest().whatInCell()) {
-            case UNIT, RESOURCE:
-                buildResult = BuildResultType.CELL_OCCUPIED;                    
-                break;
-            case BUILDING:
-                if (buildingType.equals(getDest().
-                        getBuilding().getBuildingType())) {
-                    buildResult = getDest().getBuilding().build(unit);
-                }
-                else {
-                    buildResult = BuildResultType.OTHER_BUILDING;
-                }
-                break;
             case null:
                 Building building = new Building(LIFE, TerrainType.MOUNTAIN,
                                                 buildingType, 'C');
@@ -234,7 +222,13 @@ public class Action {
                     return BuildResultType.WRONG_TERRAIN;
 
                 getDest().setBuilding(building);
+                // Specifically no break was inserted
+            case BUILDING:
                 buildResult = getDest().getBuilding().build(unit);
+                break;
+            case UNIT, RESOURCE:
+                buildResult = BuildResultType.CELL_OCCUPIED;                    
+                break;
         }
 
         return buildResult;
