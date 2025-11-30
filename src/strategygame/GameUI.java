@@ -31,18 +31,6 @@ public class GameUI {
         this.yes_no = yes_no;
     }
     
-    public boolean getIsMove() {
-        do {            
-            System.out.print("Will it be move [y/n]? ");
-            setYes_no(this.getScanner().next());
-            if (!getYes_no().equals("y") && !getYes_no().equals("n")) {
-                System.out.println("Unrecognized input. Repeat the input.");
-            }
-        } while (!getYes_no().equals("y") && !getYes_no().equals("n"));
-        
-        return getYes_no().equals("y");
-    }
-    
     public StrategyGame.Direction getDirection () {
         StrategyGame.Direction dir;
         String move;
