@@ -144,7 +144,7 @@ public class StrategyGame {
         }
 
     }
-        
+
     static class Player {
         private char symbol;
         private Unit unit;
