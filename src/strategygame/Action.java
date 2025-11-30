@@ -199,6 +199,10 @@ public class Action {
 
         return isSuccess;
     }
+    
+    public void buildExisting() {
+        getDest().getBuilding().build(unit);
+    }
 
     private BuildResultType build() {
         BuildResultType buildResult;
