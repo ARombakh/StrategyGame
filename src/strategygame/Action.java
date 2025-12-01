@@ -17,7 +17,7 @@ import strategygame.GameCell.*;
 public class Action {    
     private Unit unit;
     private Direction dir;
-    private GameCell src;
+//    private GameCell src;
     private GameCell dest;
     private ActionType action;
     private BuildingType buildingType;
@@ -37,10 +37,10 @@ public class Action {
     public Direction getDir() {
         return dir;
     }
-
+/*
     public GameCell getSrc() {
         return src;
-    }
+    }*/
 
     public GameCell getDest() {
         return dest;
@@ -71,7 +71,7 @@ public class Action {
     }
 
     public void calcDest() {
-        int x = getSrc().getxCell(), y = getSrc().getyCell();
+        int x = unit.getCell().getxCell(), y = unit.getCell().getyCell();
 
         switch (dir) {
             case UP -> {
@@ -96,7 +96,7 @@ public class Action {
                 !(y >= 0 && y < StrategyGame.FLD_HEIGHT)) {
             this.setDest(null);
         }
-        else this.setDest(getSrc().getField().cells[x][y]);
+        else this.setDest(getUnit().getCell().getField().cells[x][y]);
         }
 
     public boolean checkDest() {
@@ -121,8 +121,9 @@ public class Action {
                 (getDest().whatInCell() == CellFillType.BUILDING &&                
                 getDest().getBuilding().getBuildingType() ==
                 BuildingType.BRIDGE)) {
-            getDest().setUnit(getSrc().getUnit());
-            getSrc().setUnit(null);
+            unit.getCell().setUnit(null);
+            getDest().setUnit(unit); //getSrc().getUnit());
+//            getSrc().setUnit(null);
             getUnit().setCell(getDest());
             isSuccess = true;
         }
@@ -149,7 +150,7 @@ public class Action {
 
         switch (getDest().whatInCell()) {
             case RESOURCE, UNIT, BUILDING:
-                getDest().actUpon(getSrc().getUnit());
+                getDest().actUpon(unit);
                 isSuccess = true;
                 break;
             case null:
