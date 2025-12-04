@@ -6,6 +6,7 @@ package strategygame;
 
 import strategygame.StrategyGame.*;
 import java.util.Scanner;
+import strategygame.ActionTest.*;
 
 /**
  *
@@ -115,5 +116,16 @@ public class GameUI {
         };
 
         return dir;
+    }
+    
+    public void turn(int playerIndex) {
+        Player player = StrategyGame.Player[playerIndex];
+        Action action = new Action();
+        ActionTest actTest = new ActionTest();
+        action.setAction(getActionType());
+
+        action.setDir(getDirection());
+        
+        actTest.checkAct_dest(cell, action.getAction());
     }
 }

@@ -58,9 +58,9 @@ public class Action {
         this.dir = dir;
     }
 
-    public void setSrc(GameCell src) {
-        this.src = src;
-    }
+//    public void setSrc(GameCell src) {
+//        this.src = src;
+//    }
 
     public void setDest(GameCell dest) {
         this.dest = dest;
@@ -97,7 +97,7 @@ public class Action {
             this.setDest(null);
         }
         else this.setDest(getUnit().getCell().getField().cells[x][y]);
-        }
+    }
 
     public boolean checkDest() {
         calcDest();
