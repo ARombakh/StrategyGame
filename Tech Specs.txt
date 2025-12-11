@@ -1,0 +1,37 @@
+1. Консоль запрашивает act
+2. Вводится act
+3. Консоль запрашивает dir
+4. Вводится dir
+	Если dir неверно (выходит за пределы поля), повтор 2.
+	Если сочетание act и dir неверно, повтор 1.*
+5. Если act != building:
+	act
+	exit
+6. Если act == building -> 7
+7. Если есть здание в dest:
+	a. к шагу 9
+	b. если нет — запрос типа Building
+8. Test building type**
+	a. Если успешно — 9
+	b. Если неуспешно —> 1.
+9. Build
+	
+
+* Проверка сочетания act и dir:
+	Move:
+		dest.res == null && dest.unit == null &&
+			(dest.building == null || 
+			dest.building.type == bridge)
+			
+	Act:
+		dest.res != null || dest.unit != null ||
+			dest.building != null
+	
+	Building:
+		dest.res == null && dest.unit == null
+		
+		
+** Проверка building type:
+	dest.res == null && dest.unit == null &&
+		dest.building == null &&
+		dest.terrain == building.terrain
