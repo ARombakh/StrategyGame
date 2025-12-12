@@ -19,86 +19,66 @@ public class TestAction {
         OK
     }
     
-    private Field field;
-    private Coord src;
-    private DirType dir;
-    private ActionType act;
+    private ActionData data;
 
-    public void setField(Field field) {
-        this.field = field;
+    public void setData(ActionData data) {
+        this.data = data;
     }
 
-    public void setSrc(Coord src) {
-        this.src = src;
-    }
-
-    public void setDir(DirType dir) {
-        this.dir = dir;
-    }
-
-    public Field getField() {
-        return field;
-    }
-
-    public Coord getSrc() {
-        return src;
-    }
-
-    public DirType getDir() {
-        return dir;
-    }
-
-    public ActionType getAct() {
-        return act;
-    }
-
-    public void setAct(ActionType act) {
-        this.act = act;
+    public ActionData getData() {
+        return data;
     }
     
-    public TestAction(Field field, Coord src, DirType dir,
-                        ActionType act) {
-        setField(field);
-        setSrc(src);
-        setDir(dir);
-        setAct(act);
+    public TestAction(ActionData data) {
+        setData(data);
     }
     
-    public ErrorType testActDir() {
-        Coord dest;
-        Cell destCell;
-        
+    public ErrorType testDir(Coord dest) {        
         dest = calcDest();
         
         if (dest.getX() < 0 || dest.getX() >= FLD_WIDTH
                 || dest.getY() < 0 || dest.getY() >= FLD_HEIGHT) {
             return ErrorType.COORDS;
         }
+        else {
+            return ErrorType.OK;
+        }        
+    }
+    
+    public ErrorType testActDir() {
+        Coord dest = getData().getDest();
+        Cell destCell;
         
-        destCell = destCell(dest);
+        if (testDir(dest) == ErrorType.COORDS) {
+            return ErrorType.COORDS;
+        }
         
-        switch (this.act) {
+        getData().setDestCell(getDestCell(dest));
+        
+        switch (getData().getAct()) {
             case ACT:
-                return testAct(destCell);
+                return testAct();
             case MOVE:
-                return testMove(destCell);
+                return testMove();
             case BUILD:
-                return testBuild(destCell);
+                return testBuild();
             default:
                 return ErrorType.ACTION_PROHIB;
         }
     }
     
-    public Cell destCell(Coord coord) {
-        return field.findCell(coord);
+    public Cell getDestCell(Coord coord) {
+        return data.getField().findCell(coord);
     }
         
-    public ErrorType testAct(Cell cell) {
+    public ErrorType testAct() {
         
         return ErrorType.ACTION_PROHIB;
     }
             
-    public ErrorType testMove(Cell cell) {
+    public ErrorType testMove() {
+        Cell cell = getData().getDestCell();
+        
         if (cell.getUnit() == null &&
                 cell.getResource() == null &&
                 (cell.getBuilding() == null ||
@@ -110,19 +90,19 @@ public class TestAction {
         }
     }
     
-    public ErrorType testBuild(Cell cell) {
+    public ErrorType testBuild() {
         return ErrorType.ACTION_PROHIB;
     }
     
     public ErrorType testBuild(Cell cell, Building.BuildingType building) {
-        
+        return ErrorType.ACTION_PROHIB;
     }
     
     public Coord calcDest() {
         int x = 0, y = 0;
         Coord dest = new Coord();
         
-        switch (dir) {
+        switch (data.getDir()) {
             case UP:
                 x = 0;
                 y = 1;
@@ -141,8 +121,8 @@ public class TestAction {
                 break;
         }
         
-        dest.setX(src.getX() + x);
-        dest.setY(src.getY() + y);
+        dest.setX(data.getSource().getX() + x);
+        dest.setY(data.getSource().getY() + y);
         
         return dest;
     }

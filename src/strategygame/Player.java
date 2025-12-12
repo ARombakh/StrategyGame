@@ -12,12 +12,26 @@ import static strategygame.StrategyGame.*;
  */
 public class Player {
     private int num;
-    
-    public ActionType askAction() {
-        return ActionType.MOVE;
+    private char sym;
+
+    public int getNum() {
+        return num;
+    }
+
+    public char getSym() {
+        return sym;
+    }
+
+    public void setNum(int num) {
+        this.num = num;
+    }
+
+    public void setSym(char sym) {
+        this.sym = sym;
     }
     
-    public DirType askMove() {
-        return DirType.UP;
+    public Player(int num, char sym) {
+        this.setNum(num);
+        this.setSym(sym);
     }
 }

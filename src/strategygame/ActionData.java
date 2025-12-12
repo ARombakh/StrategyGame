@@ -21,7 +21,17 @@ public class ActionData {
     private Coord dest;
     
     private BuildingType building;
+    
+    private Cell destCell;
 
+    public Cell getDestCell() {
+        return destCell;
+    }
+
+    public void setDestCell(Cell destCell) {
+        this.destCell = destCell;
+    }
+    
     public Field getField() {
         return field;
     }

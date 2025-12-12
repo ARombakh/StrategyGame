@@ -36,16 +36,18 @@ public class AskPlActionState implements GameState {
                 default:
                     actType = null;
                     actAssigned = false;
-                    System.out.println("Wrong input, write another action");
+                    System.out.println("Wrong name of an action.");
                     break;
             }   
         }
         
         return actType;
     }
-    
+
     @Override
     public void handle(ActionController context) {
-//        context.getData().setAct(StrategyGame.ActionType.ACT);
+        context.getData().setAct(askAction());
+        
+        context.setState(new AskPlActDirState());
     }
 }

@@ -16,6 +16,10 @@ public class Unit extends FieldObject {
     public void setPlayer(Player player) {
         this.player = player;
     }
+
+    public Player getPlayer() {
+        return player;
+    }
     
     public Unit(int life, Player player) {
         super(life);

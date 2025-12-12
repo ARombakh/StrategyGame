@@ -10,7 +10,7 @@ import strategygame.StrategyGame.*;
  *
  * @author artyom
  */
-public class AskPlActDirState implements GameState {
+public class AskPlActDirState implements GameState {/*
     private ActionController context;
     
     public DirType askDirection() {
@@ -49,15 +49,14 @@ public class AskPlActDirState implements GameState {
         
         return dir;
     }
-    
+*/
     @Override
-    public void handle(ActionController context) {
-        TestAction test = new TestAction(field, src, DirType.UP, ActionType.ACT);
-        
+    public void handle(ActionController context) {/*
         context.getData().setDir(askDirection());
         
+        TestAction test = new TestAction(context.getData());
         
         
-        context.setState(this);
+        context.setState(this);*/
     }
 }

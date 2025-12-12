@@ -39,15 +39,7 @@ public class TestField {
             System.out.printf("\n");
         }
     }
-/*
-    public boolean setUnit(Field field, Coord coord, Player player) {
-        Unit unit = new Unit(100, player);
-        
-        field.findCell(coord).setUnit(unit);
-        
-        return true;
-    }
-*/    
+    
     public static void main(String[] args) {
         TestField test = new TestField();
         Field field = new Field();
@@ -60,8 +52,8 @@ public class TestField {
         
         field.findCell(coord).setUnit(new Unit(100, player0));
         
-        coord.setX(1);
-        coord.setY(0);
+        coord.setX(FLD_WIDTH - 2);
+        coord.setY(FLD_HEIGHT - 1);
         
         field.findCell(coord).setBuilding(new Building(100,
                 Building.BuildingType.HOUSE));
@@ -72,5 +64,11 @@ public class TestField {
         field.findCell(coord).setUnit(new Unit(100, player1));
         
         test.DrawField(field);
+        
+        ActionController ac = new ActionController(field);
+        
+        AskPlActionState ask = new AskPlActionState();
+        
+        ask.handle(ac);
     }
 }
