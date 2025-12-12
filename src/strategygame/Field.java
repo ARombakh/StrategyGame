@@ -26,12 +26,20 @@ public class Field {
             }
         }
     }
-    
+    /*
     public Coord findUnitCell(Player player) {
         
-    }
+    }*/
     
     public Cell findCell(Coord coord) {
         return cells[coord.getX()][coord.getY()];
+    }
+    
+    public boolean setUnit(Coord coord, Player player) {
+        Unit unit = new Unit(100, player);
+        
+        findCell(coord).setUnit(unit);
+        
+        return true;
     }
 }
