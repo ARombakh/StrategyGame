@@ -18,8 +18,8 @@ public class TestField {
         Coord coord = new Coord();
         Cell cell = new Cell();
         
-        for (x = 0; x < FLD_WIDTH; x++) {
-            for (y = 0; y < FLD_HEIGHT; y++) {
+        for (y = 0; y < FLD_HEIGHT; y++) {
+            for (x = 0; x < FLD_WIDTH; x++) {
                 coord.setX(x);
                 coord.setY(y);
                 cell = field.findCell(coord);
@@ -28,14 +28,26 @@ public class TestField {
                                                 getPlayer().getSym());
                 }
                 else {
-                    System.out.printf(" ");
+                    if (cell.getBuilding() != null) {
+                        System.out.printf("%c", 'B');
+                    }
+                    else {
+                        System.out.printf(" ");
+                    }
                 }
             }
             System.out.printf("\n");
         }
     }
-
-    
+/*
+    public boolean setUnit(Field field, Coord coord, Player player) {
+        Unit unit = new Unit(100, player);
+        
+        field.findCell(coord).setUnit(unit);
+        
+        return true;
+    }
+*/    
     public static void main(String[] args) {
         TestField test = new TestField();
         Field field = new Field();
@@ -47,6 +59,12 @@ public class TestField {
         coord.setY(0);
         
         field.findCell(coord).setUnit(new Unit(100, player0));
+        
+        coord.setX(1);
+        coord.setY(0);
+        
+        field.findCell(coord).setBuilding(new Building(100,
+                Building.BuildingType.HOUSE));
         
         coord.setX(FLD_WIDTH - 1);
         coord.setY(FLD_HEIGHT - 1);
