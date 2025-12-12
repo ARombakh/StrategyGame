@@ -68,8 +68,16 @@ public class TestAction {
     }
         
     public ErrorType testAct() {
+        Cell cell = getData().getDestCell();
         
-        return ErrorType.ACTION_PROHIB;
+        if (cell.getBuilding() == null &&
+                cell.getResource() == null &&
+                cell.getUnit() == null) {
+            return ErrorType.ACTION_PROHIB;
+        }
+        else {
+            return ErrorType.OK;
+        }
     }
             
     public ErrorType testMove() {
@@ -87,11 +95,14 @@ public class TestAction {
     }
     
     public ErrorType testBuild() {
-        return ErrorType.ACTION_PROHIB;
-    }
-    
-    public ErrorType testBuild(Cell cell, Building.BuildingType building) {
-        return ErrorType.ACTION_PROHIB;
+        Cell cell = getData().getDestCell();
+        
+        if (cell.getUnit() != null || cell.getResource() != null) {
+            return ErrorType.ACTION_PROHIB;
+        }
+        else {
+            return ErrorType.OK;
+        }
     }
     
     public Coord calcDest() {

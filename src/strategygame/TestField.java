@@ -58,6 +58,12 @@ public class TestField {
         field.findCell(coord).setBuilding(new Building(100,
                 Building.BuildingType.HOUSE));
         
+        coord.setX(1);
+        coord.setY(0);
+        
+        field.findCell(coord).setBuilding(new Building(100,
+                Building.BuildingType.HOUSE));
+        
         coord.setX(FLD_WIDTH - 1);
         coord.setY(FLD_HEIGHT - 1);
         
