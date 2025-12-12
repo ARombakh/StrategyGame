@@ -87,5 +87,7 @@ public class TestField {
         ac.getData().setSource(coord);
         
         ac.run();
+        
+        test.DrawField(field);
     }
 }

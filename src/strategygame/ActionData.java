@@ -21,7 +21,7 @@ public class ActionData {
     private Coord dest;
     
     private BuildingType building;
-    
+
     private Cell destCell;
 
     public Cell getDestCell() {

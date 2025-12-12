@@ -50,6 +50,6 @@ public class AskPlActionState implements GameState {
     public void handle(ActionController context) {
         context.getData().setAct(askAction());
         
-        context.setState(new AskPlActDirState());
+        context.setState(new AskPlDirState());
     }
 }

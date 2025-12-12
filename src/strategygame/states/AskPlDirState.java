@@ -8,6 +8,8 @@ import java.util.Scanner;
 import strategygame.ActionController;
 import strategygame.GameState;
 import strategygame.StrategyGame.*;
+import static strategygame.StrategyGame.ActionType.ACT;
+import static strategygame.StrategyGame.ActionType.MOVE;
 import strategygame.TestAction;
 /**
  *
@@ -61,7 +63,16 @@ public class AskPlDirState implements GameState {
         
         switch (test.testActDir()) {
             case OK:
-                context.setState(new EndState());
+                switch (context.getData().getAct()) {
+                    case ACT:
+                        context.setState(new EndState());
+                        break;
+                    case MOVE:
+                        context.setState(new MoveState());
+                        break;
+                    default:
+                        throw new AssertionError();
+                }
                 break;
             case COORDS:
                 System.out.println("The dest cell is out of field bounds.");
@@ -73,7 +84,5 @@ public class AskPlDirState implements GameState {
                 context.setState(new AskPlActionState());
                 break;            
         }
-        
-        
     }
 }
