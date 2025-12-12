@@ -2,15 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package strategygame;
+package strategygame.states;
 
 import java.util.Scanner;
+import strategygame.ActionController;
+import strategygame.GameState;
 import strategygame.StrategyGame.*;
+import strategygame.TestAction;
 /**
  *
  * @author artyom
  */
-public class AskPlActDirState implements GameState {
+public class AskPlDirState implements GameState {
     private ActionController context;
     
     public DirType askDirection() {

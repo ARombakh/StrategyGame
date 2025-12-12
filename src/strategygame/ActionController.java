@@ -4,6 +4,7 @@
  */
 package strategygame;
 
+import strategygame.states.EndState;
 import static strategygame.StrategyGame.*;
 import static strategygame.Building.*;
 import strategygame.ActionData.*;
