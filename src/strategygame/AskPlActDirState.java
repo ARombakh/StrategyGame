@@ -10,7 +10,7 @@ import strategygame.StrategyGame.*;
  *
  * @author artyom
  */
-public class AskPlActDirState implements GameState {/*
+public class AskPlActDirState implements GameState {
     private ActionController context;
     
     public DirType askDirection() {
@@ -49,14 +49,28 @@ public class AskPlActDirState implements GameState {/*
         
         return dir;
     }
-*/
+
     @Override
-    public void handle(ActionController context) {/*
+    public void handle(ActionController context) {
         context.getData().setDir(askDirection());
         
         TestAction test = new TestAction(context.getData());
         
+        switch (test.testActDir()) {
+            case OK:
+                context.setState(new EndState());
+                break;
+            case COORDS:
+                System.out.println("The dest cell is out of field bounds.");
+                context.setState(this);
+                break;
+            case ACTION_PROHIB:
+                System.out.println("The action cannot be taken. "
+                                    + "Choose another action.");
+                context.setState(new AskPlActionState());
+                break;            
+        }
         
-        context.setState(this);*/
+        
     }
 }

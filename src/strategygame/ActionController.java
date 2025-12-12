@@ -55,5 +55,12 @@ public class ActionController {
     public ActionController(Field field) {
         ActionData data = new ActionData();
         setData(data);
+        getData().setField(field);
+    }
+    
+    public void run() {
+        while(!(state instanceof EndState)) {
+            state.handle(this);
+        }
     }
 }

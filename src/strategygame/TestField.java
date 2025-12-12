@@ -65,10 +65,20 @@ public class TestField {
         
         test.DrawField(field);
         
+        
+        
+        coord.setX(0);
+        coord.setY(0);
+        
+        
         ActionController ac = new ActionController(field);
         
         AskPlActionState ask = new AskPlActionState();
         
-        ask.handle(ac);
+        ac.setState(ask);
+        
+        ac.getData().setSource(coord);
+        
+        ac.run();
     }
 }

@@ -34,8 +34,6 @@ public class TestAction {
     }
     
     public ErrorType testDir(Coord dest) {        
-        dest = calcDest();
-        
         if (dest.getX() < 0 || dest.getX() >= FLD_WIDTH
                 || dest.getY() < 0 || dest.getY() >= FLD_HEIGHT) {
             return ErrorType.COORDS;
@@ -46,14 +44,16 @@ public class TestAction {
     }
     
     public ErrorType testActDir() {
-        Coord dest = getData().getDest();
+        Coord dest = calcDest();
         Cell destCell;
         
         if (testDir(dest) == ErrorType.COORDS) {
             return ErrorType.COORDS;
         }
         
-        getData().setDestCell(getDestCell(dest));
+        destCell = data.getField().findCell(dest);
+        
+        getData().setDestCell(destCell);
         
         switch (getData().getAct()) {
             case ACT:
@@ -65,10 +65,6 @@ public class TestAction {
             default:
                 return ErrorType.ACTION_PROHIB;
         }
-    }
-    
-    public Cell getDestCell(Coord coord) {
-        return data.getField().findCell(coord);
     }
         
     public ErrorType testAct() {
@@ -105,11 +101,11 @@ public class TestAction {
         switch (data.getDir()) {
             case UP:
                 x = 0;
-                y = 1;
+                y = -1;
                 break;
             case DOWN:
                 x = 0;
-                y = -1;
+                y = 1;
                 break;
             case LEFT:
                 x = -1;
