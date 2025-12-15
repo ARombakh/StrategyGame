@@ -40,6 +40,8 @@ public class ActionController {
     
     public static void main(String[] args) {
         ActionController ac = new ActionController();
+        
+        boolean turnAllowed = true;
 
         Player player = null;
         int currPlayerIx = 0;
@@ -48,8 +50,9 @@ public class ActionController {
             
             ac.act = player.askAction();
             
-            // Условие, если ход допустим — переходим к следующему игроку
-            currPlayerIx = ac.nextPlayerIx(currPlayerIx);
+            if (turnAllowed) {
+                currPlayerIx = ac.nextPlayerIx(currPlayerIx);
+            }
         }
     }
 }
