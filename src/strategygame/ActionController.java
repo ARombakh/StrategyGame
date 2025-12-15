@@ -37,7 +37,7 @@ public class ActionController {
             return playerIx + 1;
         }
     }
-    
+
     public static void main(String[] args) {
         ActionController ac = new ActionController();
         
