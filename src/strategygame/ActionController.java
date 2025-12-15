@@ -48,7 +48,7 @@ public class ActionController {
             
             ac.act = player.askAction();
             
-            
+            // Условие, если ход допустим — переходим к следующему игроку
             currPlayerIx = ac.nextPlayerIx(currPlayerIx);
         }
     }
