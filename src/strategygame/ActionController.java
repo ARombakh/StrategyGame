@@ -77,7 +77,7 @@ public class ActionController {
             
             if (turnAllowed) {
                 // make turn
-                LogEntry entry = new LogEntry(ac.getAct().toString(),
+                LogEntry entry = new LogEntry(ac.getAct().getDir().toString(),
                                             "Player turn");
                 
                 log.add(entry);
