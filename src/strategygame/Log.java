@@ -27,9 +27,17 @@ public class Log {
         setFileName(fileName);
     }
     
-    public String add(LogEntry entry) {
+    public void add(LogEntry entry) throws Exception {
         LocalDateTime dateTime = LocalDateTime.now();
-        return dateTime.toString() + "\t" + entry.toText() + "\n";
+        try {
+            Files.writeString(Paths.get(getFileName()),
+                                dateTime.toString() + "\t"
+                                + entry.toText() + "\n",
+                                StandardOpenOption.APPEND);    
+        } catch (IOException e) {
+            System.out.println("File cannot be written to. " + e.getMessage());
+        }
+
     }
     
     public static void main(String[] args) throws Exception {
@@ -41,23 +49,11 @@ public class Log {
         boolean pathExists = Files.exists(testFilePath);
         
         if (!pathExists) {
-            throw new Exception("File " + testFilePath.toString() + " doesn't exist");
+            Files.createFile(testFilePath);
         }
         
         LogEntry entry = new LogEntry("Start of log", "Log writing");
-        
-        try {
-            Files.writeString(testFilePath, log.add(entry),
-                                StandardOpenOption.APPEND);
-            
-            String content = Files.readString(testFilePath);
-            
-            System.out.println(content);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        
-        System.out.printf(log.add(entry) + "\n");
+        log.add(entry);
     }
 }
