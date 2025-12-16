@@ -40,7 +40,7 @@ public class Log {
 
     }
     
-    public static void main(String[] args) throws Exception {
+    /*public static void main(String[] args) throws Exception {
         
         String path = "/home/artyom/Documents/Java/StrategyGameLog.txt";
         Log log = new Log(path);
@@ -55,5 +55,5 @@ public class Log {
         LogEntry entry = new LogEntry("Start of log", "Log writing");
 
         log.add(entry);
-    }
+    }*/
 }

@@ -4,6 +4,9 @@
  */
 package strategygame;
 
+import java.io.IOException;
+import java.nio.file.*;
+
 /**
  *
  * @author artyom
@@ -20,6 +23,14 @@ public class ActionController {
     
     private ActionData act;
     private Player[] players;
+
+    public void setAct(ActionData act) {
+        this.act = act;
+    }
+
+    public ActionData getAct() {
+        return act;
+    }
     
     public ActionController() {
         this.players = new Player[PLAYERS_QTY];
@@ -38,7 +49,21 @@ public class ActionController {
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
+        String path = "/home/artyom/Documents/Java/StrategyGameLog.txt";
+        Log log = new Log(path);
+        
+        Path testFilePath = Paths.get(log.getFileName());
+        boolean pathExists = Files.exists(testFilePath);
+
+        if (!pathExists) {
+            Files.createFile(testFilePath);
+        }
+
+        LogEntry entryStart = new LogEntry("Start of log", "Log writing");
+
+        log.add(entryStart);
+        
         ActionController ac = new ActionController();
         
         boolean turnAllowed = true;
@@ -48,9 +73,15 @@ public class ActionController {
         while (true) {
             player = ac.players[currPlayerIx];
             
-            ac.act = player.askAction();
+            ac.setAct(player.askAction());
             
             if (turnAllowed) {
+                // make turn
+                LogEntry entry = new LogEntry(ac.getAct().toString(),
+                                            "Player turn");
+                
+                log.add(entry);
+                
                 currPlayerIx = ac.nextPlayerIx(currPlayerIx);
             }
         }
