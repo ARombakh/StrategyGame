@@ -52,13 +52,20 @@ public class Player {
     public ActionData askAction() {
         Scanner sc = new Scanner(System.in);
         String input = null;
+        boolean isCorrInput = false;
         
-        System.out.println("Enter action:");
-        
-        input = sc.next().toUpperCase();
+        while (!isCorrInput) {            
+            System.out.println("Enter action:");
 
-        getAct().setDir(ActionController.DirectionType.valueOf(input));
-        
+            input = sc.next().toUpperCase();
+
+            try {
+                getAct().setDir(ActionController.DirectionType.valueOf(input));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Incorrect action!");
+            }
+        }
+
         return getAct();
     }
 }
