@@ -28,15 +28,23 @@ public class ActionController {
         this.act = act;
     }
 
+    public void setPlayers(Player[] players) {
+        this.players = players;
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
     public ActionData getAct() {
         return act;
     }
     
     public ActionController() {
-        this.players = new Player[PLAYERS_QTY];
+        setPlayers(new Player[PLAYERS_QTY]);
         
         for (int currPlayerIx = 0; currPlayerIx < PLAYERS_QTY; currPlayerIx++) {
-            players[currPlayerIx] = new Player(currPlayerIx);
+            getPlayers()[currPlayerIx] = new Player(currPlayerIx);
         }
     }
     
@@ -53,11 +61,11 @@ public class ActionController {
         String path = "/home/artyom/Documents/Java/StrategyGameLog.txt";
         Log log = new Log(path);
         
-        Path testFilePath = Paths.get(log.getFileName());
-        boolean pathExists = Files.exists(testFilePath);
+        Path filePath = Paths.get(log.getFileName());
+        boolean pathExists = Files.exists(filePath);
 
         if (!pathExists) {
-            Files.createFile(testFilePath);
+            Files.createFile(filePath);
         }
 
         LogEntry entryStart = new LogEntry("Start of log", "Log writing");
