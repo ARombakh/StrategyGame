@@ -61,8 +61,10 @@ public class Player {
 
             try {
                 getAct().setDir(ActionController.DirectionType.valueOf(input));
+                isCorrInput = true;
             } catch (IllegalArgumentException e) {
                 System.out.println("Incorrect action!");
+                isCorrInput = false;
             }
         }
 
