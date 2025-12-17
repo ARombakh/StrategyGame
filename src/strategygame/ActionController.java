@@ -78,13 +78,21 @@ public class ActionController {
 
         Player player = null;
         int currPlayerIx = 0;
-        while (true) {
+        
+        Game game = new Game(1, false);
+        
+        while (!game.isOneAlive() && !game.maxTurnsReached()) {
             player = ac.players[currPlayerIx];
+            
+            System.out.printf("Turn no. %d\n", game.getTurnNum());   // Debug 
             
             ac.setAct(player.askAction());
             
             if (turnAllowed) {
                 // make turn
+                
+                game.nextTurn();
+
                 LogEntry entry = new LogEntry(ac.getAct().getDir().toString(),
                                             "Player turn");
                 
