@@ -62,14 +62,6 @@ public class ActionController {
     public static void main(String[] args) throws Exception {
         String path = "/home/artyom/Documents/Java/StrategyGameLog.txt";
         Log log = new Log(path);
-        
-        // Debug добавить в конструктор создание файла, если не существует
-        Path filePath = Paths.get(log.getFileName());
-        boolean pathExists = Files.exists(filePath);
-
-        if (!pathExists) {
-            Files.createFile(filePath);
-        }
 
         LogEntry entryStart = new LogEntry("Start of log", "Log writing");
 

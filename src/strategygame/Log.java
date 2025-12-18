@@ -25,6 +25,17 @@ public class Log {
     
     public Log(String fileName) {
         setFileName(fileName);
+
+        Path filePath = Paths.get(getFileName());
+        boolean pathExists = Files.exists(filePath);
+
+        if (!pathExists) {
+            try {
+                Files.createFile(filePath);
+            } catch (Exception e) {
+                System.out.println("File cannot be created. " + e.getMessage());
+            }
+        }
     }
     
     public void add(LogEntry entry) throws Exception {
