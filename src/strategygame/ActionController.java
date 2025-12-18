@@ -44,7 +44,7 @@ public class ActionController {
         setPlayers(new Player[PLAYERS_QTY]);
         
         for (int currPlayerIx = 0; currPlayerIx < PLAYERS_QTY; currPlayerIx++) {
-            getPlayers()[currPlayerIx] = new Player(currPlayerIx);
+            getPlayers()[currPlayerIx] = new Player(currPlayerIx, true);
         }
         
         setAct(new ActionData());
@@ -74,8 +74,8 @@ public class ActionController {
         Player player = null;
         int currPlayerIx = 0;
         
-        Game game = new Game(1, false);
-        
+        Game game = new Game(1);
+
         // Game должна знать, закончилась ли она, и выдавать это из своей
         // функции
         while (!game.isGameOver(ac)) {

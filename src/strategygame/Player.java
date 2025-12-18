@@ -30,7 +30,7 @@ public class Player {
         this.num = num;
     }
     
-    public Player(int num) {
+    public Player(int num, boolean alive) {
         setNum(num);
         setAlive(alive);
     }

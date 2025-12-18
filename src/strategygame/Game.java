@@ -16,9 +16,8 @@ public class Game {
     private int turnNum;
     private boolean oneAlive;
     
-    public Game(int turnNum, boolean oneAlive) {
+    public Game(int turnNum) {
         setTurnNum(turnNum);
-        setOneAlive(oneAlive);
     }
 
     public int getTurnNum() {
