@@ -41,7 +41,7 @@ public class Game {
         setTurnNum(getTurnNum() + 1);
     }
     
-    public boolean checkOnePlayerAlive(ActionController ac) {
+    private boolean checkOnePlayerAlive(ActionController ac) {
         int cntAlive = 0;
         for (int i = 0; i < PLAYERS_QTY; i++) {
             if (ac.getPlayers()[i].isAlive()) {
@@ -52,7 +52,11 @@ public class Game {
         return cntAlive <= 1;
     }
     
-    public boolean maxTurnsReached() {
+    private boolean maxTurnsReached() {
         return getTurnNum() >= MAX_TURNS;
+    }
+    
+    public boolean isGameOver(ActionController ac) {
+        return checkOnePlayerAlive(ac) || maxTurnsReached();
     }
 }

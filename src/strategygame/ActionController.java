@@ -78,7 +78,7 @@ public class ActionController {
         
         // Game должна знать, закончилась ли она, и выдавать это из своей
         // функции
-        while (!game.isOneAlive() && !game.maxTurnsReached()) {
+        while (!game.isGameOver(ac)) {
             player = ac.players[currPlayerIx];
             
             System.out.printf("Turn no. %d\n", game.getTurnNum());   // Debug 
