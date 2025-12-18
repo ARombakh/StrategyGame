@@ -46,6 +46,8 @@ public class ActionController {
         for (int currPlayerIx = 0; currPlayerIx < PLAYERS_QTY; currPlayerIx++) {
             getPlayers()[currPlayerIx] = new Player(currPlayerIx);
         }
+        
+        setAct(new ActionData());
     }
     
     private int nextPlayerIx(int playerIx) {
@@ -89,7 +91,7 @@ public class ActionController {
             
             System.out.printf("Turn no. %d\n", game.getTurnNum());   // Debug 
             
-            ac.setAct(player.askAction());
+            player.askAction(ac);
             
             if (turnAllowed) {
                 // make turn

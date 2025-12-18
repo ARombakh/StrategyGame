@@ -12,7 +12,6 @@ import java.util.Scanner;
  */
 public class Player {
     private int num;
-    private ActionData act;
     private boolean alive;
 
     public boolean isAlive() {
@@ -33,23 +32,14 @@ public class Player {
     
     public Player(int num) {
         setNum(num);
-        setAct(new ActionData());
         setAlive(alive);
-    }
-
-    public ActionData getAct() {
-        return act;
-    }
-
-    public void setAct(ActionData act) {
-        this.act = act;
     }
     
     public void printPlNum() {
         System.out.printf("Player no. %d\n", getNum());
     }
     
-    public ActionData askAction() {
+    public void askAction(ActionController ac) {
         Scanner sc = new Scanner(System.in);
         String input = null;
         boolean isCorrInput = false;
@@ -60,14 +50,14 @@ public class Player {
             input = sc.next().toUpperCase();
 
             try {
-                getAct().setDir(ActionController.DirectionType.valueOf(input));
+                ac.getAct().setDir(
+                        ActionController.DirectionType.valueOf(input)
+                );
                 isCorrInput = true;
             } catch (IllegalArgumentException e) {
                 System.out.println("Incorrect action!");
                 isCorrInput = false;
             }
         }
-
-        return getAct();
     }
 }
