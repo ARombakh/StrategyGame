@@ -71,22 +71,21 @@ public class ActionController {
         
         boolean turnAllowed = true;
 
-        Player player = null;
         int currPlayerIx = 0;
         
         Game game = new Game(1);
 
-        // Game должна знать, закончилась ли она, и выдавать это из своей
-        // функции
         while (!game.isGameOver(ac)) {
-            player = ac.players[currPlayerIx];
-            
+            ac.getAct().setPlayer(ac.players[currPlayerIx]);
+
             System.out.printf("Turn no. %d\n", game.getTurnNum());   // Debug 
             
-            player.askAction(ac);
+            // ?? Имеет ли смысл делать такой "оборот" или нужно как-то 
+            // переделать
+            ac.getAct().getPlayer().askAction(ac);
             
-            if (turnAllowed) {
-                // make turn
+            if (game.isTurnPossible(ac.getAct())) {
+                game.makeTurn(ac.getAct());
                 
                 game.nextTurn();
 
@@ -96,6 +95,10 @@ public class ActionController {
                 log.add(entry);
                 
                 currPlayerIx = ac.nextPlayerIx(currPlayerIx);
+            }
+            else {
+                System.out.printf("Turn impossible. Player no. %d\n",
+                        currPlayerIx);
             }
         }
     }

@@ -58,4 +58,12 @@ public class Game {
     public boolean isGameOver(ActionController ac) {
         return checkOnePlayerAlive(ac) || maxTurnsReached();
     }
+    
+    public boolean isTurnPossible(ActionData ad) {
+        return true;
+    }
+    
+    public boolean makeTurn(ActionData ad) {
+        return true;
+    }
 }
