@@ -61,6 +61,7 @@ public class ActionController {
         String path = "/home/artyom/Documents/Java/StrategyGameLog.txt";
         Log log = new Log(path);
         
+        // Debug добавить в конструктор создание файла, если не существует
         Path filePath = Paths.get(log.getFileName());
         boolean pathExists = Files.exists(filePath);
 
@@ -81,6 +82,8 @@ public class ActionController {
         
         Game game = new Game(1, false);
         
+        // Game должна знать, закончилась ли она, и выдавать это из своей
+        // функции
         while (!game.isOneAlive() && !game.maxTurnsReached()) {
             player = ac.players[currPlayerIx];
             
