@@ -57,7 +57,7 @@ public class Game {
     }
     
     public boolean isGameOver(Player[] players) {
-        return checkOnePlayerAlive(Player[] players) || maxTurnsReached();
+        return checkOnePlayerAlive(players) || maxTurnsReached();
     }
     
     public boolean isTurnPossible(ActionData ad) {

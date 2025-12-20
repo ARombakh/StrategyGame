@@ -83,10 +83,14 @@ public class ActionController {
 
                 LogEntry entry = new LogEntry(getAct().getCommand(),
                                             "Player turn");
+
+                try {
+                    log.add(entry);
+                } catch (Exception e) {
+                    System.out.println("Can't add, " + e.getMessage());
+                }
                 
-                log.add(entry);     // Debug проверить Exception
-                
-                currPlayerIx = ac.nextPlayerIx(currPlayerIx);
+                currPlayerIx = nextPlayerIx(currPlayerIx);
             }
             else {
                 System.out.printf("Turn impossible. Player no. %d\n",

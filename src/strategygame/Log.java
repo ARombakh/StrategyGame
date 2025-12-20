@@ -39,7 +39,11 @@ public class Log {
         
         LogEntry startEntry = new LogEntry("Start of log", "Log writing");
         
-        add(startEntry);
+        try {
+            add(startEntry);
+        } catch (Exception e) {
+            System.out.println("Can't add, " + e.getMessage());
+        }
     }
     
     public void add(LogEntry entry) throws Exception {
