@@ -23,7 +23,7 @@ public class Log {
         return fileName;
     }
     
-    public Log(String fileName) {
+    public void start(String fileName) {
         setFileName(fileName);
 
         Path filePath = Paths.get(getFileName());
@@ -36,6 +36,10 @@ public class Log {
                 System.out.println("File cannot be created. " + e.getMessage());
             }
         }
+        
+        LogEntry startEntry = new LogEntry("Start of log", "Log writing");
+        
+        add(startEntry);
     }
     
     public void add(LogEntry entry) throws Exception {

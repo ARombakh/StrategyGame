@@ -12,16 +12,20 @@ import strategygame.units.Unit;
  * @author artyom
  */
 public class ActionData {
-    private DirectionType dir;
+    public String command;
     private Player player;
     private Unit unit;
-
-    public DirectionType getDir() {
-        return dir;
+    
+    public ActionData (Player player) {
+        setPlayer(player);
     }
 
-    public void setDir(DirectionType dir) {
-        this.dir = dir;
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
     }
 
     public Player getPlayer() {

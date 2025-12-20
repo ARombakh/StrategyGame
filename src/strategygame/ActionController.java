@@ -23,7 +23,16 @@ public class ActionController {
     
     private ActionData act;
     private Player[] players;
+    private static Log log;
 
+    public Log getLog() {
+        return log;
+    }
+
+    public void setLog(Log log) {
+        this.log = log;
+    }
+    
     public void setAct(ActionData act) {
         this.act = act;
     }
@@ -46,8 +55,6 @@ public class ActionController {
         for (int currPlayerIx = 0; currPlayerIx < PLAYERS_QTY; currPlayerIx++) {
             getPlayers()[currPlayerIx] = new Player(currPlayerIx, true);
         }
-        
-        setAct(new ActionData());
     }
     
     private int nextPlayerIx(int playerIx) {
@@ -58,41 +65,26 @@ public class ActionController {
             return playerIx + 1;
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        String path = "/home/artyom/Documents/Java/StrategyGameLog.txt";
-        Log log = new Log(path);
-
-        LogEntry entryStart = new LogEntry("Start of log", "Log writing");
-
-        log.add(entryStart);
-        
-        ActionController ac = new ActionController();
-        
-        boolean turnAllowed = true;
-
+    
+    private void gameLoop(Game game) {
         int currPlayerIx = 0;
         
-        Game game = new Game(1);
-
-        while (!game.isGameOver(ac)) {
-            ac.getAct().setPlayer(ac.players[currPlayerIx]);
-
+        while (!game.isGameOver(getPlayers())) {
+            Player currPlayer = getPlayers()[currPlayerIx];
+            
             System.out.printf("Turn no. %d\n", game.getTurnNum());   // Debug 
             
-            // ?? Имеет ли смысл делать такой "оборот" или нужно как-то 
-            // переделать
-            ac.getAct().getPlayer().askAction(ac);
+            setAct(currPlayer.askAction());
             
-            if (game.isTurnPossible(ac.getAct())) {
-                game.makeTurn(ac.getAct());
+            if (game.isTurnPossible(getAct())) {
+                game.makeTurn(getAct());
                 
                 game.nextTurn();
 
-                LogEntry entry = new LogEntry(ac.getAct().getDir().toString(),
+                LogEntry entry = new LogEntry(getAct().getCommand(),
                                             "Player turn");
                 
-                log.add(entry);
+                log.add(entry);     // Debug проверить Exception
                 
                 currPlayerIx = ac.nextPlayerIx(currPlayerIx);
             }
@@ -101,5 +93,19 @@ public class ActionController {
                         currPlayerIx);
             }
         }
+    }
+
+    public static void main(String[] args) throws Exception {
+        String path = "/home/artyom/Documents/Java/StrategyGameLog.txt";
+        log.start(path);
+
+        ActionController ac = new ActionController();   // Debug создание игроков
+        // сделать здесь, указывая кол-во
+        
+        boolean turnAllowed = true;
+        
+        Game game = new Game();
+        
+        ac.gameLoop(game);
     }
 }

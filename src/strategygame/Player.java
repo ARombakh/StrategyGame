@@ -39,25 +39,21 @@ public class Player {
         System.out.printf("Player no. %d\n", getNum());
     }
     
-    public void askAction(ActionController ac) {
+    public ActionData askAction() {
+        ActionData actionData = new ActionData(this);
+        
         Scanner sc = new Scanner(System.in);
         String input = null;
-        boolean isCorrInput = false;
+        boolean isCorrInput = true;
         
         while (!isCorrInput) {            
             System.out.println("Enter action:");
 
             input = sc.next().toUpperCase();
 
-            try {
-                ac.getAct().setDir(
-                        ActionController.DirectionType.valueOf(input)
-                );
-                isCorrInput = true;
-            } catch (IllegalArgumentException e) {
-                System.out.println("Incorrect action!");
-                isCorrInput = false;
-            }
+            actionData.setCommand(input);
         }
+        
+        return actionData;
     }
 }

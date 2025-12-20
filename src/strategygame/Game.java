@@ -16,8 +16,8 @@ public class Game {
     private int turnNum;
     private boolean oneAlive;
     
-    public Game(int turnNum) {
-        setTurnNum(turnNum);
+    public Game() {
+        setTurnNum(0);
     }
 
     public int getTurnNum() {
@@ -40,10 +40,11 @@ public class Game {
         setTurnNum(getTurnNum() + 1);
     }
     
-    private boolean checkOnePlayerAlive(ActionController ac) {
+    private boolean checkOnePlayerAlive(Player[] players) {
         int cntAlive = 0;
+        // подумать над тем, что игроки могут умирать и кол-во живых поменяется
         for (int i = 0; i < PLAYERS_QTY; i++) {
-            if (ac.getPlayers()[i].isAlive()) {
+            if (players[i].isAlive()) {
                 cntAlive++;
             }
         }
@@ -55,8 +56,8 @@ public class Game {
         return getTurnNum() >= MAX_TURNS;
     }
     
-    public boolean isGameOver(ActionController ac) {
-        return checkOnePlayerAlive(ac) || maxTurnsReached();
+    public boolean isGameOver(Player[] players) {
+        return checkOnePlayerAlive(Player[] players) || maxTurnsReached();
     }
     
     public boolean isTurnPossible(ActionData ad) {
